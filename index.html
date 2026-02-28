@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIGA 2 ESOA - GLOBAL SYNC</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { height:100vh; background:#0a0a14; color:#e0e0ff; font-family:Arial, sans-serif; overflow:hidden; }
+        .header { text-align:center; padding:10px; font-size:3rem; font-weight:bold; color:#ff00ea; text-shadow:0 0 20px #ff00ea; letter-spacing:10px; }
+        
+        .top-nav { text-align: center; margin-bottom: 10px; }
+        .plantilla-main-btn { background: #ff00ea; color: white; padding: 10px 30px; border-radius: 20px; font-weight: bold; cursor: pointer; border: none; box-shadow: 0 0 15px #ff00ea66; transition: 0.3s; text-transform: uppercase; }
+        .plantilla-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 25px #ff00ea; }
+
+        .container { display:grid; grid-template-columns: repeat(4, 1fr); height:calc(100vh - 180px); gap:15px; padding:20px; }
+        .panel { background:rgba(20,20,40,0.8); border:1px solid #ff00ea44; border-radius:15px; padding:15px; position:relative; display:flex; flex-direction:column; backdrop-filter: blur(10px); height: 100%; overflow: hidden; }
+        .panel-title { text-align:center; color:#ff00ea; font-size:1.5rem; margin-bottom:15px; font-weight:bold; text-transform: uppercase; }
+        
+        .data-box { flex-grow:1; background:rgba(0,0,0,0.3); border-radius:10px; overflow-y:auto; padding:10px; border: 1px solid rgba(255, 0, 234, 0.1); }
+        .data-box::-webkit-scrollbar { width: 6px; }
+        .data-box::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .data-box::-webkit-scrollbar-thumb { background: #ff00ea; border-radius: 10px; }
+
+        .clausulazo-item { 
+            background: rgba(255, 255, 255, 0.03); 
+            margin-bottom: 10px; 
+            padding: 10px; 
+            border-left: 4px solid #ff00ea; 
+            border-radius: 4px;
+            height: auto; 
+            flex-shrink: 0; 
+        }
+
+        .edit-btn { position:absolute; top:10px; right:10px; cursor:pointer; font-size:1.2rem; display:none; opacity:0.5; z-index: 10; transition: 0.3s; }
+        .edit-btn:hover { opacity:1; transform: scale(1.2); }
+        
+        .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .player-card { background: #1a237e; border-radius: 10px; padding: 12px; text-align: center; border-bottom: 4px solid #ff00ea; position: relative; min-height: 90px; display: flex; flex-direction: column; justify-content: center; }
+        .player-name { font-weight: bold; font-size: 0.85rem; color: white; text-transform: uppercase; margin-bottom: 2px; }
+        .player-goals-count { font-size: 0.75rem; color: #ff00ea; font-weight: bold; }
+        .captain-tag { color: #ffcc00; font-size: 0.65rem; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
+        
+        .player-admin-tools { position: absolute; top: 5px; right: 5px; display: none; }
+        .btn-p-edit { color: #00e5ff; font-size: 0.7rem; cursor: pointer; margin-left: 5px; }
+        .btn-p-del { color: #ff4444; font-size: 0.7rem; cursor: pointer; margin-left: 5px; }
+
+        .team-select-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid #ff00ea; color: white; padding: 15px; margin: 10px 0; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .team-select-btn:hover { background: #ff00ea; }
+
+        table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+        th { color:#ff00ea; border-bottom:1px solid #ff00ea44; padding:8px; text-align: center; font-size: 0.75rem; position: sticky; top: 0; background: #141428; z-index: 5; }
+        td { padding:10px; text-align:center; border-bottom:1px solid #ffffff05; }
+        .vs { color: #ff00ea; font-weight: bold; font-size: 0.7rem; }
+        
+        .admin-controls { display: none; margin-left: 5px; }
+        .btn-mini { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 2px; transition: 0.2s; display: inline-block; width: auto; margin: 0 2px; }
+        .btn-del { color: #ff4444; }
+        .btn-edit { color: #00e5ff; }
+        .dinero-txt { color: #00ff88; font-weight: bold; }
+
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:100; align-items:center; justify-content:center; }
+        .modal-content { background:#1a1a2e; padding:30px; border:1px solid #ff00ea; border-radius:15px; width:450px; text-align:center; box-shadow: 0 0 30px #ff00ea44; max-height: 85vh; overflow-y: auto; }
+        input, textarea { width:100%; padding:12px; margin:10px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
+        button { width:100%; padding:14px; background:#ff00ea; border:none; color:white; font-weight:bold; cursor:pointer; border-radius:8px; margin-top:10px; }
+        
+        #auth-trigger { position:fixed; top:10px; right:10px; cursor:pointer; z-index:20; font-size:1.5rem; opacity: 0.2; transition: 0.5s; }
+        #auth-trigger:hover { opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div id="auth-trigger" onclick="openModal('auth-modal')">🔐</div>
+    <div class="header">BIENVENIDOS</div>
+
+    <div class="top-nav">
+        <button class="plantilla-main-btn" onclick="openModal('plantillas-modal')">PLANTILLA</button>
+    </div>
+
+    <div class="container">
+        <div class="panel"><div class="edit-btn" onclick="clearModal('goleadores-modal')">✏️</div><div class="panel-title">TOP GOLEADORES</div><div class="data-box" id="goleadores-table"></div></div>
+        <div class="panel"><div class="edit-btn" onclick="clearModal('calendario-modal')">✏️</div><div class="panel-title">CALENDARIO</div><div class="data-box" id="calendario-table"></div></div>
+        <div class="panel"><div class="edit-btn" onclick="clearModal('clausulazos-modal')">✏️</div><div class="panel-title">CLAUSULAZOS</div><div class="data-box" id="clausulazos-list"></div></div>
+        <div class="panel"><div class="edit-btn" onclick="clearModal('clasificacion-modal')">✏️</div><div class="panel-title">CLASIFICACIÓN</div><div class="data-box" id="clasificacion-table"></div></div>
+    </div>
+
+    <div id="plantillas-modal" class="modal"><div class="modal-content"><h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2><button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">Pingüinos Locos</button><button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">Atlético de Jhonsy</button><button class="team-select-btn" onclick="showTeam('Pajillas')">Pajillas</button><button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button></div></div>
+    <div id="team-list-modal" class="modal"><div class="modal-content"><h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2><div id="admin-team-controls" style="display:none; margin-bottom:10px;"><button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button></div><div id="players-list-content" class="player-grid"></div><button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button></div></div>
+    <div id="auth-modal" class="modal"><div class="modal-content"><h3>ADMIN LOGIN</h3><input type="text" id="user" placeholder="Usuario"><input type="password" id="pass" placeholder="Contraseña"><button onclick="login()">ENTRAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="error-modal" class="modal" onclick="closeModals()"><div class="modal-content"><div style="color:red; font-weight:bold;">Q NO ENTRES CABROONNN</div><button>CERRAR</button></div></div>
+    
+    <div id="calendario-modal" class="modal"><div class="modal-content"><h3 id="cal-title">AÑADIR PARTIDO</h3><input type="hidden" id="cal-index"><input type="text" id="cal-e1" placeholder="EQUIPO 1"><input type="text" id="cal-e2" placeholder="EQUIPO 2"><input type="text" id="cal-hora" placeholder="HORA Y DIA"><button onclick="saveData('calendario')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="clausulazos-modal" class="modal"><div class="modal-content"><h3 id="cl-title">NUEVO CLAUSULAZO</h3><input type="hidden" id="cl-index"><textarea id="cl-text" rows="4" placeholder="Escribe el clausulazo..."></textarea><button onclick="saveData('clausulazos')">PUBLICAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="goleadores-modal" class="modal"><div class="modal-content"><h3 id="g-title">AÑADIR JUGADOR</h3><input type="hidden" id="g-index"><input type="text" id="g-name" placeholder="NOMBRE"><input type="number" id="g-goals" placeholder="GOLES"><input type="number" id="g-pj" placeholder="PJ"><button onclick="saveData('goleadores')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="clasificacion-modal" class="modal"><div class="modal-content"><h3 id="c-title">AÑADIR EQUIPO</h3><input type="hidden" id="c-index"><input type="text" id="c-team" placeholder="EQUIPO"><input type="number" id="c-pts" placeholder="PUNTOS"><input type="number" id="c-pj" placeholder="PJ"><input type="text" id="c-money" placeholder="DINERO"><button onclick="saveData('clasificacion')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+
+    <script>
+        const BIN_ID = '69a1d862ae596e708f5006cd'; 
+        const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.'; 
+        const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+        let globalData = { goleadores: [], clasificacion: [], clausulazos: [], calendario: [], teams: {} };
+        let isAdmin = false;
+        let currentOpenTeam = "";
+
+        const captains = ["Enol", "Moreno", "Fran"];
+
+        async function loadData() {
+            try {
+                const res = await fetch(URL, { headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': false }});
+                const data = await res.json();
+                if (data) {
+                    globalData = data;
+                    render();
+                    if(currentOpenTeam) renderTeamPlayers();
+                }
+            } catch (e) { console.error("Error al cargar"); }
+        }
+
+        function showTeam(name) {
+            currentOpenTeam = name;
+            document.getElementById('team-name-title').innerText = name;
+            document.getElementById('admin-team-controls').style.display = isAdmin ? 'block' : 'none';
+            renderTeamPlayers();
+            openModal('team-list-modal');
+        }
+
+        function renderTeamPlayers() {
+            let players = globalData.teams[currentOpenTeam] || [];
+            players.sort((a, b) => {
+                let aCap = captains.includes(a.n) ? 1 : 0;
+                let bCap = captains.includes(b.n) ? 1 : 0;
+                return bCap - aCap;
+            });
+
+            let html = "";
+            players.forEach((p, idx) => {
+                const isCap = captains.includes(p.n);
+                html += `
+                <div class="player-card">
+                    <div class="player-admin-tools" style="display:${isAdmin ? 'block' : 'none'}">
+                        <span class="btn-p-edit" onclick="editPlayer(${idx})">✎</span>
+                        <span class="btn-p-del" onclick="deletePlayer(${idx})">✖</span>
+                    </div>
+                    <div class="player-name">${p.n}</div>
+                    ${isCap ? '<div class="captain-tag">CAPITÁN</div>' : ''}
+                    <div class="player-goals-count">${p.g} GOLES</div>
+                </div>`;
+            });
+            document.getElementById('players-list-content').innerHTML = html;
+        }
+
+        function editPlayer(idx) {
+            const p = globalData.teams[currentOpenTeam][idx];
+            const newName = prompt("Nombre:", p.n);
+            const newGoals = prompt("Goles:", p.g);
+            if (newName !== null) p.n = newName;
+            if (newGoals !== null) p.g = parseInt(newGoals);
+            renderTeamPlayers(); sync();
+        }
+
+        function deletePlayer(idx) {
+            if(confirm("¿Eliminar?")) { globalData.teams[currentOpenTeam].splice(idx, 1); renderTeamPlayers(); sync(); }
+        }
+
+        function addPlayerPrompt() {
+            const n = prompt("Nombre:");
+            if(n) { globalData.teams[currentOpenTeam].push({n: n, g: 0}); renderTeamPlayers(); sync(); }
+        }
+
+        async function sync() {
+            await fetch(URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalData) });
+        }
+
+        function openEditModal(type, index) {
+            const item = globalData[type][index];
+            if (type === 'goleadores') {
+                document.getElementById('g-title').innerText = "EDITAR JUGADOR";
+                document.getElementById('g-index').value = index;
+                document.getElementById('g-name').value = item.name;
+                document.getElementById('g-goals').value = item.goals;
+                document.getElementById('g-pj').value = item.pj;
+                openModal('goleadores-modal');
+            } else if (type === 'clasificacion') {
+                document.getElementById('c-title').innerText = "EDITAR EQUIPO";
+                document.getElementById('c-index').value = index;
+                document.getElementById('c-team').value = item.team;
+                document.getElementById('c-pts').value = item.pts;
+                document.getElementById('c-pj').value = item.pj;
+                document.getElementById('c-money').value = item.money;
+                openModal('clasificacion-modal');
+            } else if (type === 'calendario') {
+                document.getElementById('cal-title').innerText = "EDITAR PARTIDO";
+                document.getElementById('cal-index').value = index;
+                document.getElementById('cal-e1').value = item.e1;
+                document.getElementById('cal-e2').value = item.e2;
+                document.getElementById('cal-hora').value = item.hora;
+                openModal('calendario-modal');
+            } else if (type === 'clausulazos') {
+                document.getElementById('cl-title').innerText = "EDITAR CLAUSULAZO";
+                document.getElementById('cl-index').value = index;
+                document.getElementById('cl-text').value = item.body;
+                openModal('clausulazos-modal');
+            }
+        }
+
+        function clearModal(id) {
+            document.querySelectorAll(`#${id} input`).forEach(i => i.value = "");
+            document.querySelectorAll(`#${id} textarea`).forEach(i => i.value = "");
+            const titles = { 'goleadores-modal': 'AÑADIR JUGADOR', 'clasificacion-modal': 'AÑADIR EQUIPO', 'calendario-modal': 'AÑADIR PARTIDO', 'clausulazos-modal': 'NUEVO CLAUSULAZO' };
+            document.querySelector(`#${id} h3`).innerText = titles[id];
+            openModal(id);
+        }
+
+        async function saveData(type) {
+            let idxInput = document.getElementById(type === 'goleadores' ? 'g-index' : type === 'clasificacion' ? 'c-index' : type === 'calendario' ? 'cal-index' : 'cl-index');
+            let idx = idxInput.value;
+            let item = (idx !== "") ? globalData[type][idx] : {};
+
+            if (type === 'goleadores') {
+                item.name = document.getElementById('g-name').value;
+                item.goals = parseInt(document.getElementById('g-goals').value) || 0;
+                item.pj = document.getElementById('g-pj').value;
+            } else if (type === 'clasificacion') {
+                item.team = document.getElementById('c-team').value;
+                item.pts = parseInt(document.getElementById('c-pts').value) || 0;
+                item.pj = document.getElementById('c-pj').value;
+                item.money = document.getElementById('c-money').value;
+            } else if (type === 'calendario') {
+                item.e1 = document.getElementById('cal-e1').value;
+                item.e2 = document.getElementById('cal-e2').value;
+                item.hora = document.getElementById('cal-hora').value;
+            } else if (type === 'clausulazos') {
+                item.title = "NOTICIA";
+                item.body = document.getElementById('cl-text').value;
+            }
+
+            if (idx === "") {
+                if(type === 'clausulazos') globalData[type].unshift(item);
+                else globalData[type].push(item);
+            }
+            render(); closeModals(); sync();
+        }
+
+        function deleteItem(type, index) {
+            if(confirm("¿Eliminar?")) { globalData[type].splice(index, 1); render(); sync(); }
+        }
+
+        function render() {
+            const disp = isAdmin ? 'inline-block' : 'none';
+            
+            // Render GOLEADORES con ordenación por goles
+            let gHtml = `<table><tr><th>NOMBRE</th><th>G</th><th>PJ</th><th></th></tr>`;
+            let sortedGoleadores = [...globalData.goleadores].sort((a, b) => b.goals - a.goals);
+            sortedGoleadores.forEach((i) => {
+                const originalIndex = globalData.goleadores.indexOf(i);
+                gHtml += `<tr><td>${i.name}</td><td style="color:#ff00ea; font-weight:bold;">${i.goals}</td><td>${i.pj}</td>
+                <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('goleadores', ${originalIndex})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('goleadores', ${originalIndex})">X</span></div></td></tr>`;
+            });
+            document.getElementById('goleadores-table').innerHTML = gHtml + `</table>`;
+
+            // Render CLASIFICACIÓN con ordenación por PUNTOS
+            let cHtml = `<table><tr><th>EQUIPO</th><th>PTS</th><th>PJ</th><th>DINERO</th><th></th></tr>`;
+            let sortedClasificacion = [...globalData.clasificacion].sort((a, b) => b.pts - a.pts);
+            sortedClasificacion.forEach((i) => {
+                const originalIndex = globalData.clasificacion.indexOf(i);
+                cHtml += `<tr><td>${i.team}</td><td style="color:#ff00ea; font-weight:bold;">${i.pts}</td><td>${i.pj}</td><td class="dinero-txt">${i.money || '0€'}</td>
+                <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('clasificacion', ${originalIndex})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('clasificacion', ${originalIndex})">X</span></div></td></tr>`;
+            });
+            document.getElementById('clasificacion-table').innerHTML = cHtml + `</table>`;
+
+            // Calendario
+            let calHtml = `<table><tr><th>PARTIDO</th><th>HORA</th><th></th></tr>`;
+            globalData.calendario.forEach((c, idx) => {
+                calHtml += `<tr><td>${c.e1} <span class="vs">VS</span> ${c.e2}</td><td>${c.hora}</td>
+                <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('calendario', ${idx})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('calendario', ${idx})">X</span></div></td></tr>`;
+            });
+            document.getElementById('calendario-table').innerHTML = calHtml + `</table>`;
+
+            // Clausulazos
+            let clHtml = '';
+            globalData.clausulazos.forEach((cl, idx) => {
+                clHtml += `<div class="clausulazo-item">
+                    <div style="font-weight:bold; color:#ff00ea; font-size:0.7rem;">NOTICIA</div>
+                    <div style="font-size:0.85rem; margin: 4px 0;">${cl.body}</div>
+                    <div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('clausulazos', ${idx})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('clausulazos', ${idx})">X</span></div>
+                </div>`;
+            });
+            document.getElementById('clausulazos-list').innerHTML = clHtml || 'Sin noticias';
+        }
+
+        function login() {
+            const u = document.getElementById('user').value, p = document.getElementById('pass').value;
+            if(u === '67' && p === '123456') { isAdmin = true; document.querySelectorAll('.edit-btn').forEach(b => b.style.display = 'block'); render(); closeModals(); } 
+            else { closeModals(); openModal('error-modal'); }
+        }
+
+        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'flex'; }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
