@@ -3,298 +3,1368 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIGA 2 ESOA - GLOBAL SYNC</title>
+    <title>LIGA AGUSTINOS</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { height:100vh; background:#0a0a14; color:#e0e0ff; font-family:Arial, sans-serif; overflow:hidden; font-size: 0.9rem; }
-        .header { text-align:center; padding:10px; font-size:2.5rem; font-weight:bold; color:#ff00ea; text-shadow:0 0 20px #ff00ea; letter-spacing:10px; }
+        body { 
+            height:100vh; 
+            background:#0a0a14; 
+            color:#e0e0ff; 
+            font-family:Arial, sans-serif; 
+            overflow-y: auto;
+            font-size: 0.9rem; 
+        }
+
+        .header {
+            text-align:center;
+            padding:10px;
+            font-size:2.5rem;
+            font-weight:bold;
+            color:#ff00ea;
+            text-shadow:0 0 20px #ff00ea;
+            letter-spacing:10px;
+            transition: all 0.3s ease;
+            opacity: 0.09;
+            pointer-events: none;
+        }
+        .header.with-name {
+            font-size: 1.35rem;
+            letter-spacing: 4px;
+            opacity: 0.06;
+        }
+
+        .welcome-name {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00e5ff;
+            font-size: 4.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 9px;
+            text-shadow: 0 0 40px #00e5ff, 0 0 80px #00e5ff55;
+            z-index: 15;
+            background: rgba(10,10,35,0.68);
+            padding: 22px 70px;
+            border-radius: 45px;
+            border: 3px solid #00e5ff66;
+            backdrop-filter: blur(12px);
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 96vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 0 70px rgba(0,229,255,0.45);
+        }
+
+        @media (max-width: 800px) {
+            .welcome-name {
+                font-size: 3.6rem;
+                padding: 18px 55px;
+                letter-spacing: 7px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .welcome-name {
+                font-size: 2.9rem;
+                padding: 15px 45px;
+                letter-spacing: 5px;
+            }
+        }
+
+        /* Puntos suspensivos para TOP 5 */
+        .goleadores-more-indicator {
+            text-align: center;
+            padding: 8px;
+            color: #ff00ea;
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-top: 1px dashed #ff00ea44;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .goleadores-more-indicator:hover {
+            color: #00e5ff;
+            text-shadow: 0 0 10px #00e5ff;
+        }
         
-        @media (max-width: 600px) {
-            .header { font-size: 1.5rem; letter-spacing: 5px; padding-top: 40px; }
+        /* Para el scroll de goleadores */
+        .goleadores-scroll-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .goleadores-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .goleadores-scroll-container::-webkit-scrollbar-thumb {
+            background: #ff00ea;
+            border-radius: 10px;
+        }
+
+        /* Прозрачная кнопка админа (без цвета и яркости) - ПРАВАЯ НЕРАБОЧАЯ */
+        .admin-access-circle {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            opacity: 0.1;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: 0.3s;
+            z-index: 200;
+        }
+        .admin-access-circle:hover {
+            opacity: 0.3;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Дубликат кнопки админа слева снизу без обводки - РАБОЧАЯ */
+        .admin-access-circle-left {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            opacity: 0.1;
+            background: transparent;
+            border: none;
+            transition: 0.3s;
+            z-index: 200;
+        }
+        .admin-access-circle-left:hover {
+            opacity: 0.3;
+        }
+
+        /* Текст для правой кнопки - появляется при наведении */
+        .admin-access-circle::after {
+            content: "SI ERES FAJARDO... CASI CRACK";
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: #ff00ea;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 10px;
+            white-space: nowrap;
+            border: 2px solid #ff00ea;
+            box-shadow: 0 0 20px #ff00ea;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .admin-access-circle:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Убираем замок с главного экрана */
+        .top-right-tools .tool-icon[title="Admin Login"] {
+            display: none;
+        }
+
+        /* Nuevo header con botón integrado */
+        .main-header-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .ultimos-partidos-small-btn {
+            position: absolute;
+            left: 10px;
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00e5ff66;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+        .ultimos-partidos-small-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00e5ff;
         }
 
         .top-nav { text-align: center; margin-bottom: 10px; display: flex; justify-content: center; gap: 10px; }
         .plantilla-main-btn { background: #ff00ea; color: white; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; border: none; box-shadow: 0 0 15px #ff00ea66; transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; }
         .plantilla-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 25px #ff00ea; }
-        
-        .watermark { position: fixed; top: 10px; left: 10px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.2); z-index: 5; pointer-events: none; font-weight: bold; text-transform: uppercase; }
-
+        .watermark { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: rgba(255, 255, 255, 0.3); z-index: 5; pointer-events: none; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
         .phone-btn { background: #00e5ff; color: #000; box-shadow: 0 0 15px #00e5ff66; }
         .phone-btn:hover { box-shadow: 0 0 25px #00e5ff; }
-
-        .container { display:grid; grid-template-columns: repeat(4, 1fr); height:calc(100vh - 120px); gap:15px; padding:20px; transition: 0.5s; }
-        .container.mobile-mode { display: flex; flex-direction: column; height: calc(100vh - 120px); overflow-y: auto; padding: 10px; }
+        .container { display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; padding:20px; transition: 0.5s; }
+        .container.mobile-mode { display: flex; flex-direction: column; overflow-y: auto; padding: 10px; }
         .container.mobile-mode .panel { min-height: 400px; margin-bottom: 15px; flex-shrink: 0; }
-
         .panel { background:rgba(20,20,40,0.8); border:1px solid #ff00ea44; border-radius:15px; padding:15px; position:relative; display:flex; flex-direction:column; backdrop-filter: blur(10px); height: 100%; overflow: hidden; }
         .panel-title { text-align:center; color:#ff00ea; font-size:1.2rem; margin-bottom:15px; font-weight:bold; text-transform: uppercase; }
-        
-        .data-box { flex-grow:1; background:rgba(0,0,0,0.3); border-radius:10px; overflow-y:auto; padding:10px; border: 1px solid rgba(255, 0, 234, 0.1); }
+       
+        /* Уменьшаем CLAUSULAZOS */
+        .panel:nth-child(3) {
+            flex: 0.7;
+        }
+        /* Увеличиваем CLASIFICACION */
+        .panel:nth-child(4) {
+            flex: 1.3;
+        }
+       
+        .data-box {
+            flex-grow:1;
+            background:rgba(0,0,0,0.3);
+            border-radius:10px;
+            overflow-y:auto;
+            padding:10px;
+            border: 1px solid rgba(255, 0, 234, 0.1);
+        }
         .data-box::-webkit-scrollbar { width: 6px; }
         .data-box::-webkit-scrollbar-thumb { background: #ff00ea; border-radius: 10px; }
-
-        .clausulazo-item { background: rgba(255, 255, 255, 0.03); margin-bottom: 10px; padding: 10px; border-left: 4px solid #ff00ea; border-radius: 4px; }
+       
+        /* Уменьшенная таблица классификации (в 2-3 раза меньше) */
+        #clasificacion-table table {
+            font-size: 0.35rem;
+            border-collapse: separate;
+            border-spacing: 0 1px;
+        }
+        #clasificacion-table td {
+            padding: 2px 1px;
+            border-bottom: 1px solid rgba(255,0,234,0.1);
+        }
+        #clasificacion-table tr {
+            transition: 0.2s;
+        }
+        #clasificacion-table tr:hover {
+            background: rgba(255,0,234,0.15) !important;
+        }
+        #clasificacion-table th {
+            font-size: 0.4rem;
+            padding: 3px;
+        }
+       
+        .clasificacion-equipo { cursor: pointer; transition: 0.2s; }
+        .clasificacion-equipo:hover { background: rgba(255,0,234,0.2) !important; }
+       
+        .clausulazo-item {
+            background: rgba(255, 255, 255, 0.03);
+            margin-bottom: 8px;
+            padding: 8px;
+            border-left: 3px solid #ff00ea;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
         .edit-btn { position:absolute; top:10px; right:10px; cursor:pointer; font-size:1rem; display:none; opacity:0.5; z-index: 10; transition: 0.3s; }
         .edit-btn:hover { opacity:1; transform: scale(1.2); }
-        
         .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .player-card { background: #1a237e; border-radius: 10px; padding: 12px; text-align: center; border-bottom: 4px solid #ff00ea; position: relative; min-height: 90px; display: flex; flex-direction: column; justify-content: center; }
         .player-name { font-weight: bold; font-size: 0.75rem; color: white; text-transform: uppercase; }
         .player-goals-count { font-size: 0.7rem; color: #ff00ea; font-weight: bold; }
+        .player-pj-count { font-size: 0.65rem; color: #00e5ff; font-weight: bold; margin-top: 2px; }
         .captain-tag { color: #ffcc00; font-size: 0.6rem; font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
-        
         .player-admin-tools { position: absolute; top: 5px; right: 5px; display: none; }
         .btn-p-edit { color: #00e5ff; font-size: 0.65rem; cursor: pointer; margin-left: 5px; }
         .btn-p-del { color: #ff4444; font-size: 0.65rem; cursor: pointer; margin-left: 5px; }
-
         .team-select-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid #ff00ea; color: white; padding: 12px; margin: 8px 0; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 0.8rem; }
-        
         table { width:100%; border-collapse:collapse; font-size:0.75rem; }
         th { color:#ff00ea; border-bottom:1px solid #ff00ea44; padding:6px; position: sticky; top: 0; background: #141428; z-index: 5; }
         td { padding:8px; text-align:center; border-bottom:1px solid #ffffff05; }
-        
         .admin-controls { display: none; margin-left: 5px; }
         .btn-mini { background: none; border: none; cursor: pointer; font-size: 0.75rem; padding: 2px; display: inline-block; margin: 0 2px; }
         .btn-del { color: #ff4444; }
         .btn-edit { color: #00e5ff; }
         .dinero-txt { color: #00ff88; font-weight: bold; }
-
         .form-dots { display: flex; justify-content: center; gap: 4px; }
         .dot { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; }
         .dot-v { background: #28a745; }
         .dot-d { background: #dc3545; }
         .dot-e { background: #6c757d; }
         .dot:last-child { border: 2px solid white; box-shadow: 0 0 5px white; }
-
-        /* ОКНО ¿QUIÉN ERES? - СТИЛЬ ИЗ СКРИНШОТА */
         .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
-        .modal-content { background:#1a1a2e; padding:30px; border:2px solid #ff00ea; border-radius:25px; width:550px; text-align:center; box-shadow: 0 0 30px #ff00ea66; max-height: 85vh; overflow-y: auto; }
-        
-        input, textarea { width:100%; padding:10px; margin:8px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
+        .modal-content { background:#1a1a2e; padding:30px; border:2px solid #ff00ea; border-radius:25px; width:550px; text-align:center; box-shadow: 0 0 30px #ff00ea66; max-height: 85vh; overflow-y: auto; position: relative; }
+        .modal-content-full { width: 90%; max-width: 1200px; height: 90vh; }
+        input, textarea, select { width:100%; padding:10px; margin:8px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
         button { width:100%; padding:12px; background:#ff00ea; border:none; color:white; font-weight:bold; cursor:pointer; border-radius:8px; margin-top:10px; }
-        
         .top-right-tools { position: fixed; top: 10px; right: 10px; display: flex; gap: 10px; align-items: center; z-index: 20; }
         .tool-icon { cursor: pointer; font-size: 1.3rem; opacity: 0.3; transition: 0.3s; }
         .tool-icon:hover { opacity: 1; transform: scale(1.1); }
-
         .names-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
         .name-chip { font-size: 0.75rem; background: rgba(255,0,234,0.1); padding: 5px 12px; border-radius: 15px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,0,234,0.3); color: white; font-weight: bold; }
         .name-chip:hover { background: #ff00ea; transform: scale(1.1); }
-
         .log-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #ffffff11; font-size: 0.75rem; text-align: left; }
         #btn-logs-header { display: none; background: #7000ff; color: white; padding: 4px 12px; border-radius: 10px; font-size: 0.65rem; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+       
+        .team-group {
+            margin: 15px 0;
+            padding: 12px;
+            border: 1px solid #ff00ea44;
+            border-radius: 12px;
+            background: rgba(255,0,234,0.03);
+        }
+        .team-group h3 {
+            color: #00e5ff;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #add-player-btn {
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 15px auto;
+            display: block;
+            box-shadow: 0 0 15px #00e5ff66;
+        }
+        #add-player-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00e5ff;
+        }
+        #invitado-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px auto 0;
+            display: block;
+            width: 200px;
+            box-shadow: 0 0 15px #6c757d66;
+        }
+        #invitado-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #6c757d;
+        }
+        #full-logs-modal .modal-content {
+            width: 95%;
+            max-width: 1200px;
+            height: 95vh;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        #full-logs-list {
+            max-height: none;
+        }
+        .team-info-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #ff00ea44;
+        }
+        .team-info-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-item {
+            background: rgba(255,0,234,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-label {
+            color: #00e5ff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            color: #ff00ea;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .team-name-big {
+            font-size: 2.5rem;
+            color: #ff00ea;
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #ff00ea;
+        }
+        .form-big {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .form-big .dot {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+        }
+        .money-big {
+            font-size: 2.5rem;
+            color: #00ff88;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 0 0 20px #00ff88;
+        }
+        .goleadores-1 {
+            color: #00ff88 !important;
+            font-size: 1.18rem !important;
+            font-weight: bold;
+            background: rgba(0,255,136,0.08);
+            padding: 6px 8px;
+            border-radius: 8px;
+        }
+        .goleadores-2 {
+            color: #d0d0d0 !important;
+            font-size: 1.12rem !important;
+            font-weight: bold;
+            background: rgba(200,200,200,0.05);
+            padding: 5px 8px;
+            border-radius: 8px;
+        }
+        .goleadores-3 {
+            color: #cd7f32 !important;
+            font-size: 1.08rem !important;
+            font-weight: bold;
+            background: rgba(205,127,50,0.08);
+            padding: 5px 8px;
+            border-radius: 8px;
+        }
+        .goleadores-other {
+            color: #a0a0a0 !important;
+            font-size: 0.98rem !important;
+            background: rgba(160,160,160,0.03);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        .clasificacion-1 td {
+            color: #00ff88 !important;
+            font-size: 0.45rem !important;
+            font-weight: bold;
+            background: rgba(0,255,136,0.06) !important;
+        }
+        .clasificacion-2 td {
+            color: #d0d0d0 !important;
+            font-size: 0.42rem !important;
+            font-weight: bold;
+            background: rgba(200,200,200,0.04) !important;
+        }
+        .clasificacion-3 td {
+            color: #cd7f32 !important;
+            font-size: 0.4rem !important;
+            font-weight: bold;
+            background: rgba(205,127,50,0.06) !important;
+        }
+        .clasificacion-other td {
+            color: #a0a0a0 !important;
+            font-size: 0.38rem !important;
+            background: rgba(160,160,160,0.02) !important;
+        }
+        .welcome-name {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00e5ff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00e5ff;
+            z-index: 15;
+            background: rgba(10,10,20,0.8);
+            padding: 5px 20px;
+            border-radius: 20px;
+            border: 1px solid #00e5ff44;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
+        }
+
+        /* Estilos para la tabla de últimos partidos */
+        .ultimos-partidos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .partido-card {
+            background: rgba(255,0,234,0.05);
+            border: 1px solid #ff00ea44;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .partido-card:hover {
+            transform: scale(1.02);
+            background: rgba(255,0,234,0.1);
+            border-color: #ff00ea;
+            box-shadow: 0 0 20px #ff00ea66;
+        }
+        .partido-header {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #00e5ff;
+            font-size: 1rem;
+            border-bottom: 1px solid #ff00ea44;
+            padding-bottom: 8px;
+        }
+        .partido-equipos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .partido-equipo {
+            flex: 1;
+            text-align: center;
+        }
+        .partido-resultado {
+            font-size: 1.8rem;
+            color: #ff00ea;
+            margin: 0 20px;
+            text-shadow: 0 0 10px #ff00ea;
+        }
+        .partido-goleadores-preview {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            border-top: 1px solid #ff00ea22;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        .goleador-nombre-equipo1 {
+            color: #ff00ea;
+            font-weight: bold;
+        }
+        .goleador-nombre-equipo2 {
+            color: #00e5ff;
+            font-weight: bold;
+        }
+        .goles-destacados {
+            color: #ffaa00;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .admin-partido-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none;
+            gap: 5px;
+        }
+        .partido-card:hover .admin-partido-controls {
+            display: flex;
+        }
+        .btn-partido-edit, .btn-partido-del {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #ff00ea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .btn-partido-edit:hover {
+            background: #00e5ff;
+            border-color: #00e5ff;
+            transform: scale(1.1);
+        }
+        .btn-partido-del:hover {
+            background: #ff4444;
+            border-color: #ff4444;
+            transform: scale(1.1);
+        }
+        .btn-add-partido {
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            width: 300px;
+            box-shadow: 0 0 20px #00e5ff;
+            transition: 0.3s;
+        }
+        .btn-add-partido:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #00e5ff;
+        }
+        .goleadores-partido {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,229,255,0.05);
+            border-radius: 10px;
+        }
+        .goleador-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ff00ea22;
+        }
+        .goleador-equipo1 {
+            color: #ff00ea;
+            font-weight: bold;
+        }
+        .goleador-equipo2 {
+            color: #00e5ff;
+            font-weight: bold;
+        }
+        .goles-cantidad {
+            color: #ffaa00;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-
-    <div class="watermark">Hecho por Vadym</div>
-    
     <div class="top-right-tools">
         <button id="btn-logs-header" onclick="openModal('logs-modal')">LOGS</button>
-        <div class="tool-icon" onclick="openModal('auth-modal')" title="Admin Login">🔐</div>
     </div>
-
-    <div class="header">BIENVENIDOS</div>
-
+    
+    <!-- Nuevo header con botón integrado -->
+    <div class="main-header-container">
+        <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
+        <div class="header" id="main-header">BIENVENIDOS</div>
+    </div>
+    
+    <div class="welcome-name" id="welcome-name"></div>
+    <div class="watermark">HECHO POR VADYM</div>
+    
     <div class="top-nav">
         <button id="toggle-view-btn" class="plantilla-main-btn phone-btn" onclick="toggleView()">MODO MÓVIL</button>
         <button class="plantilla-main-btn" onclick="openModal('plantillas-modal')">PLANTILLA</button>
     </div>
-
     <div class="container" id="main-container">
-        <div class="panel"><div class="edit-btn" onclick="clearModal('goleadores-modal')">✏️</div><div class="panel-title">TOP GOLEADORES</div><div class="data-box" id="goleadores-table"></div></div>
-        <div class="panel"><div class="edit-btn" onclick="clearModal('calendario-modal')">✏️</div><div class="panel-title">CALENDARIO</div><div class="data-box" id="calendario-table"></div></div>
-        <div class="panel"><div class="edit-btn" onclick="clearModal('clausulazos-modal')">✏️</div><div class="panel-title">CLAUSULAZOS</div><div class="data-box" id="clausulazos-list"></div></div>
-        <div class="panel"><div class="edit-btn" onclick="clearModal('clasificacion-modal')">✏️</div><div class="panel-title">CLASIFICACIÓN</div><div class="data-box" id="clasificacion-table"></div></div>
+        <div class="panel">
+            <div class="edit-btn" onclick="clearModal('goleadores-modal')">✏️</div>
+            <div class="panel-title">TOP GOLEADORES</div>
+            <div class="data-box" id="goleadores-table"></div>
+        </div>
+        <div class="panel">
+            <div class="edit-btn" onclick="clearModal('calendario-modal')">✏️</div>
+            <div class="panel-title">CALENDARIO</div>
+            <div class="data-box" id="calendario-table"></div>
+        </div>
+        <div class="panel">
+            <div class="edit-btn" onclick="clearModal('clausulazos-modal')">✏️</div>
+            <div class="panel-title">CLAUSULAZOS</div>
+            <div class="data-box" id="clausulazos-list"></div>
+        </div>
+        <div class="panel">
+            <div class="edit-btn" onclick="clearModal('clasificacion-modal')">✏️</div>
+            <div class="panel-title">CLASIFICACIÓN</div>
+            <div class="data-box" id="clasificacion-table"></div>
+        </div>
     </div>
-
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <h1 style="color:#ff00ea; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">¿QUIÉN ERES?</h1>
-            <div id="all-players-list" class="names-cloud"></div>
+            <div class="team-group">
+                <h3>PINGÜINOS LOCOS</h3>
+                <div id="team-pinguinos" class="names-cloud"></div>
+            </div>
+            <div class="team-group">
+                <h3>PAJILLAS</h3>
+                <div id="team-pajillas" class="names-cloud"></div>
+            </div>
+            <div class="team-group">
+                <h3>ATLÉTICO DE JHONSY</h3>
+                <div id="team-jhonsy" class="names-cloud"></div>
+            </div>
+            <button id="add-player-btn" style="display:none;" onclick="addPlayerInWelcome()">+ AÑADIR JUGADOR</button>
+            <button id="invitado-btn" onclick="saveUserSession('INVITADO')">INVITADO</button>
             <p style="font-size: 0.7rem; color: #777; margin-top: 20px;">Selecciona tu nombre para continuar</p>
+            <div class="admin-access-circle"></div>
+            <div class="admin-access-circle-left" onclick="openModal('auth-modal')"></div>
         </div>
     </div>
-
     <div id="logs-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:#00e5ff;">LOGS DE ACCESO</h2>
             <div id="logs-list" class="data-box" style="margin-top:20px; max-height:400px;"></div>
+            <button id="ver-mas-logs" style="display:none; margin-top:15px;" onclick="openFullLogs()">VER MÁS</button>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+    <div id="full-logs-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:#00e5ff;">TODOS LOS LOGS DE ACCESO</h2>
+            <div id="full-logs-list" class="data-box" style="margin-top:20px;"></div>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+    <div id="team-info-modal" class="modal">
+        <div class="modal-content">
+            <div id="team-info-content"></div>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+    <div id="plantillas-modal" class="modal"><div class="modal-content"><h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2><button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">Pingüinos Locos</button><button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">Atlético de Jhonsy</button><button class="team-select-btn" onclick="showTeam('Pajillas')">Pajillas</button><button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button></div></div>
+    <div id="team-list-modal" class="modal"><div class="modal-content"><h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2><div id="admin-team-controls" style="display:none; margin-bottom:10px;"><button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button></div><div id="players-list-content" class="player-grid"></div><button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button></div></div>
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <h3>ACCESO ESPECIAL</h3>
+            <input type="text" id="user" placeholder="Usuario">
+            <input type="password" id="pass" placeholder="Contraseña">
+            <button onclick="login()">ENTRAR</button>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+    <div id="error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">ACCESO DENEGADO</div><button onclick="openModal('welcome-modal')">Cerrar</button></div></div>
+    <div id="enol-error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">CREDENCIALES INCORRECTAS</div><button onclick="closeModals(); openModal('welcome-modal');">Cerrar</button></div></div>
+    <div id="calendario-modal" class="modal"><div class="modal-content"><h3 id="cal-title">AÑADIR PARTIDO</h3><input type="hidden" id="cal-index"><input type="text" id="cal-e1" placeholder="EQUIPO 1"><input type="text" id="cal-e2" placeholder="EQUIPO 2"><input type="text" id="cal-hora" placeholder="DIA Y HORA"><button onclick="saveData('calendario')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="clausulazos-modal" class="modal"><div class="modal-content"><h3 id="cl-title">NUEVO CLAUSULAZO</h3><input type="hidden" id="cl-index"><textarea id="cl-text" rows="4" placeholder="Escribe el clausulazo..."></textarea><button onclick="saveData('clausulazos')">PUBLICAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    <div id="goleadores-modal" class="modal"><div class="modal-content"><h3 id="g-title">AÑADIR JUGADOR</h3><input type="hidden" id="g-index"><input type="text" id="g-name" placeholder="NOMBRE"><input type="number" id="g-goals" placeholder="GOLES"><input type="number" id="g-pj" placeholder="PJ"><button onclick="saveData('goleadores')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+   
+    <div id="clasificacion-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="c-title">AÑADIR/EDITAR EQUIPO</h3>
+            <input type="hidden" id="c-index">
+            <input type="text" id="c-team" placeholder="CLUB (Ej: PINGÜINOS LOCOS)">
+            <input type="number" id="c-pj" placeholder="PARTIDOS JUGADOS (PJ)">
+            <input type="number" id="c-g" placeholder="GANADOS (G)">
+            <input type="number" id="c-e" placeholder="EMPATES (E)">
+            <input type="number" id="c-p" placeholder="PERDIDOS (P)">
+            <input type="number" id="c-gf" placeholder="GOLES FAVOR (GF)">
+            <input type="number" id="c-gc" placeholder="GOLES CONTRA (GC)">
+            <input type="text" id="c-money" placeholder="DINERO (Ej: 100€)">
+            <input type="text" id="c-form" placeholder="ÚLTIMOS 5 (Ej: VVDEV)">
+            <button onclick="saveData('clasificacion')">GUARDAR</button>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+    
+    <!-- Modal específico para login de Enol -->
+    <div id="enol-auth-modal" class="modal">
+        <div class="modal-content">
+            <h3>ACCESO PARA ENOL</h3>
+            <p style="color:#00e5ff; margin-bottom:15px;">Introduce tus credenciales</p>
+            <input type="text" id="enol-user" placeholder="Usuario">
+            <input type="password" id="enol-pass" placeholder="Contraseña">
+            <button onclick="enolLogin()">ENTRAR</button>
+            <button onclick="closeModals(); openModal('welcome-modal');">CANCELAR</button>
+        </div>
+    </div>
+
+    <!-- Modal para ÚLTIMOS PARTIDOS (casi pantalla completa) -->
+    <div id="ultimos-partidos-modal" class="modal">
+        <div class="modal-content modal-content-full">
+            <h1 style="color:#ff00ea; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 20px;">ÚLTIMOS PARTIDOS</h1>
+            
+            <!-- Botón para añadir partido (solo visible para admin) -->
+            <button id="add-partido-btn" class="btn-add-partido" style="display:none;" onclick="openEditPartidoModal()">+ AÑADIR PARTIDO</button>
+            
+            <!-- Grid de partidos -->
+            <div id="partidos-grid" class="ultimos-partidos-grid"></div>
+            
+            <button onclick="closeModals()" style="background: #333; width: 200px; margin: 20px auto;">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- Modal para editar/añadir partido (solo admin) -->
+    <div id="edit-partido-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="edit-partido-title">AÑADIR PARTIDO</h3>
+            <input type="hidden" id="partido-index">
+            
+            <select id="partido-equipo1">
+                <option value="">SELECCIONAR EQUIPO 1</option>
+                <option value="Pingüinos Locos">Pingüinos Locos</option>
+                <option value="Pajillas">Pajillas</option>
+                <option value="Atlético de Jhonsy">Atlético de Jhonsy</option>
+            </select>
+            
+            <select id="partido-equipo2">
+                <option value="">SELECCIONAR EQUIPO 2</option>
+                <option value="Pingüinos Locos">Pingüinos Locos</option>
+                <option value="Pajillas">Pajillas</option>
+                <option value="Atlético de Jhonsy">Atlético de Jhonsy</option>
+            </select>
+            
+            <input type="text" id="partido-dia" placeholder="DÍA (Ej: Sábado 15 Marzo)">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                <input type="number" id="partido-goles1" placeholder="GOLES EQUIPO 1" min="0">
+                <input type="number" id="partido-goles2" placeholder="GOLES EQUIPO 2" min="0">
+            </div>
+            
+            <div class="goleadores-partido">
+                <h4 style="color:#ff00ea; margin-bottom: 10px;">GOLEADORES EQUIPO 1</h4>
+                <div id="goleadores-equipo1-container"></div>
+                <button onclick="addGoleadorInput('equipo1')" style="background: #00e5ff; color: #000; padding: 5px; font-size: 0.8rem;">+ AÑADIR GOLEADOR</button>
+                
+                <h4 style="color:#00e5ff; margin: 15px 0 10px;">GOLEADORES EQUIPO 2</h4>
+                <div id="goleadores-equipo2-container"></div>
+                <button onclick="addGoleadorInput('equipo2')" style="background: #00e5ff; color: #000; padding: 5px; font-size: 0.8rem;">+ AÑADIR GOLEADOR</button>
+            </div>
+            
+            <button onclick="savePartido()">GUARDAR PARTIDO</button>
+            <button onclick="closeModals()" style="background: #333;">CANCELAR</button>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalles del partido -->
+    <div id="detalle-partido-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="detalle-partido-titulo" style="color:#ff00ea; margin-bottom: 20px;"></h2>
+            <div id="detalle-partido-contenido"></div>
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
 
-    <div id="plantillas-modal" class="modal"><div class="modal-content"><h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2><button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">Pingüinos Locos</button><button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">Atlético de Jhonsy</button><button class="team-select-btn" onclick="showTeam('Pajillas')">Pajillas</button><button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button></div></div>
-    <div id="team-list-modal" class="modal"><div class="modal-content"><h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2><div id="admin-team-controls" style="display:none; margin-bottom:10px;"><button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button></div><div id="players-list-content" class="player-grid"></div><button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button></div></div>
-    <div id="auth-modal" class="modal"><div class="modal-content"><h3>ADMIN LOGIN</h3><input type="text" id="user" placeholder="Usuario"><input type="password" id="pass" placeholder="Contraseña"><button onclick="login()">ENTRAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    <div id="error-modal" class="modal" onclick="closeModals()"><div class="modal-content"><div style="color:red; font-weight:bold;">Q NO ENTRES CABROONNN</div><button>CERRAR</button></div></div>
-    
-    <div id="calendario-modal" class="modal"><div class="modal-content"><h3 id="cal-title">AÑADIR PARTIDO</h3><input type="hidden" id="cal-index"><input type="text" id="cal-e1" placeholder="EQUIPO 1"><input type="text" id="cal-e2" placeholder="EQUIPO 2"><input type="text" id="cal-hora" placeholder="DIA Y HORA"><button onclick="saveData('calendario')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    <div id="clausulazos-modal" class="modal"><div class="modal-content"><h3 id="cl-title">NUEVO CLAUSULAZO</h3><input type="hidden" id="cl-index"><textarea id="cl-text" rows="4" placeholder="Escribe el clausulazo..."></textarea><button onclick="saveData('clausulazos')">PUBLICAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    <div id="goleadores-modal" class="modal"><div class="modal-content"><h3 id="g-title">AÑADIR JUGADOR</h3><input type="hidden" id="g-index"><input type="text" id="g-name" placeholder="NOMBRE"><input type="number" id="g-goals" placeholder="GOLES"><input type="number" id="g-pj" placeholder="PJ"><button onclick="saveData('goleadores')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    <div id="clasificacion-modal" class="modal"><div class="modal-content"><h3 id="c-title">AÑADIR EQUIPO</h3><input type="hidden" id="c-index"><input type="text" id="c-team" placeholder="EQUIPO"><input type="number" id="c-pj" placeholder="PJ"><input type="number" id="c-pts" placeholder="PUNTOS"><input type="text" id="c-money" placeholder="DINERO"><input type="text" id="c-form" placeholder="ÚLTIMOS 5 (Ej: VVDEV)"> <button onclick="saveData('clasificacion')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-
     <script>
-        const BIN_ID = '69a1d862ae596e708f5006cd'; 
-        const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.'; 
+        const BIN_ID = '69a1d862ae596e708f5006cd';
+        const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.';
         const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-
-        let globalData = { goleadores: [], clasificacion: [], clausulazos: [], calendario: [], teams: {}, accessLogs: [] };
+        let globalData = { 
+            goleadores: [], 
+            clasificacion: [], 
+            clausulazos: [], 
+            calendario: [], 
+            teams: {}, 
+            accessLogs: [],
+            ultimosPartidos: [] // Nuevo array para guardar los partidos
+        };
         let isAdmin = false;
+        let isEnolMode = false;
         let currentOpenTeam = "";
         const captains = ["Enol", "Moreno", "Carlos Fernández"];
+        
+        function syncGoleadoresWithTeams() {
+            const playerGoalsMap = new Map();
+            
+            if (globalData.teams) {
+                Object.values(globalData.teams).forEach(teamPlayers => {
+                    teamPlayers.forEach(player => {
+                        if (player && player.n) {
+                            playerGoalsMap.set(player.n, {
+                                goals: player.g || 0,
+                                pj: player.pj || 0
+                            });
+                        }
+                    });
+                });
+            }
+            
+            const updatedGoleadores = [];
+            playerGoalsMap.forEach((stats, playerName) => {
+                updatedGoleadores.push({
+                    name: playerName,
+                    goals: stats.goals,
+                    pj: stats.pj
+                });
+            });
+            
+            updatedGoleadores.sort((a, b) => b.goals - a.goals);
+            globalData.goleadores = updatedGoleadores;
+        }
 
-        // ФУНКЦИЯ ПРОВЕРКИ И ВЫВОДА ОКНА ВХОДА
         function showWelcomeScreen() {
-            // Если имя уже сохранено, не показываем
-            if (localStorage.getItem('user_name')) return;
-            
-            let allNames = [];
-            Object.values(globalData.teams).forEach(team => {
-                team.forEach(p => allNames.push(p.n));
+            const teamNames = {
+                "Pingüinos Locos": "team-pinguinos",
+                "Pajillas": "team-pajillas",
+                "Atlético de Jhonsy": "team-jhonsy"
+            };
+            Object.values(teamNames).forEach(id => {
+                document.getElementById(id).innerHTML = '';
             });
-            
-            // Если база пуста, добавим примеры
-            if (allNames.length === 0) allNames = ["Invitado", "Andrés", "JAVI", "MARC"];
-            
-            let html = "";
-            [...new Set(allNames)].sort().forEach(name => {
-                html += `<div class="name-chip" onclick="saveUserSession('${name}')">${name}</div>`;
+            let hasPlayers = false;
+            Object.keys(teamNames).forEach(teamName => {
+                const containerId = teamNames[teamName];
+                const players = globalData.teams?.[teamName] || [];
+                let html = '';
+                if (players.length > 0) {
+                    hasPlayers = true;
+                    players.forEach(p => {
+                        const name = typeof p === 'object' ? p.n : p;
+                        if (name) {
+                            if (name === "Enol") {
+                                html += `<div class="name-chip" onclick="openModal('enol-auth-modal')">${name}</div>`;
+                            } else {
+                                html += `<div class="name-chip" onclick="saveUserSession('${name.replace(/'/g, "\\'")}')">${name}</div>`;
+                            }
+                        }
+                    });
+                } else {
+                    if (teamName === "Pingüinos Locos") {
+                        const defaultPlayers = ["Enol", "Eiden", "Fajardo", "Unai", "Andrés", "Javi"];
+                        defaultPlayers.forEach(name => {
+                            if (name === "Enol") {
+                                html += `<div class="name-chip" onclick="openModal('enol-auth-modal')">${name}</div>`;
+                            } else {
+                                html += `<div class="name-chip" onclick="saveUserSession('${name}')">${name}</div>`;
+                            }
+                        });
+                    } else if (teamName === "Pajillas") {
+                        const defaultPlayers = ["Carlos Fernández", "Carlos Gutiérrez", "Jacobo", "Fran"];
+                        defaultPlayers.forEach(name => {
+                            html += `<div class="name-chip" onclick="saveUserSession('${name}')">${name}</div>`;
+                        });
+                    } else if (teamName === "Atlético de Jhonsy") {
+                        const defaultPlayers = ["Moreno", "Marc", "Rodri", "Pou", "Ángel"];
+                        defaultPlayers.forEach(name => {
+                            html += `<div class="name-chip" onclick="saveUserSession('${name}')">${name}</div>`;
+                        });
+                    }
+                }
+                document.getElementById(containerId).innerHTML = html;
             });
-            document.getElementById('all-players-list').innerHTML = html;
+            document.getElementById('add-player-btn').style.display = isAdmin ? 'block' : 'none';
             openModal('welcome-modal');
         }
 
+        function enolLogin() {
+            const u = document.getElementById('enol-user').value;
+            const p = document.getElementById('enol-pass').value;
+            
+            if(u === '12' && p === '21') {
+                isEnolMode = true;
+                isAdmin = false;
+                
+                document.querySelectorAll('.edit-btn').forEach(b => {
+                    if (b.closest('.panel') && b.closest('.panel').querySelector('.panel-title').innerText === 'CLAUSULAZOS') {
+                        b.style.display = 'block';
+                    } else {
+                        b.style.display = 'none';
+                    }
+                });
+                
+                document.getElementById('btn-logs-header').style.display = 'none';
+                document.getElementById('add-player-btn').style.display = 'none';
+                document.getElementById('add-partido-btn').style.display = 'none';
+                
+                localStorage.setItem('user_name', 'Enol');
+                document.getElementById('welcome-name').innerHTML = `BIENVENIDO ENOL`;
+                document.getElementById('main-header').classList.add('with-name');
+                
+                const now = new Date();
+                const timeStr = now.toLocaleDateString() + " " + now.toLocaleTimeString();
+                if(!globalData.accessLogs) globalData.accessLogs = [];
+                globalData.accessLogs.unshift({ name: 'Enol (modo clausulazos)', time: timeStr });
+                if(globalData.accessLogs.length > 100) globalData.accessLogs.pop();
+                
+                closeModals();
+                render();
+                sync();
+            } else {
+                closeModals();
+                openModal('enol-error-modal');
+            }
+        }
+
+        function addPlayerInWelcome() {
+            const name = prompt("Ingrese nombre del nuevo jugador:");
+            if (!name || name.trim() === "") return;
+            const team = prompt("¿En qué equipo añadir?\n1 - Pingüinos Locos\n2 - Pajillas\n3 - Atlético de Jhonsy", "1");
+            let selectedTeam;
+            if (team === "1") selectedTeam = "Pingüinos Locos";
+            else if (team === "2") selectedTeam = "Pajillas";
+            else if (team === "3") selectedTeam = "Atlético de Jhonsy";
+            else {
+                alert("Elección de equipo inválida.");
+                return;
+            }
+            if (!globalData.teams) globalData.teams = {};
+            if (!globalData.teams[selectedTeam]) globalData.teams[selectedTeam] = [];
+            const exists = globalData.teams[selectedTeam].some(p => (typeof p === 'object' ? p.n : p) === name.trim());
+            if (exists) {
+                alert("Ya existe un jugador con ese nombre en este equipo.");
+                return;
+            }
+            globalData.teams[selectedTeam].push({ n: name.trim(), g: 0, pj: 0 });
+            syncGoleadoresWithTeams();
+            sync();
+            showWelcomeScreen();
+            alert(`Jugador "${name}" añadido al equipo "${selectedTeam}"!`);
+        }
+        
         async function saveUserSession(name) {
             localStorage.setItem('user_name', name);
             const now = new Date();
             const timeStr = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            
             if(!globalData.accessLogs) globalData.accessLogs = [];
             globalData.accessLogs.unshift({ name: name, time: timeStr });
-            
             if(globalData.accessLogs.length > 100) globalData.accessLogs.pop();
-            
+           
+            if (name === "CRACK" || name === "Admin" || name === "admin" || name === "INVITADO") {
+                document.getElementById('welcome-name').innerHTML = `BIENVENIDO CRACK`;
+            } else {
+                document.getElementById('welcome-name').innerHTML = `BIENVENIDO ${name}`;
+            }
+            document.getElementById('main-header').classList.add('with-name');
+           
             closeModals();
             await sync();
         }
-
-        function renderLogs() {
-            if (!globalData.accessLogs) return;
+        
+        function renderLogs(limit = 8) {
+            if (!globalData.accessLogs || globalData.accessLogs.length === 0) {
+                document.getElementById('logs-list').innerHTML = "No hay registros";
+                document.getElementById('ver-mas-logs').style.display = 'none';
+                return;
+            }
             let html = "";
-            globalData.accessLogs.forEach(log => {
-                html += `<div class="log-item"><span><b>${log.name}</b></span> <span style="color:#00e5ff;">${log.time}</span></div>`;
+            const recentLogs = globalData.accessLogs.slice(0, limit);
+            recentLogs.forEach((log, idx) => {
+                html += `<div class="log-item"><span><b>${log.name}</b></span> <span style="color:#00e5ff;">${log.time}</span>
+                <div class="admin-controls" style="display:inline-block; margin-left: 10px;">
+                    <span class="btn-mini btn-edit" onclick="editLog(${idx})">✎</span>
+                    <span class="btn-mini btn-del" onclick="deleteLog(${idx})">X</span>
+                </div></div>`;
             });
-            document.getElementById('logs-list').innerHTML = html || "No hay registros";
+            document.getElementById('logs-list').innerHTML = html;
+            document.getElementById('ver-mas-logs').style.display = globalData.accessLogs.length > limit ? 'block' : 'none';
         }
-
+        
+        function openFullLogs() {
+            if (!globalData.accessLogs || globalData.accessLogs.length === 0) {
+                document.getElementById('full-logs-list').innerHTML = "No hay registros";
+            } else {
+                let html = "";
+                globalData.accessLogs.forEach((log, idx) => {
+                    html += `<div class="log-item"><span><b>${log.name}</b></span> <span style="color:#00e5ff;">${log.time}</span>
+                    <div class="admin-controls" style="display:inline-block; margin-left: 10px;">
+                        <span class="btn-mini btn-edit" onclick="editLog(${idx})">✎</span>
+                        <span class="btn-mini btn-del" onclick="deleteLog(${idx})">X</span>
+                    </div></div>`;
+                });
+                document.getElementById('full-logs-list').innerHTML = html;
+            }
+            openModal('full-logs-modal');
+        }
+        
+        function deleteLog(idx) {
+            if (confirm("¿Eliminar log?")) {
+                globalData.accessLogs.splice(idx, 1);
+                renderLogs();
+                sync();
+            }
+        }
+        
+        function editLog(idx) {
+            const log = globalData.accessLogs[idx];
+            const newName = prompt("Nuevo nombre:", log.name);
+            const newTime = prompt("Nueva hora:", log.time);
+            if (newName !== null) log.name = newName;
+            if (newTime !== null) log.time = newTime;
+            renderLogs();
+            sync();
+        }
+        
         function login() {
             const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-            if(u === '67' && p === '123456') { 
-                isAdmin = true; 
-                document.querySelectorAll('.edit-btn').forEach(b => b.style.display = 'block'); 
+            if(u === '67' && p === '12') {
+                isAdmin = true;
+                isEnolMode = false;
+                document.querySelectorAll('.edit-btn').forEach(b => b.style.display = 'block');
                 document.getElementById('btn-logs-header').style.display = 'block';
-                render(); 
+                document.getElementById('add-player-btn').style.display = 'block';
+                document.getElementById('add-partido-btn').style.display = 'block';
+                render();
                 renderLogs();
                 closeModals();
-            } 
-            else { closeModals(); openModal('error-modal'); }
+            }
+            else { 
+                closeModals(); 
+                openModal('error-modal'); 
+            }
         }
-
+        
         async function loadData() {
             try {
                 const res = await fetch(URL, { headers: { 'X-Master-Key': API_KEY, 'X-Bin-Meta': false }});
                 const data = await res.json();
-                if (data) { 
-                    globalData = data; 
-                    render(); 
-                    if(currentOpenTeam) renderTeamPlayers(); 
-                    showWelcomeScreen(); // Показываем окно входа если нужно
-                    if(isAdmin) renderLogs();
+                if (data) {
+                    globalData = data;
+                    // Asegurar que existe el array de últimos partidos
+                    if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
+                    syncGoleadoresWithTeams();
+                    render();
+                    if(currentOpenTeam) renderTeamPlayers();
+                    showWelcomeScreen();
+                    if(isAdmin) {
+                        renderLogs();
+                        document.getElementById('add-player-btn').style.display = 'block';
+                        document.getElementById('add-partido-btn').style.display = 'block';
+                    }
+                   
+                    const savedName = localStorage.getItem('user_name');
+                    if (savedName) {
+                        if (savedName === "CRACK" || savedName === "Admin" || savedName === "admin" || savedName === "INVITADO") {
+                            document.getElementById('welcome-name').innerHTML = `BIENVENIDO CRACK`;
+                        } else {
+                            document.getElementById('welcome-name').innerHTML = `BIENVENIDO ${savedName}`;
+                        }
+                        document.getElementById('main-header').classList.add('with-name');
+                    }
                 }
             } catch (e) { console.error("Error loading"); }
         }
-
-        async function sync() { await fetch(URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, body: JSON.stringify(globalData) }); }
-
+        
+        async function sync() { 
+            await fetch(URL, { 
+                method: 'PUT', 
+                headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY }, 
+                body: JSON.stringify(globalData) 
+            }); 
+        }
+        
         function showTeam(name) {
             currentOpenTeam = name;
             document.getElementById('team-name-title').innerText = name;
-            document.getElementById('admin-team-controls').style.display = isAdmin ? 'block' : 'none';
-            renderTeamPlayers(); openModal('team-list-modal');
+            document.getElementById('admin-team-controls').style.display = (isAdmin && !isEnolMode) ? 'block' : 'none';
+            renderTeamPlayers(); 
+            openModal('team-list-modal');
         }
-
+        
         function renderTeamPlayers() {
             let players = globalData.teams[currentOpenTeam] || [];
+            
+            if (players.length === 0) {
+                if (currentOpenTeam === "Pingüinos Locos") {
+                    players = [{ n: "Enol", g: 0, pj: 0 }, { n: "Eiden", g: 0, pj: 0 }, { n: "Fajardo", g: 0, pj: 0 }, { n: "Unai", g: 0, pj: 0 }, { n: "Andrés", g: 0, pj: 0 }, { n: "Javi", g: 0, pj: 0 }];
+                } else if (currentOpenTeam === "Pajillas") {
+                    players = [{ n: "Carlos Fernández", g: 0, pj: 0 }, { n: "Carlos Gutiérrez", g: 0, pj: 0 }, { n: "Jacobo", g: 0, pj: 0 }, { n: "Fran", g: 0, pj: 0 }];
+                } else if (currentOpenTeam === "Atlético de Jhonsy") {
+                    players = [{ n: "Moreno", g: 0, pj: 0 }, { n: "Marc", g: 0, pj: 0 }, { n: "Rodri", g: 0, pj: 0 }, { n: "Pou", g: 0, pj: 0 }, { n: "Ángel", g: 0, pj: 0 }];
+                }
+            }
+            
             players.sort((a, b) => (captains.includes(b.n) ? 1 : 0) - (captains.includes(a.n) ? 1 : 0));
             let html = "";
             players.forEach((p, idx) => {
                 const isCap = captains.includes(p.n);
                 html += `<div class="player-card">
-                    <div class="player-admin-tools" style="display:${isAdmin ? 'block' : 'none'}">
+                    <div class="player-admin-tools" style="display:${(isAdmin && !isEnolMode) ? 'block' : 'none'}">
                         <span class="btn-p-edit" onclick="editPlayer(${idx})">✎</span>
                         <span class="btn-p-del" onclick="deletePlayer(${idx})">✖</span>
                     </div>
                     <div class="player-name">${p.n}</div>
                     ${isCap ? '<div class="captain-tag">CAPITÁN</div>' : ''}
-                    <div class="player-goals-count">${p.g} GOLES</div>
+                    <div class="player-goals-count">⚽ ${p.g || 0} GOLES</div>
+                    <div class="player-pj-count">📊 ${p.pj || 0} PJ</div>
                 </div>`;
             });
             document.getElementById('players-list-content').innerHTML = html;
         }
-
+        
         function editPlayer(idx) {
+            if (!isAdmin || isEnolMode) return;
             const p = globalData.teams[currentOpenTeam][idx];
-            const n = prompt("Nombre:", p.n), g = prompt("Goles:", p.g);
-            if (n !== null) p.n = n; if (g !== null) p.g = parseInt(g);
-            renderTeamPlayers(); sync();
+            const n = prompt("Nombre:", p.n);
+            const g = prompt("Goles:", p.g);
+            const pj = prompt("Partidos Jugados (PJ):", p.pj);
+            if (n !== null) p.n = n; 
+            if (g !== null) p.g = parseInt(g) || 0;
+            if (pj !== null) p.pj = parseInt(pj) || 0;
+            
+            syncGoleadoresWithTeams();
+            renderTeamPlayers(); 
+            render();
+            sync();
         }
-
-        function deletePlayer(idx) { if(confirm("¿?")) { globalData.teams[currentOpenTeam].splice(idx, 1); renderTeamPlayers(); sync(); } }
-        function addPlayerPrompt() { const n = prompt("Nombre:"); if(n) { if(!globalData.teams[currentOpenTeam]) globalData.teams[currentOpenTeam]=[]; globalData.teams[currentOpenTeam].push({n: n, g: 0}); renderTeamPlayers(); sync(); } }
-
+        
+        function deletePlayer(idx) { 
+            if (!isAdmin || isEnolMode) return;
+            if(confirm("¿Eliminar jugador?")) { 
+                globalData.teams[currentOpenTeam].splice(idx, 1); 
+                syncGoleadoresWithTeams();
+                renderTeamPlayers(); 
+                render();
+                sync(); 
+            } 
+        }
+        
+        function addPlayerPrompt() { 
+            if (!isAdmin || isEnolMode) return;
+            const n = prompt("Nombre:"); 
+            if(n) { 
+                if(!globalData.teams[currentOpenTeam]) globalData.teams[currentOpenTeam]=[]; 
+                globalData.teams[currentOpenTeam].push({n: n, g: 0, pj: 0}); 
+                syncGoleadoresWithTeams();
+                renderTeamPlayers(); 
+                render();
+                sync(); 
+            } 
+        }
+        
         function openEditModal(type, index) {
+            if (isEnolMode && type !== 'clausulazos') {
+                alert("Solo puedes editar CLAUSULAZOS");
+                return;
+            }
+            
             const item = globalData[type][index];
             if (type === 'goleadores') {
-                document.getElementById('g-index').value = index; document.getElementById('g-name').value = item.name;
-                document.getElementById('g-goals').value = item.goals; document.getElementById('g-pj').value = item.pj;
+                document.getElementById('g-index').value = index;
+                document.getElementById('g-name').value = item.name;
+                document.getElementById('g-goals').value = item.goals;
+                document.getElementById('g-pj').value = item.pj;
                 openModal('goleadores-modal');
             } else if (type === 'clasificacion') {
-                document.getElementById('c-index').value = index; document.getElementById('c-team').value = item.team;
-                document.getElementById('c-pts').value = item.pts; document.getElementById('c-pj').value = item.pj;
-                document.getElementById('c-money').value = item.money; document.getElementById('c-form').value = item.form || ""; 
+                document.getElementById('c-index').value = index;
+                document.getElementById('c-team').value = item.team || '';
+                document.getElementById('c-pj').value = item.pj || 0;
+                document.getElementById('c-g').value = item.g || 0;
+                document.getElementById('c-e').value = item.e || 0;
+                document.getElementById('c-p').value = item.p || 0;
+                document.getElementById('c-gf').value = item.gf || 0;
+                document.getElementById('c-gc').value = item.gc || 0;
+                document.getElementById('c-money').value = item.money || '';
+                document.getElementById('c-form').value = item.form || "";
                 openModal('clasificacion-modal');
             } else if (type === 'calendario') {
-                document.getElementById('cal-index').value = index; document.getElementById('cal-e1').value = item.e1;
-                document.getElementById('cal-e2').value = item.e2; document.getElementById('cal-hora').value = item.hora;
+                document.getElementById('cal-index').value = index; 
+                document.getElementById('cal-e1').value = item.e1;
+                document.getElementById('cal-e2').value = item.e2; 
+                document.getElementById('cal-hora').value = item.hora;
                 openModal('calendario-modal');
             } else if (type === 'clausulazos') {
-                document.getElementById('cl-index').value = index; document.getElementById('cl-text').value = item.body;
+                document.getElementById('cl-index').value = index; 
+                document.getElementById('cl-text').value = item.body;
                 openModal('clausulazos-modal');
             }
         }
-
-        function clearModal(id) { document.querySelectorAll(`#${id} input, #${id} textarea`).forEach(i => i.value = ""); openModal(id); }
-
-        async function saveData(type) {
-            let pre = (type === 'goleadores' ? 'g' : type === 'clasificacion' ? 'c' : type === 'calendario' ? 'cal' : 'cl');
-            let idx = document.getElementById(pre + '-index').value, item = (idx !== "") ? globalData[type][idx] : {};
-            if (type === 'goleadores') { item.name = document.getElementById('g-name').value; item.goals = parseInt(document.getElementById('g-goals').value) || 0; item.pj = document.getElementById('g-pj').value; }
-            else if (type === 'clasificacion') { 
-                item.team = document.getElementById('c-team').value; 
-                item.pts = parseInt(document.getElementById('c-pts').value) || 0; 
-                item.pj = document.getElementById('c-pj').value; 
-                item.money = document.getElementById('c-money').value; 
-                item.form = document.getElementById('c-form').value.slice(-5); 
+        
+        function clearModal(id) {
+            if (isEnolMode && id !== 'clausulazos-modal') {
+                alert("Solo puedes editar CLAUSULAZOS");
+                return;
             }
-            else if (type === 'calendario') { item.e1 = document.getElementById('cal-e1').value; item.e2 = document.getElementById('cal-e2').value; item.hora = document.getElementById('cal-hora').value; }
-            else if (type === 'clausulazos') { item.title = "NOTICIA"; item.body = document.getElementById('cl-text').value; }
-            if (idx === "") (type === 'clausulazos') ? globalData[type].unshift(item) : globalData[type].push(item);
-            render(); closeModals(); sync();
+            document.querySelectorAll(`#${id} input, #${id} textarea`).forEach(i => i.value = "");
+            openModal(id);
         }
-
-        function deleteItem(type, index) { if(confirm("¿?")) { globalData[type].splice(index, 1); render(); sync(); } }
-
+        
+        async function saveData(type) {
+            if (isEnolMode && type !== 'clausulazos') {
+                alert("Solo puedes editar CLAUSULAZOS");
+                closeModals();
+                return;
+            }
+            
+            if (type === 'clasificacion') {
+                let idx = document.getElementById('c-index').value;
+                let item = (idx !== "") ? globalData[type][idx] : {};
+               
+                item.team = document.getElementById('c-team').value;
+                item.pj = parseInt(document.getElementById('c-pj').value) || 0;
+                item.g = parseInt(document.getElementById('c-g').value) || 0;
+                item.e = parseInt(document.getElementById('c-e').value) || 0;
+                item.p = parseInt(document.getElementById('c-p').value) || 0;
+                item.gf = parseInt(document.getElementById('c-gf').value) || 0;
+                item.gc = parseInt(document.getElementById('c-gc').value) || 0;
+                item.pts = (item.g * 3) + (item.e * 1);
+                item.money = document.getElementById('c-money').value;
+                item.form = document.getElementById('c-form').value.slice(-5).toUpperCase();
+               
+                if (idx === "") {
+                    globalData[type].push(item);
+                }
+                render();
+                closeModals();
+                sync();
+            }
+            else if (type === 'goleadores') {
+                let idx = document.getElementById('g-index').value;
+                let item = (idx !== "") ? globalData[type][idx] : {};
+                item.name = document.getElementById('g-name').value;
+                item.goals = parseInt(document.getElementById('g-goals').value) || 0;
+                item.pj = parseInt(document.getElementById('g-pj').value) || 0;
+                
+                if (globalData.teams) {
+                    for (let team in globalData.teams) {
+                        const player = globalData.teams[team].find(p => p.n === item.name);
+                        if (player) {
+                            player.g = item.goals;
+                            player.pj = item.pj;
+                            break;
+                        }
+                    }
+                }
+                
+                if (idx === "") globalData[type].push(item);
+                render(); 
+                closeModals(); 
+                sync();
+            }
+            else if (type === 'calendario') {
+                let idx = document.getElementById('cal-index').value;
+                let item = (idx !== "") ? globalData[type][idx] : {};
+                item.e1 = document.getElementById('cal-e1').value;
+                item.e2 = document.getElementById('cal-e2').value;
+                item.hora = document.getElementById('cal-hora').value;
+                if (idx === "") globalData[type].push(item);
+                render(); 
+                closeModals(); 
+                sync();
+            }
+            else if (type === 'clausulazos') {
+                let idx = document.getElementById('cl-index').value;
+                let item = (idx !== "") ? globalData[type][idx] : {};
+                item.title = "NOTICIA";
+                item.body = document.getElementById('cl-text').value;
+                if (idx === "") globalData[type].unshift(item);
+                render(); 
+                closeModals(); 
+                sync();
+            }
+        }
+        
+        function deleteItem(type, index) { 
+            if (isEnolMode) {
+                alert("No tienes permiso para eliminar");
+                return;
+            }
+            
+            if(confirm("¿Eliminar?")) { 
+                globalData[type].splice(index, 1); 
+                if (type === 'goleadores') {
+                    if (globalData.teams) {
+                        for (let team in globalData.teams) {
+                            globalData.teams[team] = globalData.teams[team].filter(p => {
+                                const goleadorEliminado = globalData.goleadores.find(g => g.name === p.n);
+                                return !goleadorEliminado;
+                            });
+                        }
+                    }
+                }
+                render(); 
+                sync(); 
+            } 
+        }
+        
         function getFormHtml(formStr) {
             if(!formStr) return "";
             let html = '<div class="form-dots">';
@@ -306,53 +1376,464 @@
             html += '</div>';
             return html;
         }
+        
+        function showTeamInfo(teamName) {
+            const team = globalData.clasificacion.find(t => t.team === teamName);
+            if (!team) return;
+          
+            let html = `
+                <div class="team-info-card">
+                    <div class="team-name-big">${team.team}</div>
+                    <div class="team-info-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">PUNTOS</div>
+                            <div class="stat-value">${team.pts}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">PARTIDOS JUGADOS</div>
+                            <div class="stat-value">${team.pj}</div>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0;">
+                        <div class="stat-item" style="padding:15px;">
+                            <div class="stat-label">GANADOS</div>
+                            <div class="stat-value" style="font-size:1.5rem;">${team.g}</div>
+                        </div>
+                        <div class="stat-item" style="padding:15px;">
+                            <div class="stat-label">EMPATES</div>
+                            <div class="stat-value" style="font-size:1.5rem;">${team.e}</div>
+                        </div>
+                        <div class="stat-item" style="padding:15px;">
+                            <div class="stat-label">PERDIDOS</div>
+                            <div class="stat-value" style="font-size:1.5rem;">${team.p}</div>
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin:20px 0;">
+                        <div class="stat-item" style="padding:15px;">
+                            <div class="stat-label">GOLES FAVOR</div>
+                            <div class="stat-value" style="font-size:1.5rem;">${team.gf}</div>
+                        </div>
+                        <div class="stat-item" style="padding:15px;">
+                            <div class="stat-label">GOLES CONTRA</div>
+                            <div class="stat-value" style="font-size:1.5rem;">${team.gc}</div>
+                        </div>
+                    </div>
+                    <div class="stat-label" style="text-align:center; margin-top:20px;">ÚLTIMOS 5 PARTIDOS</div>
+                    <div class="form-big">`;
+          
+            if (team.form) {
+                team.form.split('').forEach(char => {
+                    let cls = char.toUpperCase() === 'V' ? 'dot-v' : char.toUpperCase() === 'D' ? 'dot-d' : 'dot-e';
+                    let icon = char.toUpperCase() === 'V' ? '✓' : char.toUpperCase() === 'D' ? '✕' : '-';
+                    html += `<div class="dot ${cls}" style="width:50px; height:50px; font-size:24px;">${icon}</div>`;
+                });
+            }
+          
+            html += `</div>
+                    <div class="stat-label" style="text-align:center; margin-top:20px;">DINERO</div>
+                    <div class="money-big">${team.money || '0€'}</div>
+                </div>`;
+          
+            if (isAdmin && !isEnolMode) {
+                const teamIndex = globalData.clasificacion.findIndex(t => t.team === teamName);
+                html += `<button onclick="openEditModal('clasificacion', ${teamIndex})" style="background:#00e5ff; color:black; margin-top:10px;">EDITAR EQUIPO</button>`;
+            }
+          
+            document.getElementById('team-info-content').innerHTML = html;
+            openModal('team-info-modal');
+        }
 
+        // Funciones para ÚLTIMOS PARTIDOS
+        function openUltimosPartidos() {
+            renderUltimosPartidos();
+            openModal('ultimos-partidos-modal');
+        }
+
+        function renderUltimosPartidos() {
+            const grid = document.getElementById('partidos-grid');
+            let html = '';
+            
+            // Ordenar partidos (los más recientes primero)
+            const partidosOrdenados = [...(globalData.ultimosPartidos || [])].reverse();
+            
+            partidosOrdenados.forEach((partido, idx) => {
+                const goles1 = partido.goles1 || 0;
+                const goles2 = partido.goles2 || 0;
+                const resultadoClass = goles1 > goles2 ? 'goleadores-1' : (goles2 > goles1 ? 'goleadores-2' : '');
+                
+                // Resumen de goleadores con goles destacados
+                let goleadoresPreview = '';
+                if (partido.goleadores1 && partido.goleadores1.length > 0) {
+                    goleadoresPreview += `<span class="goleador-nombre-equipo1">${partido.goleadores1.slice(0,2).map(g => g.nombre).join(', ')}</span>`;
+                    goleadoresPreview += `<span class="goles-destacados">(${partido.goleadores1.slice(0,2).map(g => g.goles).join(', ')})</span>`;
+                    if (partido.goleadores1.length > 2) goleadoresPreview += '...';
+                }
+                if (partido.goleadores2 && partido.goleadores2.length > 0) {
+                    if (goleadoresPreview) goleadoresPreview += ' | ';
+                    goleadoresPreview += `<span class="goleador-nombre-equipo2">${partido.goleadores2.slice(0,2).map(g => g.nombre).join(', ')}</span>`;
+                    goleadoresPreview += `<span class="goles-destacados">(${partido.goleadores2.slice(0,2).map(g => g.goles).join(', ')})</span>`;
+                    if (partido.goleadores2.length > 2) goleadoresPreview += '...';
+                }
+                
+                html += `
+                    <div class="partido-card" onclick="verDetallePartido(${globalData.ultimosPartidos.indexOf(partido)})">
+                        <div class="admin-partido-controls" style="display:${isAdmin ? 'flex' : 'none'}">
+                            <div class="btn-partido-edit" onclick="event.stopPropagation(); openEditPartidoModal(${globalData.ultimosPartidos.indexOf(partido)})">✎</div>
+                            <div class="btn-partido-del" onclick="event.stopPropagation(); eliminarPartido(${globalData.ultimosPartidos.indexOf(partido)})">✖</div>
+                        </div>
+                        <div class="partido-header">
+                            ${partido.dia || 'Sin fecha'}
+                        </div>
+                        <div class="partido-equipos">
+                            <div class="partido-equipo">${partido.equipo1}</div>
+                            <div class="partido-resultado ${resultadoClass}">${goles1} - ${goles2}</div>
+                            <div class="partido-equipo">${partido.equipo2}</div>
+                        </div>
+                        ${goleadoresPreview ? `<div class="partido-goleadores-preview">⚽ ${goleadoresPreview}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            if (partidosOrdenados.length === 0) {
+                html = '<p style="text-align:center; color:#777; padding:50px;">No hay partidos registrados</p>';
+            }
+            
+            grid.innerHTML = html;
+        }
+
+        function openEditPartidoModal(index = null) {
+            if (!isAdmin) {
+                alert("Solo el administrador puede gestionar partidos");
+                return;
+            }
+            
+            document.getElementById('edit-partido-title').innerText = index !== null ? 'EDITAR PARTIDO' : 'AÑADIR PARTIDO';
+            document.getElementById('partido-index').value = index !== null ? index : '';
+            
+            if (index !== null) {
+                const partido = globalData.ultimosPartidos[index];
+                document.getElementById('partido-equipo1').value = partido.equipo1 || '';
+                document.getElementById('partido-equipo2').value = partido.equipo2 || '';
+                document.getElementById('partido-dia').value = partido.dia || '';
+                document.getElementById('partido-goles1').value = partido.goles1 || 0;
+                document.getElementById('partido-goles2').value = partido.goles2 || 0;
+                
+                // Cargar goleadores
+                renderGoleadoresInputs('equipo1', partido.goleadores1 || []);
+                renderGoleadoresInputs('equipo2', partido.goleadores2 || []);
+            } else {
+                // Limpiar formulario
+                document.getElementById('partido-equipo1').value = '';
+                document.getElementById('partido-equipo2').value = '';
+                document.getElementById('partido-dia').value = '';
+                document.getElementById('partido-goles1').value = 0;
+                document.getElementById('partido-goles2').value = 0;
+                renderGoleadoresInputs('equipo1', []);
+                renderGoleadoresInputs('equipo2', []);
+            }
+            
+            closeModals();
+            openModal('edit-partido-modal');
+        }
+
+        function renderGoleadoresInputs(equipo, goleadores) {
+            const container = document.getElementById(`goleadores-${equipo}-container`);
+            container.innerHTML = '';
+            
+            goleadores.forEach((goleador, idx) => {
+                const div = document.createElement('div');
+                div.className = 'goleador-item';
+                div.style.marginBottom = '10px';
+                div.innerHTML = `
+                    <input type="text" class="goleador-nombre-${equipo}" value="${goleador.nombre}" placeholder="Nombre del jugador" style="width: 60%; margin-right: 5px;">
+                    <input type="number" class="goleador-goles-${equipo}" value="${goleador.goles}" placeholder="Goles" min="1" style="width: 30%;">
+                    <span onclick="this.parentElement.remove()" style="cursor:pointer; color:#ff4444; margin-left:5px;">✖</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addGoleadorInput(equipo) {
+            const container = document.getElementById(`goleadores-${equipo}-container`);
+            const div = document.createElement('div');
+            div.className = 'goleador-item';
+            div.style.marginBottom = '10px';
+            div.innerHTML = `
+                <input type="text" class="goleador-nombre-${equipo}" placeholder="Nombre del jugador" style="width: 60%; margin-right: 5px;">
+                <input type="number" class="goleador-goles-${equipo}" placeholder="Goles" min="1" style="width: 30%;">
+                <span onclick="this.parentElement.remove()" style="cursor:pointer; color:#ff4444; margin-left:5px;">✖</span>
+            `;
+            container.appendChild(div);
+        }
+
+        function savePartido() {
+            const index = document.getElementById('partido-index').value;
+            const equipo1 = document.getElementById('partido-equipo1').value;
+            const equipo2 = document.getElementById('partido-equipo2').value;
+            
+            if (!equipo1 || !equipo2) {
+                alert("Selecciona ambos equipos");
+                return;
+            }
+            
+            if (equipo1 === equipo2) {
+                alert("Los equipos deben ser diferentes");
+                return;
+            }
+            
+            const partido = {
+                equipo1: equipo1,
+                equipo2: equipo2,
+                dia: document.getElementById('partido-dia').value,
+                goles1: parseInt(document.getElementById('partido-goles1').value) || 0,
+                goles2: parseInt(document.getElementById('partido-goles2').value) || 0,
+                goleadores1: [],
+                goleadores2: []
+            };
+            
+            // Recoger goleadores equipo 1
+            document.querySelectorAll('.goleador-nombre-equipo1').forEach((input, i) => {
+                const nombre = input.value.trim();
+                const golesInput = document.querySelectorAll('.goleador-goles-equipo1')[i];
+                const goles = parseInt(golesInput?.value) || 1;
+                if (nombre) {
+                    partido.goleadores1.push({ nombre: nombre, goles: goles });
+                    
+                    // Actualizar estadísticas del jugador en su equipo
+                    if (globalData.teams && globalData.teams[equipo1]) {
+                        const jugador = globalData.teams[equipo1].find(j => j.n === nombre);
+                        if (jugador) {
+                            jugador.g = (jugador.g || 0) + goles;
+                            jugador.pj = (jugador.pj || 0) + 1;
+                        }
+                    }
+                }
+            });
+            
+            // Recoger goleadores equipo 2
+            document.querySelectorAll('.goleador-nombre-equipo2').forEach((input, i) => {
+                const nombre = input.value.trim();
+                const golesInput = document.querySelectorAll('.goleador-goles-equipo2')[i];
+                const goles = parseInt(golesInput?.value) || 1;
+                if (nombre) {
+                    partido.goleadores2.push({ nombre: nombre, goles: goles });
+                    
+                    // Actualizar estadísticas del jugador en su equipo
+                    if (globalData.teams && globalData.teams[equipo2]) {
+                        const jugador = globalData.teams[equipo2].find(j => j.n === nombre);
+                        if (jugador) {
+                            jugador.g = (jugador.g || 0) + goles;
+                            jugador.pj = (jugador.pj || 0) + 1;
+                        }
+                    }
+                }
+            });
+            
+            if (index === '') {
+                // Nuevo partido
+                if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
+                globalData.ultimosPartidos.push(partido);
+            } else {
+                // Editar partido existente
+                globalData.ultimosPartidos[index] = partido;
+            }
+            
+            // Sincronizar goleadores
+            syncGoleadoresWithTeams();
+            
+            closeModals();
+            renderUltimosPartidos();
+            render();
+            sync();
+        }
+
+        function eliminarPartido(index) {
+            if (!isAdmin) return;
+            if (confirm("¿Eliminar este partido?")) {
+                globalData.ultimosPartidos.splice(index, 1);
+                renderUltimosPartidos();
+                sync();
+            }
+        }
+
+        function verDetallePartido(index) {
+            const partido = globalData.ultimosPartidos[index];
+            if (!partido) return;
+            
+            let html = `
+                <div style="text-align:center; margin-bottom: 30px;">
+                    <h3 style="color:#00e5ff; font-size: 1.5rem;">${partido.dia || ''}</h3>
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin: 30px 0;">
+                        <div style="font-size: 2rem; color:#ff00ea;">${partido.equipo1}</div>
+                        <div style="font-size: 3rem; color:#fff; background: #ff00ea22; padding: 20px; border-radius: 20px;">${partido.goles1 || 0} - ${partido.goles2 || 0}</div>
+                        <div style="font-size: 2rem; color:#00e5ff;">${partido.equipo2}</div>
+                    </div>
+                </div>
+            `;
+            
+            if (partido.goleadores1 && partido.goleadores1.length > 0) {
+                html += '<div style="margin: 20px 0;"><h4 style="color:#ff00ea; margin-bottom: 10px;">GOLEADORES ' + partido.equipo1 + '</h4>';
+                partido.goleadores1.forEach(g => {
+                    html += `<div class="goleador-item"><span class="goleador-nombre-equipo1">${g.nombre}</span> <span class="goles-destacados">${g.goles} gol${g.goles > 1 ? 'es' : ''}</span></div>`;
+                });
+                html += '</div>';
+            }
+            
+            if (partido.goleadores2 && partido.goleadores2.length > 0) {
+                html += '<div style="margin: 20px 0;"><h4 style="color:#00e5ff; margin-bottom: 10px;">GOLEADORES ' + partido.equipo2 + '</h4>';
+                partido.goleadores2.forEach(g => {
+                    html += `<div class="goleador-item"><span class="goleador-nombre-equipo2">${g.nombre}</span> <span class="goles-destacados">${g.goles} gol${g.goles > 1 ? 'es' : ''}</span></div>`;
+                });
+                html += '</div>';
+            }
+            
+            document.getElementById('detalle-partido-titulo').innerText = `${partido.equipo1} vs ${partido.equipo2}`;
+            document.getElementById('detalle-partido-contenido').innerHTML = html;
+            openModal('detalle-partido-modal');
+        }
+        
         function render() {
-            const disp = isAdmin ? 'inline-block' : 'none';
-            let gHtml = `<table><tr><th>NOMBRE</th><th>G</th><th>PJ</th><th></th></tr>`;
-            [...globalData.goleadores].sort((a, b) => b.goals - a.goals).forEach((i) => {
+            const disp = (isAdmin && !isEnolMode) ? 'inline-block' : 'none';
+            
+            syncGoleadoresWithTeams();
+            
+            // TOP GOLEADORES con scroll y TOP 5 visible
+            let gHtml = `<div class="goleadores-scroll-container">`;
+            gHtml += `<table><tr><th>NOMBRE</th><th>G</th><th>PJ</th><th></th></tr>`;
+            
+            const goleadoresOrdenados = [...globalData.goleadores].sort((a, b) => b.goals - a.goals);
+            
+            goleadoresOrdenados.forEach((i, rank) => {
                 const oi = globalData.goleadores.indexOf(i);
-                gHtml += `<tr><td>${i.name}</td><td style="color:#ff00ea; font-weight:bold;">${i.goals}</td><td>${i.pj}</td>
-                <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('goleadores', ${oi})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('goleadores', ${oi})">X</span></div></td></tr>`;
+                let rowClass = 'goleadores-other';
+                if (rank === 0) rowClass = 'goleadores-1';
+                else if (rank === 1) rowClass = 'goleadores-2';
+                else if (rank === 2) rowClass = 'goleadores-3';
+                
+                if (rank < 5) {
+                    gHtml += `<tr class="${rowClass}">
+                        <td>${i.name}</td>
+                        <td style="color:#ff00ea; font-weight:bold;">${i.goals}</td>
+                        <td>${i.pj}</td>
+                        <td><div class="admin-controls" style="display:${disp}">
+                            <span class="btn-mini btn-edit" onclick="openEditModal('goleadores', ${oi})">✎</span>
+                            <span class="btn-mini btn-del" onclick="deleteItem('goleadores', ${oi})">X</span>
+                        </div></td>
+                    </tr>`;
+                }
             });
-            document.getElementById('goleadores-table').innerHTML = gHtml + `</table>`;
-
-            let cHtml = `<table><tr><th>EQUIPO</th><th>PTS</th><th>PJ</th><th>ÚLTIMOS 5</th><th>DINERO</th><th></th></tr>`;
-            [...globalData.clasificacion].sort((a, b) => b.pts - a.pts).forEach((i) => {
-                const oi = globalData.clasificacion.indexOf(i);
-                cHtml += `<tr><td>${i.team}</td><td style="color:#ff00ea; font-weight:bold;">${i.pts}</td><td>${i.pj}</td><td>${getFormHtml(i.form)}</td><td class="dinero-txt">${i.money || '0€'}</td>
-                <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('clasificacion', ${oi})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('clasificacion', ${oi})">X</span></div></td></tr>`;
-            });
+            
+            gHtml += `</table>`;
+            
+            if (goleadoresOrdenados.length > 5) {
+                gHtml += `<div class="goleadores-more-indicator">▼ VER MÁS GOLEADORES ▼</div>`;
+                
+                goleadoresOrdenados.forEach((i, rank) => {
+                    if (rank >= 5) {
+                        const oi = globalData.goleadores.indexOf(i);
+                        gHtml += `<div class="goleadores-other" style="padding: 5px; margin: 2px 0; border-bottom: 1px solid #ff00ea22; display: flex; justify-content: space-between;">
+                            <span>${i.name}</span>
+                            <span style="color:#ff00ea; font-weight:bold;">${i.goals} goles</span>
+                            <span style="color:#00e5ff;">${i.pj} PJ</span>
+                        </div>`;
+                    }
+                });
+            }
+            
+            gHtml += `</div>`;
+            document.getElementById('goleadores-table').innerHTML = gHtml;
+            
+            // CLASIFICACIÓN con desempate por diferencia de goles
+            let cHtml = `<table><tr><th>CLUB</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th><th></th></tr>`;
+            
+            [...globalData.clasificacion]
+                .sort((a, b) => {
+                    if (b.pts !== a.pts) {
+                        return b.pts - a.pts;
+                    } else {
+                        const dgA = (a.gf || 0) - (a.gc || 0);
+                        const dgB = (b.gf || 0) - (b.gc || 0);
+                        return dgB - dgA;
+                    }
+                })
+                .forEach((i, rank) => {
+                    const oi = globalData.clasificacion.indexOf(i);
+                    let rowClass = 'clasificacion-other';
+                    if (rank === 0) rowClass = 'clasificacion-1';
+                    else if (rank === 1) rowClass = 'clasificacion-2';
+                    else if (rank === 2) rowClass = 'clasificacion-3';
+                    
+                    const dg = (i.gf || 0) - (i.gc || 0);
+                    const dgStr = dg > 0 ? `+${dg}` : dg;
+                    
+                    cHtml += `<tr class="${rowClass} clasificacion-equipo" onclick="showTeamInfo('${i.team}')">
+                        <td>${i.team}</td>
+                        <td>${i.pj || 0}</td>
+                        <td>${i.g || 0}</td>
+                        <td>${i.e || 0}</td>
+                        <td>${i.p || 0}</td>
+                        <td>${i.gf || 0}</td>
+                        <td>${i.gc || 0}</td>
+                        <td style="color:${dg > 0 ? '#00ff88' : dg < 0 ? '#ff4444' : '#888'}; font-weight:bold;">${dgStr}</td>
+                        <td style="color:#ff00ea; font-weight:bold; font-size: 0.45rem;">${i.pts}</td>
+                        <td><div class="admin-controls" style="display:${disp}">
+                            <span class="btn-mini btn-edit" onclick="event.stopPropagation(); openEditModal('clasificacion', ${oi})">✎</span>
+                            <span class="btn-mini btn-del" onclick="event.stopPropagation(); deleteItem('clasificacion', ${oi})">X</span>
+                        </div></td>
+                    </tr>`;
+                });
             document.getElementById('clasificacion-table').innerHTML = cHtml + `</table>`;
-
+            
             let calHtml = `<table><tr><th>PARTIDO</th><th>DIA</th><th></th></tr>`;
             globalData.calendario.forEach((c, idx) => {
-                calHtml += `<tr><td>${c.e1} <span class="vs">VS</span> ${c.e2}</td><td>${c.hora}</td>
+                calHtml += `<tr><td>${c.e1} VS ${c.e2}</td><td>${c.hora}</td>
                 <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('calendario', ${idx})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('calendario', ${idx})">X</span></div></td></tr>`;
             });
             document.getElementById('calendario-table').innerHTML = calHtml + `</table>`;
-
+            
             let clHtml = '';
             globalData.clausulazos.forEach((cl, idx) => {
+                const enolEdit = (isEnolMode) ? 'inline-block' : disp;
                 clHtml += `<div class="clausulazo-item">
                     <div style="font-weight:bold; color:#ff00ea; font-size:0.7rem;">NOTICIA</div>
                     <div style="font-size:0.85rem; margin: 4px 0;">${cl.body}</div>
-                    <div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('clausulazos', ${idx})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('clausulazos', ${idx})">X</span></div>
+                    <div class="admin-controls" style="display:${enolEdit}">
+                        <span class="btn-mini btn-edit" onclick="openEditModal('clausulazos', ${idx})">✎</span>
+                        <span class="btn-mini btn-del" onclick="deleteItem('clausulazos', ${idx})">X</span>
+                    </div>
                 </div>`;
             });
             document.getElementById('clausulazos-list').innerHTML = clHtml || 'Sin noticias';
         }
-
-        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'flex'; }
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        
+        function openModal(id) {
+            closeModals();
+            document.getElementById(id).style.display = 'flex';
+            if (id === 'logs-modal') {
+                renderLogs(8);
+            }
+        }
+        
+        function closeModals() { 
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+        }
+        
         function toggleView() {
             const container = document.getElementById('main-container');
             container.classList.toggle('mobile-mode');
             document.getElementById('toggle-view-btn').innerText = container.classList.contains('mobile-mode') ? "MODO IPAD" : "MODO MÓVIL";
         }
-
+        
         loadData();
-        setInterval(loadData, 30000);
+        
+        let fromWelcome = false;
+        document.querySelector('.admin-access-circle-left').addEventListener('click', () => { fromWelcome = true; });
+        document.querySelector('#auth-modal button:nth-of-type(2)').addEventListener('click', () => {
+          if (fromWelcome) {
+            fromWelcome = false;
+            openModal('welcome-modal');
+          }
+        });
     </script>
 </body>
 </html>
