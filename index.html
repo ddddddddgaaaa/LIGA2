@@ -15,63 +15,82 @@
             font-size: 0.9rem; 
         }
 
+        /* Watermark en esquina superior izquierda */
+        .watermark { 
+            position: fixed; 
+            top: 10px; 
+            left: 10px; 
+            font-size: 0.7rem; 
+            color: rgba(255, 255, 255, 0.3); 
+            z-index: 5; 
+            pointer-events: none; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
+
+        /* Header con BIENVENIDO + nombre */
+        .main-header-container {
+            text-align: center;
+            padding-top: 40px;
+            margin-bottom: 10px;
+        }
+
         .header {
-            text-align:center;
-            padding:10px;
-            font-size:2.5rem;
-            font-weight:bold;
-            color:#ff00ea;
-            text-shadow:0 0 20px #ff00ea;
-            letter-spacing:10px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff00ea;
+            text-shadow: 0 0 20px #ff00ea;
+            letter-spacing: 10px;
             transition: all 0.3s ease;
             opacity: 0.09;
             pointer-events: none;
+            line-height: 1;
         }
         .header.with-name {
-            font-size: 1.35rem;
+            font-size: 1.8rem;
             letter-spacing: 4px;
-            opacity: 0.06;
+            opacity: 0.15;
+            margin-bottom: 5px;
         }
 
         .welcome-name {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             color: #00e5ff;
-            font-size: 4.5rem;
-            font-weight: bold;
+            font-size: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 9px;
-            text-shadow: 0 0 40px #00e5ff, 0 0 80px #00e5ff55;
-            z-index: 15;
-            background: rgba(10,10,35,0.68);
-            padding: 22px 70px;
-            border-radius: 45px;
-            border: 3px solid #00e5ff66;
-            backdrop-filter: blur(12px);
-            pointer-events: none;
-            white-space: nowrap;
-            max-width: 96vw;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            box-shadow: 0 0 70px rgba(0,229,255,0.45);
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px #00e5ff;
+            background: rgba(10,10,20,0.8);
+            padding: 8px 25px;
+            border-radius: 30px;
+            border: 1px solid #00e5ff66;
+            backdrop-filter: blur(5px);
+            display: inline-block;
+            margin-top: 5px;
         }
 
-        @media (max-width: 800px) {
-            .welcome-name {
-                font-size: 3.6rem;
-                padding: 18px 55px;
-                letter-spacing: 7px;
-            }
+        /* Botón pequeño de ÚLTIMOS PARTIDOS */
+        .ultimos-partidos-small-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00e5ff66;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
         }
-
-        @media (max-width: 500px) {
-            .welcome-name {
-                font-size: 2.9rem;
-                padding: 15px 45px;
-                letter-spacing: 5px;
-            }
+        .ultimos-partidos-small-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00e5ff;
         }
 
         /* Puntos suspensivos para TOP 5 */
@@ -94,7 +113,7 @@
         
         /* Para el scroll de goleadores */
         .goleadores-scroll-container {
-            max-height: 300px;
+            max-height: 350px;
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -177,41 +196,9 @@
             display: none;
         }
 
-        /* Nuevo header con botón integrado */
-        .main-header-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        
-        .ultimos-partidos-small-btn {
-            position: absolute;
-            left: 10px;
-            background: #00e5ff;
-            color: #000;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.7rem;
-            cursor: pointer;
-            box-shadow: 0 0 10px #00e5ff66;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 10;
-        }
-        .ultimos-partidos-small-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px #00e5ff;
-        }
-
         .top-nav { text-align: center; margin-bottom: 10px; display: flex; justify-content: center; gap: 10px; }
         .plantilla-main-btn { background: #ff00ea; color: white; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; border: none; box-shadow: 0 0 15px #ff00ea66; transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; }
         .plantilla-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 25px #ff00ea; }
-        .watermark { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; color: rgba(255, 255, 255, 0.3); z-index: 5; pointer-events: none; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
         .phone-btn { background: #00e5ff; color: #000; box-shadow: 0 0 15px #00e5ff66; }
         .phone-btn:hover { box-shadow: 0 0 25px #00e5ff; }
         .container { display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; padding:20px; transition: 0.5s; }
@@ -303,7 +290,7 @@
         .modal-content-full { width: 90%; max-width: 1200px; height: 90vh; }
         input, textarea, select { width:100%; padding:10px; margin:8px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
         button { width:100%; padding:12px; background:#ff00ea; border:none; color:white; font-weight:bold; cursor:pointer; border-radius:8px; margin-top:10px; }
-        .top-right-tools { position: fixed; top: 10px; right: 10px; display: flex; gap: 10px; align-items: center; z-index: 20; }
+        .top-right-tools { position: fixed; top: 10px; right: 60px; display: flex; gap: 10px; align-items: center; z-index: 20; }
         .tool-icon { cursor: pointer; font-size: 1.3rem; opacity: 0.3; transition: 0.3s; }
         .tool-icon:hover { opacity: 1; transform: scale(1.1); }
         .names-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
@@ -482,24 +469,6 @@
             font-size: 0.38rem !important;
             background: rgba(160,160,160,0.02) !important;
         }
-        .welcome-name {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #00e5ff;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #00e5ff;
-            z-index: 15;
-            background: rgba(10,10,20,0.8);
-            padding: 5px 20px;
-            border-radius: 20px;
-            border: 1px solid #00e5ff44;
-            backdrop-filter: blur(5px);
-            pointer-events: none;
-        }
 
         /* Estilos para la tabla de últimos partidos */
         .ultimos-partidos-grid {
@@ -513,15 +482,7 @@
             border: 1px solid #ff00ea44;
             border-radius: 15px;
             padding: 20px;
-            cursor: pointer;
-            transition: 0.3s;
             position: relative;
-        }
-        .partido-card:hover {
-            transform: scale(1.02);
-            background: rgba(255,0,234,0.1);
-            border-color: #ff00ea;
-            box-shadow: 0 0 20px #ff00ea66;
         }
         .partido-header {
             text-align: center;
@@ -550,8 +511,7 @@
             text-shadow: 0 0 10px #ff00ea;
         }
         .partido-goleadores-preview {
-            font-size: 0.8rem;
-            color: #a0a0a0;
+            font-size: 0.9rem;
             border-top: 1px solid #ff00ea22;
             padding-top: 10px;
             margin-top: 10px;
@@ -634,38 +594,35 @@
             padding: 8px;
             border-bottom: 1px solid #ff00ea22;
         }
-        .goleador-equipo1 {
-            color: #ff00ea;
-            font-weight: bold;
-        }
-        .goleador-equipo2 {
-            color: #00e5ff;
-            font-weight: bold;
-        }
-        .goles-cantidad {
-            color: #ffaa00;
-            font-weight: bold;
+
+        /* Botón cerrar al final */
+        .cerrar-btn-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ff00ea44;
         }
     </style>
 </head>
 <body>
+    <div class="watermark">HECHO POR VADYM</div>
+    
     <div class="top-right-tools">
         <button id="btn-logs-header" onclick="openModal('logs-modal')">LOGS</button>
     </div>
     
-    <!-- Nuevo header con botón integrado -->
-    <div class="main-header-container">
-        <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
-        <div class="header" id="main-header">BIENVENIDOS</div>
-    </div>
+    <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
     
-    <div class="welcome-name" id="welcome-name"></div>
-    <div class="watermark">HECHO POR VADYM</div>
+    <!-- Header con BIENVENIDO y nombre -->
+    <div class="main-header-container">
+        <div class="header" id="main-header">BIENVENIDOS</div>
+        <div class="welcome-name" id="welcome-name"></div>
+    </div>
     
     <div class="top-nav">
         <button id="toggle-view-btn" class="plantilla-main-btn phone-btn" onclick="toggleView()">MODO MÓVIL</button>
         <button class="plantilla-main-btn" onclick="openModal('plantillas-modal')">PLANTILLA</button>
     </div>
+    
     <div class="container" id="main-container">
         <div class="panel">
             <div class="edit-btn" onclick="clearModal('goleadores-modal')">✏️</div>
@@ -688,6 +645,8 @@
             <div class="data-box" id="clasificacion-table"></div>
         </div>
     </div>
+    
+    <!-- Modales existentes (se mantienen igual) -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <h1 style="color:#ff00ea; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">¿QUIÉN ERES?</h1>
@@ -710,6 +669,7 @@
             <div class="admin-access-circle-left" onclick="openModal('auth-modal')"></div>
         </div>
     </div>
+    
     <div id="logs-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:#00e5ff;">LOGS DE ACCESO</h2>
@@ -718,6 +678,7 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
+    
     <div id="full-logs-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:#00e5ff;">TODOS LOS LOGS DE ACCESO</h2>
@@ -725,14 +686,18 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
+    
     <div id="team-info-modal" class="modal">
         <div class="modal-content">
             <div id="team-info-content"></div>
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
+    
     <div id="plantillas-modal" class="modal"><div class="modal-content"><h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2><button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">Pingüinos Locos</button><button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">Atlético de Jhonsy</button><button class="team-select-btn" onclick="showTeam('Pajillas')">Pajillas</button><button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button></div></div>
+    
     <div id="team-list-modal" class="modal"><div class="modal-content"><h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2><div id="admin-team-controls" style="display:none; margin-bottom:10px;"><button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button></div><div id="players-list-content" class="player-grid"></div><button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button></div></div>
+    
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <h3>ACCESO ESPECIAL</h3>
@@ -742,10 +707,15 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
+    
     <div id="error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">ACCESO DENEGADO</div><button onclick="openModal('welcome-modal')">Cerrar</button></div></div>
+    
     <div id="enol-error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">CREDENCIALES INCORRECTAS</div><button onclick="closeModals(); openModal('welcome-modal');">Cerrar</button></div></div>
+    
     <div id="calendario-modal" class="modal"><div class="modal-content"><h3 id="cal-title">AÑADIR PARTIDO</h3><input type="hidden" id="cal-index"><input type="text" id="cal-e1" placeholder="EQUIPO 1"><input type="text" id="cal-e2" placeholder="EQUIPO 2"><input type="text" id="cal-hora" placeholder="DIA Y HORA"><button onclick="saveData('calendario')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    
     <div id="clausulazos-modal" class="modal"><div class="modal-content"><h3 id="cl-title">NUEVO CLAUSULAZO</h3><input type="hidden" id="cl-index"><textarea id="cl-text" rows="4" placeholder="Escribe el clausulazo..."></textarea><button onclick="saveData('clausulazos')">PUBLICAR</button><button onclick="closeModals()">CERRAR</button></div></div>
+    
     <div id="goleadores-modal" class="modal"><div class="modal-content"><h3 id="g-title">AÑADIR JUGADOR</h3><input type="hidden" id="g-index"><input type="text" id="g-name" placeholder="NOMBRE"><input type="number" id="g-goals" placeholder="GOLES"><input type="number" id="g-pj" placeholder="PJ"><button onclick="saveData('goleadores')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
    
     <div id="clasificacion-modal" class="modal">
@@ -789,7 +759,10 @@
             <!-- Grid de partidos -->
             <div id="partidos-grid" class="ultimos-partidos-grid"></div>
             
-            <button onclick="closeModals()" style="background: #333; width: 200px; margin: 20px auto;">CERRAR</button>
+            <!-- Botón CERRAR al final -->
+            <div class="cerrar-btn-container">
+                <button onclick="closeModals()" style="background: #333; width: 200px; margin: 0 auto;">CERRAR</button>
+            </div>
         </div>
     </div>
 
@@ -835,15 +808,6 @@
         </div>
     </div>
 
-    <!-- Modal para ver detalles del partido -->
-    <div id="detalle-partido-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="detalle-partido-titulo" style="color:#ff00ea; margin-bottom: 20px;"></h2>
-            <div id="detalle-partido-contenido"></div>
-            <button onclick="closeModals()">CERRAR</button>
-        </div>
-    </div>
-
     <script>
         const BIN_ID = '69a1d862ae596e708f5006cd';
         const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.';
@@ -855,7 +819,7 @@
             calendario: [], 
             teams: {}, 
             accessLogs: [],
-            ultimosPartidos: [] // Nuevo array para guardar los partidos
+            ultimosPartidos: []
         };
         let isAdmin = false;
         let isEnolMode = false;
@@ -1108,7 +1072,6 @@
                 const data = await res.json();
                 if (data) {
                     globalData = data;
-                    // Asegurar que existe el array de últimos partidos
                     if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
                     syncGoleadoresWithTeams();
                     render();
@@ -1453,7 +1416,6 @@
             const grid = document.getElementById('partidos-grid');
             let html = '';
             
-            // Ordenar partidos (los más recientes primero)
             const partidosOrdenados = [...(globalData.ultimosPartidos || [])].reverse();
             
             partidosOrdenados.forEach((partido, idx) => {
@@ -1461,22 +1423,28 @@
                 const goles2 = partido.goles2 || 0;
                 const resultadoClass = goles1 > goles2 ? 'goleadores-1' : (goles2 > goles1 ? 'goleadores-2' : '');
                 
-                // Resumen de goleadores con goles destacados
+                // Resumen de goleadores con nombres en color y goles en amarillo
                 let goleadoresPreview = '';
                 if (partido.goleadores1 && partido.goleadores1.length > 0) {
-                    goleadoresPreview += `<span class="goleador-nombre-equipo1">${partido.goleadores1.slice(0,2).map(g => g.nombre).join(', ')}</span>`;
-                    goleadoresPreview += `<span class="goles-destacados">(${partido.goleadores1.slice(0,2).map(g => g.goles).join(', ')})</span>`;
-                    if (partido.goleadores1.length > 2) goleadoresPreview += '...';
+                    goleadoresPreview += `<div><span class="goleador-nombre-equipo1">${partido.equipo1}:</span> `;
+                    partido.goleadores1.forEach((g, i) => {
+                        goleadoresPreview += `${g.nombre} <span class="goles-destacados">(${g.goles})</span>`;
+                        if (i < partido.goleadores1.length - 1) goleadoresPreview += ', ';
+                    });
+                    goleadoresPreview += '</div>';
                 }
+                
                 if (partido.goleadores2 && partido.goleadores2.length > 0) {
-                    if (goleadoresPreview) goleadoresPreview += ' | ';
-                    goleadoresPreview += `<span class="goleador-nombre-equipo2">${partido.goleadores2.slice(0,2).map(g => g.nombre).join(', ')}</span>`;
-                    goleadoresPreview += `<span class="goles-destacados">(${partido.goleadores2.slice(0,2).map(g => g.goles).join(', ')})</span>`;
-                    if (partido.goleadores2.length > 2) goleadoresPreview += '...';
+                    goleadoresPreview += `<div><span class="goleador-nombre-equipo2">${partido.equipo2}:</span> `;
+                    partido.goleadores2.forEach((g, i) => {
+                        goleadoresPreview += `${g.nombre} <span class="goles-destacados">(${g.goles})</span>`;
+                        if (i < partido.goleadores2.length - 1) goleadoresPreview += ', ';
+                    });
+                    goleadoresPreview += '</div>';
                 }
                 
                 html += `
-                    <div class="partido-card" onclick="verDetallePartido(${globalData.ultimosPartidos.indexOf(partido)})">
+                    <div class="partido-card">
                         <div class="admin-partido-controls" style="display:${isAdmin ? 'flex' : 'none'}">
                             <div class="btn-partido-edit" onclick="event.stopPropagation(); openEditPartidoModal(${globalData.ultimosPartidos.indexOf(partido)})">✎</div>
                             <div class="btn-partido-del" onclick="event.stopPropagation(); eliminarPartido(${globalData.ultimosPartidos.indexOf(partido)})">✖</div>
@@ -1489,7 +1457,7 @@
                             <div class="partido-resultado ${resultadoClass}">${goles1} - ${goles2}</div>
                             <div class="partido-equipo">${partido.equipo2}</div>
                         </div>
-                        ${goleadoresPreview ? `<div class="partido-goleadores-preview">⚽ ${goleadoresPreview}</div>` : ''}
+                        ${goleadoresPreview ? `<div class="partido-goleadores-preview">${goleadoresPreview}</div>` : ''}
                     </div>
                 `;
             });
@@ -1518,11 +1486,9 @@
                 document.getElementById('partido-goles1').value = partido.goles1 || 0;
                 document.getElementById('partido-goles2').value = partido.goles2 || 0;
                 
-                // Cargar goleadores
                 renderGoleadoresInputs('equipo1', partido.goleadores1 || []);
                 renderGoleadoresInputs('equipo2', partido.goleadores2 || []);
             } else {
-                // Limpiar formulario
                 document.getElementById('partido-equipo1').value = '';
                 document.getElementById('partido-equipo2').value = '';
                 document.getElementById('partido-dia').value = '';
@@ -1591,7 +1557,6 @@
                 goleadores2: []
             };
             
-            // Recoger goleadores equipo 1
             document.querySelectorAll('.goleador-nombre-equipo1').forEach((input, i) => {
                 const nombre = input.value.trim();
                 const golesInput = document.querySelectorAll('.goleador-goles-equipo1')[i];
@@ -1599,7 +1564,6 @@
                 if (nombre) {
                     partido.goleadores1.push({ nombre: nombre, goles: goles });
                     
-                    // Actualizar estadísticas del jugador en su equipo
                     if (globalData.teams && globalData.teams[equipo1]) {
                         const jugador = globalData.teams[equipo1].find(j => j.n === nombre);
                         if (jugador) {
@@ -1610,7 +1574,6 @@
                 }
             });
             
-            // Recoger goleadores equipo 2
             document.querySelectorAll('.goleador-nombre-equipo2').forEach((input, i) => {
                 const nombre = input.value.trim();
                 const golesInput = document.querySelectorAll('.goleador-goles-equipo2')[i];
@@ -1618,7 +1581,6 @@
                 if (nombre) {
                     partido.goleadores2.push({ nombre: nombre, goles: goles });
                     
-                    // Actualizar estadísticas del jugador en su equipo
                     if (globalData.teams && globalData.teams[equipo2]) {
                         const jugador = globalData.teams[equipo2].find(j => j.n === nombre);
                         if (jugador) {
@@ -1630,15 +1592,12 @@
             });
             
             if (index === '') {
-                // Nuevo partido
                 if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
                 globalData.ultimosPartidos.push(partido);
             } else {
-                // Editar partido existente
                 globalData.ultimosPartidos[index] = partido;
             }
             
-            // Sincronizar goleadores
             syncGoleadoresWithTeams();
             
             closeModals();
@@ -1655,49 +1614,13 @@
                 sync();
             }
         }
-
-        function verDetallePartido(index) {
-            const partido = globalData.ultimosPartidos[index];
-            if (!partido) return;
-            
-            let html = `
-                <div style="text-align:center; margin-bottom: 30px;">
-                    <h3 style="color:#00e5ff; font-size: 1.5rem;">${partido.dia || ''}</h3>
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 30px; margin: 30px 0;">
-                        <div style="font-size: 2rem; color:#ff00ea;">${partido.equipo1}</div>
-                        <div style="font-size: 3rem; color:#fff; background: #ff00ea22; padding: 20px; border-radius: 20px;">${partido.goles1 || 0} - ${partido.goles2 || 0}</div>
-                        <div style="font-size: 2rem; color:#00e5ff;">${partido.equipo2}</div>
-                    </div>
-                </div>
-            `;
-            
-            if (partido.goleadores1 && partido.goleadores1.length > 0) {
-                html += '<div style="margin: 20px 0;"><h4 style="color:#ff00ea; margin-bottom: 10px;">GOLEADORES ' + partido.equipo1 + '</h4>';
-                partido.goleadores1.forEach(g => {
-                    html += `<div class="goleador-item"><span class="goleador-nombre-equipo1">${g.nombre}</span> <span class="goles-destacados">${g.goles} gol${g.goles > 1 ? 'es' : ''}</span></div>`;
-                });
-                html += '</div>';
-            }
-            
-            if (partido.goleadores2 && partido.goleadores2.length > 0) {
-                html += '<div style="margin: 20px 0;"><h4 style="color:#00e5ff; margin-bottom: 10px;">GOLEADORES ' + partido.equipo2 + '</h4>';
-                partido.goleadores2.forEach(g => {
-                    html += `<div class="goleador-item"><span class="goleador-nombre-equipo2">${g.nombre}</span> <span class="goles-destacados">${g.goles} gol${g.goles > 1 ? 'es' : ''}</span></div>`;
-                });
-                html += '</div>';
-            }
-            
-            document.getElementById('detalle-partido-titulo').innerText = `${partido.equipo1} vs ${partido.equipo2}`;
-            document.getElementById('detalle-partido-contenido').innerHTML = html;
-            openModal('detalle-partido-modal');
-        }
         
         function render() {
             const disp = (isAdmin && !isEnolMode) ? 'inline-block' : 'none';
             
             syncGoleadoresWithTeams();
             
-            // TOP GOLEADORES con scroll y TOP 5 visible
+            // TOP GOLEADORES con scroll y TOP 5 visible - altura aumentada
             let gHtml = `<div class="goleadores-scroll-container">`;
             gHtml += `<table><tr><th>NOMBRE</th><th>G</th><th>PJ</th><th></th></tr>`;
             
