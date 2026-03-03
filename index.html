@@ -15,64 +15,31 @@
             font-size: 0.9rem; 
         }
 
-        /* Верхняя панель (ДОБАВЛЕНО) */
-        .top-bar {
-            position: fixed;
-            top: 5px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 10px;
-            z-index: 20;
-            pointer-events: none;
-        }
-        
         .watermark { 
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            pointer-events: none;
-        }
-        
-        /* Кнопка УМЕНЬШЕНА в 3 раза */
-        .ultimos-partidos-small-btn {
-            background: #00e5ff;
-            color: #000;
-            border: none;
-            padding: 2px 8px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.4rem;
-            cursor: pointer;
-            box-shadow: 0 0 5px #00e5ff66;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            pointer-events: auto;
-            line-height: 1.2;
-        }
-        .ultimos-partidos-small-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 8px #00e5ff;
+            position: fixed; 
+            top: 10px; 
+            left: 10px; 
+            font-size: 0.7rem; 
+            color: rgba(255, 255, 255, 0.3); 
+            z-index: 5; 
+            pointer-events: none; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
         }
 
-        /* Поднято вверх (ИЗМЕНЕНО) */
         .main-header-container {
             text-align: center;
-            padding-top: 35px;
-            margin-bottom: 5px;
+            padding-top: 40px;
+            margin-bottom: 10px;
         }
 
-        /* BIENVENIDOS теперь белый (ИЗМЕНЕНО) */
+        /* Восстановлен розовый цвет и толщина */
         .header {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #ffffff;
-            text-shadow: none;
+            color: #ff00ea;
+            text-shadow: 0 0 20px #ff00ea;
             letter-spacing: 10px;
             transition: all 0.3s ease;
             opacity: 0.09;
@@ -101,8 +68,30 @@
             margin-top: 5px;
         }
 
-        /* Старая кнопка УДАЛЕНА - этот блок полностью убран */
-        /* .ultimos-partidos-small-btn { ... } */
+        /* Кнопка УМЕНЬШЕНА по ширине в 4 раза (padding 3px вместо 12px) */
+        .ultimos-partidos-small-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 4px 3px;         /* горизонтальный padding 3px (было 12px) */
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.7rem;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00e5ff66;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 10;
+            white-space: nowrap;        /* чтобы текст не переносился */
+        }
+        .ultimos-partidos-small-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px #00e5ff;
+        }
 
         .goleadores-more-indicator {
             text-align: center;
@@ -604,21 +593,17 @@
     </style>
 </head>
 <body>
-    <!-- Новая верхняя панель (ДОБАВЛЕНО) -->
-    <div class="top-bar">
-        <div class="watermark">HECHO POR VADYM</div>
-        <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
-    </div>
+    <div class="watermark">HECHO POR VADYM</div>
     
     <div class="top-right-tools">
         <button id="btn-logs-header" onclick="openModal('logs-modal')">LOGS</button>
     </div>
     
-    <!-- СТАРАЯ КНОПКА УДАЛЕНА (этот блок полностью убран) -->
-    <!-- <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button> -->
+    <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
     
     <div class="main-header-container">
-        <div class="header" id="main-header">BIENVENIDOS</div>
+        <!-- Текст BIENVENIDOS ПОЛНОСТЬЮ УДАЛЁН -->
+        <div class="header" id="main-header"></div>
         <div class="welcome-name" id="welcome-name"></div>
     </div>
     
@@ -650,6 +635,7 @@
         </div>
     </div>
     
+    <!-- Все модальные окна и скрипты остаются без изменений (далее идёт полный код, который мы не трогаем) -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <h1 style="color:#ff00ea; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">¿QUIÉN ERES?</h1>
@@ -806,6 +792,7 @@
     </div>
 
     <script>
+        // Весь скрипт остаётся без изменений
         const BIN_ID = '69a1d862ae596e708f5006cd';
         const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.';
         const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
