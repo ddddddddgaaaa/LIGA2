@@ -74,11 +74,11 @@
             }
         }
 
-        /* Botón ÚLTIMOS PARTIDOS - reposicionado junto a "Hecho por Vadym" */
+        /* Botón ÚLTIMOS PARTIDOS - alineado con watermark */
         .ultimos-partidos-btn {
             position: fixed;
             top: 10px;
-            left: 110px;  /* Al lado del watermark */
+            left: 110px;
             width: auto;
             height: 35px;
             padding: 0 15px;
@@ -171,7 +171,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.3rem;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -180,8 +179,21 @@
             border-left-width: 8px;
         }
         .partido-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .partido-teams {
+            font-size: 1.3rem;
             font-weight: bold;
             color: white;
+        }
+        .partido-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00e5ff;
+            text-shadow: 0 0 15px #00e5ff, 0 0 30px #00e5ff;
+            letter-spacing: 2px;
         }
         .partido-admin-tools {
             display: flex;
@@ -1151,7 +1163,7 @@
             globalData.teams[selectedTeam].push({ n: name.trim(), g: 0, pj: 0 });
             syncGoleadoresWithTeams();
             sync();
-            showWelcomeScreen();
+            showWelcomeScreen(); // Actualizar la pantalla de bienvenida
             alert(`Jugador "${name}" añadido al equipo "${selectedTeam}"!`);
         }
         
@@ -1349,6 +1361,7 @@
             syncGoleadoresWithTeams();
             renderTeamPlayers(); 
             render();
+            showWelcomeScreen(); // Actualizar pantalla de bienvenida
             sync();
         }
         
@@ -1359,6 +1372,7 @@
                 syncGoleadoresWithTeams();
                 renderTeamPlayers(); 
                 render();
+                showWelcomeScreen(); // Actualizar pantalla de bienvenida
                 sync(); 
             } 
         }
@@ -1372,6 +1386,7 @@
                 syncGoleadoresWithTeams();
                 renderTeamPlayers(); 
                 render();
+                showWelcomeScreen(); // Actualizar pantalla de bienvenida
                 sync(); 
             } 
         }
@@ -1638,7 +1653,7 @@
         }
 
         function editarPartido(e, index) {
-            e.stopPropagation(); // Предотвращаем открытие деталей
+            e.stopPropagation();
             const p = globalData.ultimosPartidos[index];
             document.getElementById('partido-modal-title').innerText = 'EDITAR PARTIDO';
             document.getElementById('partido-index').value = index;
@@ -1668,7 +1683,6 @@
                 return;
             }
 
-            // Si es nuevo, inicializar goles vacíos
             const partido = { 
                 equipo1, 
                 equipo2, 
@@ -1682,7 +1696,6 @@
             if (idx === "") {
                 globalData.ultimosPartidos.unshift(partido);
             } else {
-                // Conservar los goles existentes al editar
                 const old = globalData.ultimosPartidos[parseInt(idx)];
                 partido.goles = old.goles || { [equipo1]: [], [equipo2]: [] };
                 globalData.ultimosPartidos[parseInt(idx)] = partido;
@@ -1697,7 +1710,6 @@
             const partido = globalData.ultimosPartidos[index];
             if (!partido) return;
 
-            // Asegurar estructura de goles
             if (!partido.goles) {
                 partido.goles = {};
                 partido.goles[partido.equipo1] = [];
@@ -1784,7 +1796,6 @@
             partido.goles[equipo].push(nombre);
             
             closeModals();
-            // Переоткрыть детали, чтобы обновить список
             verDetallePartido(partidoIdx);
             sync();
         }
@@ -1809,7 +1820,10 @@
                 globalData.ultimosPartidos.forEach((p, idx) => {
                     html += `
                         <div class="partido-item" onclick="verDetallePartido(${idx})">
-                            <span class="partido-info">${p.equipo1} - ${p.equipo2}  ${p.resultado}</span>
+                            <div class="partido-info">
+                                <div class="partido-teams">${p.equipo1} - ${p.equipo2}</div>
+                                <div class="partido-score">${p.resultado}</div>
+                            </div>
                             <div class="partido-admin-tools" style="display:${isAdmin && !isEnolMode ? 'flex' : 'none'}" onclick="event.stopPropagation()">
                                 <button class="btn-edit-partido" onclick="editarPartido(event, ${idx})">✎</button>
                                 <button class="btn-del-partido" onclick="eliminarPartido(event, ${idx})">✖</button>
