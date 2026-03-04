@@ -15,97 +15,274 @@
             font-size: 0.9rem; 
         }
 
-        /* Исправлено: водяной знак слева, кнопка справа на одном уровне */
-        .top-bar {
-            position: fixed;
-            top: 10px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            z-index: 20;
+        .header {
+            text-align:center;
+            padding:10px;
+            font-size:2.5rem;
+            font-weight:bold;
+            color:#ff00ea;
+            text-shadow:0 0 20px #ff00ea;
+            letter-spacing:10px;
+            transition: all 0.3s ease;
+            opacity: 0.09;
             pointer-events: none;
         }
-        
-        .watermark { 
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
+        .header.with-name {
+            font-size: 1.35rem;
+            letter-spacing: 4px;
+            opacity: 0.06;
+        }
+
+        .welcome-name {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00e5ff;
+            font-size: 4.5rem;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 9px;
+            text-shadow: 0 0 40px #00e5ff, 0 0 80px #00e5ff55;
+            z-index: 15;
+            background: rgba(10,10,35,0.68);
+            padding: 22px 70px;
+            border-radius: 45px;
+            border: 3px solid #00e5ff66;
+            backdrop-filter: blur(12px);
             pointer-events: none;
+            white-space: nowrap;
+            max-width: 96vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 0 70px rgba(0,229,255,0.45);
         }
-        
-        /* Кнопка УМЕНЬШЕНА по ширине в 4 раза */
-        .ultimos-partidos-small-btn {
+
+        @media (max-width: 800px) {
+            .welcome-name {
+                font-size: 3.6rem;
+                padding: 18px 55px;
+                letter-spacing: 7px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .welcome-name {
+                font-size: 2.9rem;
+                padding: 15px 45px;
+                letter-spacing: 5px;
+            }
+        }
+
+        /* Botón ÚLTIMOS PARTIDOS - reposicionado junto a "Hecho por Vadym" */
+        .ultimos-partidos-btn {
+            position: fixed;
+            top: 10px;
+            left: 110px;  /* Al lado del watermark */
+            width: auto;
+            height: 35px;
+            padding: 0 15px;
             background: #00e5ff;
             color: #000;
             border: none;
-            padding: 4px 8px;        /* Уменьшено с 12px до 8px по горизонтали */
-            border-radius: 12px;
+            border-radius: 8px;
             font-weight: bold;
-            font-size: 0.6rem;        /* Немного меньше текст */
+            font-size: 0.7rem;
             cursor: pointer;
-            box-shadow: 0 0 8px #00e5ff66;
+            box-shadow: 0 0 15px #00e5ff66;
+            z-index: 20;
             transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            pointer-events: auto;
-            line-height: 1.2;
+            letter-spacing: 1px;
             white-space: nowrap;
         }
-        .ultimos-partidos-small-btn:hover {
+        .ultimos-partidos-btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 12px #00e5ff;
+            box-shadow: 0 0 25px #00e5ff;
         }
 
-        /* Поднято вверх */
-        .main-header-container {
+        /* Modal casi pantalla completa */
+        .modal-full {
+            display: none;
+            position: fixed;
+            inset: 20px;
+            background: rgba(10,10,25,0.98);
+            border: 2px solid #ff00ea;
+            border-radius: 30px;
+            z-index: 2000;
+            padding: 30px;
+            overflow-y: auto;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px #ff00ea;
+        }
+        .modal-full .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ff00ea44;
+            padding-bottom: 15px;
+        }
+        .modal-full h2 {
+            color: #ff00ea;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+        .modal-full .close-btn {
+            background: none;
+            border: 2px solid #ff00ea;
+            color: #ff00ea;
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-full .close-btn:hover {
+            background: #ff00ea;
+            color: black;
+        }
+        .add-partido-btn {
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            box-shadow: 0 0 20px #00e5ff;
+            width: auto;
+            display: inline-block;
+        }
+        .partidos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .partido-item {
+            background: rgba(255,255,255,0.03);
+            border-left: 5px solid #ff00ea;
+            padding: 15px 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .partido-item:hover {
+            background: rgba(255,0,234,0.1);
+            border-left-width: 8px;
+        }
+        .partido-info {
+            font-weight: bold;
+            color: white;
+        }
+        .partido-admin-tools {
+            display: flex;
+            gap: 10px;
+        }
+        .partido-admin-tools button {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            padding: 5px 10px;
+        }
+        .btn-edit-partido {
+            color: #00e5ff;
+        }
+        .btn-del-partido {
+            color: #ff4444;
+        }
+
+        /* Modal de detalle de partido */
+        .detalle-partido {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .detalle-header {
             text-align: center;
-            padding-top: 45px;        /* Чуть больше места для фиксированной панели */
-            margin-bottom: 5px;
-        }
-
-        /* Восстановлен розовый цвет */
-        .header {
             font-size: 2.5rem;
             font-weight: bold;
             color: #ff00ea;
             text-shadow: 0 0 20px #ff00ea;
-            letter-spacing: 10px;
-            transition: all 0.3s ease;
-            opacity: 0.09;
-            pointer-events: none;
-            line-height: 1;
+            letter-spacing: 2px;
         }
-        .header.with-name {
-            font-size: 1.8rem;
-            letter-spacing: 4px;
-            opacity: 0.15;
-            margin-bottom: 5px;
-        }
-
-        .welcome-name {
+        .detalle-resultado {
+            text-align: center;
+            font-size: 4rem;
+            font-weight: bold;
             color: #00e5ff;
-            font-size: 1.2rem;
+            text-shadow: 0 0 30px #00e5ff;
+            margin: 10px 0;
+        }
+        .goleadores-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .goleadores-col {
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #ff00ea66;
+        }
+        .goleadores-col h3 {
+            color: #00e5ff;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 15px #00e5ff;
-            background: rgba(10,10,20,0.8);
-            padding: 8px 25px;
-            border-radius: 30px;
-            border: 1px solid #00e5ff66;
-            backdrop-filter: blur(5px);
-            display: inline-block;
-            margin-top: 5px;
+        }
+        .goleador-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #ff00ea22;
+            font-size: 1.2rem;
+        }
+        .goleador-item:last-child {
+            border-bottom: none;
+        }
+        .goleador-nombre {
+            color: white;
+        }
+        .goleador-acciones {
+            display: flex;
+            gap: 8px;
+        }
+        .goleador-acciones button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            padding: 2px 5px;
+        }
+        .btn-add-goleador {
+            background: #00e5ff;
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-top: 15px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        /* Старая кнопка УДАЛЕНА */
-        /* .ultimos-partidos-small-btn { ... } */
-
-        /* Все остальные стили БЕЗ ИЗМЕНЕНИЙ */
         .goleadores-more-indicator {
             text-align: center;
             padding: 8px;
@@ -124,7 +301,7 @@
         }
         
         .goleadores-scroll-container {
-            max-height: 350px;
+            max-height: 300px;
             overflow-y: auto;
             padding-right: 5px;
         }
@@ -203,9 +380,10 @@
             display: none;
         }
 
-        .top-nav { text-align: center; margin-bottom: 10px; display: flex; justify-content: center; gap: 10px; }
+        .top-nav { text-align: center; margin-bottom: 10px; display: flex; justify-content: center; gap: 10px; margin-top: 60px; }
         .plantilla-main-btn { background: #ff00ea; color: white; padding: 8px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; border: none; box-shadow: 0 0 15px #ff00ea66; transition: 0.3s; text-transform: uppercase; font-size: 0.8rem; }
         .plantilla-main-btn:hover { transform: scale(1.1); box-shadow: 0 0 25px #ff00ea; }
+        .watermark { position: fixed; top: 10px; left: 10px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.2); z-index: 5; pointer-events: none; font-weight: bold; text-transform: uppercase; }
         .phone-btn { background: #00e5ff; color: #000; box-shadow: 0 0 15px #00e5ff66; }
         .phone-btn:hover { box-shadow: 0 0 25px #00e5ff; }
         .container { display:grid; grid-template-columns: repeat(4, 1fr); gap:15px; padding:20px; transition: 0.5s; }
@@ -232,28 +410,93 @@
         .data-box::-webkit-scrollbar { width: 6px; }
         .data-box::-webkit-scrollbar-thumb { background: #ff00ea; border-radius: 10px; }
        
-        #clasificacion-table table {
-            font-size: 0.35rem;
-            border-collapse: separate;
-            border-spacing: 0 1px;
+        .team-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        #clasificacion-table td {
-            padding: 2px 1px;
-            border-bottom: 1px solid rgba(255,0,234,0.1);
+        .team-logo-small {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #ff00ea66;
         }
-        #clasificacion-table tr {
-            transition: 0.2s;
+        .team-name-with-logo {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        #clasificacion-table tr:hover {
-            background: rgba(255,0,234,0.15) !important;
+        
+        .team-select-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #ff00ea;
+            color: white;
+            padding: 15px;
+            margin: 8px 0;
+            border-radius: 15px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 0.8rem;
         }
-        #clasificacion-table th {
-            font-size: 0.4rem;
-            padding: 3px;
+        .team-select-btn:hover {
+            transform: scale(1.02);
+            background: rgba(255,0,234,0.1);
+        }
+        .team-logo-select {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #ff00ea;
+            margin-bottom: 5px;
+        }
+        .team-name-select {
+            font-size: 1rem;
+            letter-spacing: 1px;
         }
        
-        .clasificacion-equipo { cursor: pointer; transition: 0.2s; }
-        .clasificacion-equipo:hover { background: rgba(255,0,234,0.2) !important; }
+        .team-logo-big {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 3px solid #ff00ea;
+            margin-bottom: 15px;
+        }
+        .team-header-with-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+       
+        .team-header-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 3px solid #ff00ea;
+            margin: 10px auto;
+        }
+        .team-title-with-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
        
         .clausulazo-item {
             background: rgba(255, 255, 255, 0.03);
@@ -274,10 +517,9 @@
         .player-admin-tools { position: absolute; top: 5px; right: 5px; display: none; }
         .btn-p-edit { color: #00e5ff; font-size: 0.65rem; cursor: pointer; margin-left: 5px; }
         .btn-p-del { color: #ff4444; font-size: 0.65rem; cursor: pointer; margin-left: 5px; }
-        .team-select-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid #ff00ea; color: white; padding: 12px; margin: 8px 0; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 0.8rem; }
         table { width:100%; border-collapse:collapse; font-size:0.75rem; }
-        th { color:#ff00ea; border-bottom:1px solid #ff00ea44; padding:6px; position: sticky; top: 0; background: #141428; z-index: 5; }
-        td { padding:8px; text-align:center; border-bottom:1px solid #ffffff05; }
+        th { color:#ff00ea; border-bottom:1px solid #ff00ea44; padding:6px; position: sticky; top: 0; background: #141428; z-index: 5; font-size:0.75rem; }
+        td { padding:8px; text-align:center; border-bottom:1px solid #ffffff05; font-size:1.1rem; }
         .admin-controls { display: none; margin-left: 5px; }
         .btn-mini { background: none; border: none; cursor: pointer; font-size: 0.75rem; padding: 2px; display: inline-block; margin: 0 2px; }
         .btn-del { color: #ff4444; }
@@ -289,12 +531,11 @@
         .dot-d { background: #dc3545; }
         .dot-e { background: #6c757d; }
         .dot:last-child { border: 2px solid white; box-shadow: 0 0 5px white; }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:1000; align-items:center; justify-content:center; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:3000; align-items:center; justify-content:center; }
         .modal-content { background:#1a1a2e; padding:30px; border:2px solid #ff00ea; border-radius:25px; width:550px; text-align:center; box-shadow: 0 0 30px #ff00ea66; max-height: 85vh; overflow-y: auto; position: relative; }
-        .modal-content-full { width: 90%; max-width: 1200px; height: 90vh; }
-        input, textarea, select { width:100%; padding:10px; margin:8px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
+        input, textarea { width:100%; padding:10px; margin:8px 0; background:#0a0a14; border:1px solid #ff00ea44; color:white; border-radius:8px; }
         button { width:100%; padding:12px; background:#ff00ea; border:none; color:white; font-weight:bold; cursor:pointer; border-radius:8px; margin-top:10px; }
-        .top-right-tools { position: fixed; top: 10px; right: 60px; display: flex; gap: 10px; align-items: center; z-index: 20; }
+        .top-right-tools { position: fixed; top: 10px; right: 10px; display: flex; gap: 10px; align-items: center; z-index: 20; }
         .tool-icon { cursor: pointer; font-size: 1.3rem; opacity: 0.3; transition: 0.3s; }
         .tool-icon:hover { opacity: 1; transform: scale(1.1); }
         .names-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 20px; }
@@ -452,182 +693,68 @@
         }
         .clasificacion-1 td {
             color: #00ff88 !important;
-            font-size: 0.45rem !important;
+            font-size: 1.1rem !important;
             font-weight: bold;
             background: rgba(0,255,136,0.06) !important;
         }
         .clasificacion-2 td {
             color: #d0d0d0 !important;
-            font-size: 0.42rem !important;
+            font-size: 1.1rem !important;
             font-weight: bold;
             background: rgba(200,200,200,0.04) !important;
         }
         .clasificacion-3 td {
             color: #cd7f32 !important;
-            font-size: 0.4rem !important;
+            font-size: 1.1rem !important;
             font-weight: bold;
             background: rgba(205,127,50,0.06) !important;
         }
         .clasificacion-other td {
             color: #a0a0a0 !important;
-            font-size: 0.38rem !important;
+            font-size: 1.1rem !important;
             background: rgba(160,160,160,0.02) !important;
         }
-
-        .ultimos-partidos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-        .partido-card {
-            background: rgba(255,0,234,0.05);
-            border: 1px solid #ff00ea44;
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-        }
-        .partido-header {
-            text-align: center;
-            margin-bottom: 15px;
+        .welcome-name {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
             color: #00e5ff;
-            font-size: 1rem;
-            border-bottom: 1px solid #ff00ea44;
-            padding-bottom: 8px;
-        }
-        .partido-equipos {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        .partido-equipo {
-            flex: 1;
-            text-align: center;
-        }
-        .partido-resultado {
-            font-size: 1.8rem;
-            color: #ff00ea;
-            margin: 0 20px;
-            text-shadow: 0 0 10px #ff00ea;
-        }
-        .partido-goleadores-preview {
             font-size: 0.9rem;
-            border-top: 1px solid #ff00ea22;
-            padding-top: 10px;
-            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #00e5ff;
+            z-index: 15;
+            background: rgba(10,10,20,0.8);
+            padding: 5px 20px;
+            border-radius: 20px;
+            border: 1px solid #00e5ff44;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
         }
-        .goleador-nombre-equipo1 {
-            color: #ff00ea;
-            font-weight: bold;
-        }
-        .goleador-nombre-equipo2 {
-            color: #00e5ff;
-            font-weight: bold;
-        }
-        .goles-destacados {
-            color: #ffaa00;
-            font-weight: bold;
-            margin-left: 5px;
-        }
-        .admin-partido-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: none;
-            gap: 5px;
-        }
-        .partido-card:hover .admin-partido-controls {
-            display: flex;
-        }
-        .btn-partido-edit, .btn-partido-del {
-            background: rgba(0,0,0,0.7);
-            border: 1px solid #ff00ea;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-        .btn-partido-edit:hover {
-            background: #00e5ff;
-            border-color: #00e5ff;
-            transform: scale(1.1);
-        }
-        .btn-partido-del:hover {
-            background: #ff4444;
-            border-color: #ff4444;
-            transform: scale(1.1);
-        }
-        .btn-add-partido {
-            background: #00e5ff;
-            color: #000;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin: 20px auto;
-            display: block;
-            width: 300px;
-            box-shadow: 0 0 20px #00e5ff;
-            transition: 0.3s;
-        }
-        .btn-add-partido:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #00e5ff;
-        }
-        .goleadores-partido {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0,229,255,0.05);
+        /* Estilo para preview de logo */
+        .logo-preview {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 10px auto;
             border-radius: 10px;
-        }
-        .goleador-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid #ff00ea22;
-        }
-
-        .cerrar-btn-container {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ff00ea44;
+            border: 2px solid #ff00ea;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Новая верхняя панель с водяным знаком и кнопкой справа -->
-    <div class="top-bar">
-        <div class="watermark">HECHO POR VADYM</div>
-        <button class="ultimos-partidos-small-btn" onclick="openUltimosPartidos()">ÚLTIMOS PARTIDOS</button>
-    </div>
-    
+    <div class="watermark">Hecho por Vadym</div>
+    <button class="ultimos-partidos-btn" onclick="openModalFull('ultimos-partidos-full')">ÚLTIMOS PARTIDOS</button>
     <div class="top-right-tools">
         <button id="btn-logs-header" onclick="openModal('logs-modal')">LOGS</button>
     </div>
-    
-    <!-- Старая кнопка УДАЛЕНА -->
-    
-    <div class="main-header-container">
-        <div class="header" id="main-header">BIENVENIDOS</div>
-        <div class="welcome-name" id="welcome-name"></div>
-    </div>
-    
+    <div class="header" id="main-header">BIENVENIDOS</div>
+    <div class="welcome-name" id="welcome-name"></div>
     <div class="top-nav">
         <button id="toggle-view-btn" class="plantilla-main-btn phone-btn" onclick="toggleView()">MODO MÓVIL</button>
         <button class="plantilla-main-btn" onclick="openModal('plantillas-modal')">PLANTILLA</button>
     </div>
-    
     <div class="container" id="main-container">
         <div class="panel">
             <div class="edit-btn" onclick="clearModal('goleadores-modal')">✏️</div>
@@ -650,8 +777,54 @@
             <div class="data-box" id="clasificacion-table"></div>
         </div>
     </div>
-    
-    <!-- Все модальные окна БЕЗ ИЗМЕНЕНИЙ -->
+
+    <!-- Modal full screen para ÚLTIMOS PARTIDOS -->
+    <div id="ultimos-partidos-full" class="modal-full">
+        <div class="modal-header">
+            <h2>ÚLTIMOS PARTIDOS</h2>
+            <button class="close-btn" onclick="closeModalFull()">×</button>
+        </div>
+        <div style="text-align: center;">
+            <button id="add-partido-full-btn" class="add-partido-btn" style="display:none;" onclick="abrirModalAddPartido()">+ AÑADIR PARTIDO</button>
+        </div>
+        <div id="ultimos-partidos-list" class="partidos-list"></div>
+    </div>
+
+    <!-- Modal para añadir/editar partido -->
+    <div id="partido-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="partido-modal-title">AÑADIR PARTIDO</h3>
+            <input type="hidden" id="partido-index">
+            <input type="text" id="partido-equipo1" placeholder="EQUIPO 1 (ej: Pingüinos Locos)">
+            <input type="text" id="partido-equipo2" placeholder="EQUIPO 2 (ej: Pajillas)">
+            <input type="text" id="partido-resultado" placeholder="RESULTADO (ej: 3-1)">
+            <button onclick="guardarPartido()">GUARDAR</button>
+            <button onclick="closeModals()">CANCELAR</button>
+        </div>
+    </div>
+
+    <!-- Modal para detalle del partido (goleadores) -->
+    <div id="detalle-partido-modal" class="modal">
+        <div class="modal-content" style="width:800px; max-width:90vw;">
+            <h2 style="color:#ff00ea; margin-bottom:20px;">DETALLE DEL PARTIDO</h2>
+            <div id="detalle-partido-content"></div>
+            <button onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- Modal para añadir goleador -->
+    <div id="add-goleador-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="add-goleador-title">AÑADIR GOLEADOR</h3>
+            <input type="hidden" id="goleador-partido-idx">
+            <input type="hidden" id="goleador-equipo">
+            <input type="text" id="goleador-nombre" placeholder="Nombre del jugador">
+            <button onclick="guardarGoleador()">AÑADIR</button>
+            <button onclick="closeModals()">CANCELAR</button>
+        </div>
+    </div>
+
+    <!-- Modal de bienvenida -->
     <div id="welcome-modal" class="modal">
         <div class="modal-content">
             <h1 style="color:#ff00ea; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">¿QUIÉN ERES?</h1>
@@ -674,7 +847,8 @@
             <div class="admin-access-circle-left" onclick="openModal('auth-modal')"></div>
         </div>
     </div>
-    
+
+    <!-- Modal de logs -->
     <div id="logs-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:#00e5ff;">LOGS DE ACCESO</h2>
@@ -683,7 +857,8 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
-    
+
+    <!-- Modal de logs completo -->
     <div id="full-logs-modal" class="modal">
         <div class="modal-content">
             <h2 style="color:#00e5ff;">TODOS LOS LOGS DE ACCESO</h2>
@@ -691,18 +866,51 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
-    
+
+    <!-- Modal de información de equipo -->
     <div id="team-info-modal" class="modal">
         <div class="modal-content">
             <div id="team-info-content"></div>
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
-    
-    <div id="plantillas-modal" class="modal"><div class="modal-content"><h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2><button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">Pingüinos Locos</button><button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">Atlético de Jhonsy</button><button class="team-select-btn" onclick="showTeam('Pajillas')">Pajillas</button><button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button></div></div>
-    
-    <div id="team-list-modal" class="modal"><div class="modal-content"><h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2><div id="admin-team-controls" style="display:none; margin-bottom:10px;"><button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button></div><div id="players-list-content" class="player-grid"></div><button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button></div></div>
-    
+
+    <!-- Modal de plantillas -->
+    <div id="plantillas-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color:#ff00ea; margin-bottom:20px;">EQUIPOS</h2>
+            <button class="team-select-btn" onclick="showTeam('Pingüinos Locos')">
+                <img class="team-logo-select" id="logo-pinguinos" src="" alt="logo" onerror="this.style.display='none'">
+                <span class="team-name-select">Pingüinos Locos</span>
+            </button>
+            <button class="team-select-btn" onclick="showTeam('Atlético de Jhonsy')">
+                <img class="team-logo-select" id="logo-jhonsy" src="" alt="logo" onerror="this.style.display='none'">
+                <span class="team-name-select">Atlético de Jhonsy</span>
+            </button>
+            <button class="team-select-btn" onclick="showTeam('Pajillas')">
+                <img class="team-logo-select" id="logo-pajillas" src="" alt="logo" onerror="this.style.display='none'">
+                <span class="team-name-select">Pajillas</span>
+            </button>
+            <button style="background:transparent; border:1px solid grey; margin-top:20px;" onclick="closeModals()">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- Modal de lista de jugadores de un equipo -->
+    <div id="team-list-modal" class="modal">
+        <div class="modal-content">
+            <div id="team-header-with-logo" class="team-title-with-logo">
+                <img id="team-modal-logo" class="team-header-logo" src="" alt="logo" style="display:none;">
+                <h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2>
+            </div>
+            <div id="admin-team-controls" style="display:none; margin-bottom:10px;">
+                <button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button>
+            </div>
+            <div id="players-list-content" class="player-grid"></div>
+            <button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button>
+        </div>
+    </div>
+
+    <!-- Modal de autenticación admin -->
     <div id="auth-modal" class="modal">
         <div class="modal-content">
             <h3>ACCESO ESPECIAL</h3>
@@ -712,22 +920,35 @@
             <button onclick="closeModals()">CERRAR</button>
         </div>
     </div>
-    
+
+    <!-- Modal de error -->
     <div id="error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">ACCESO DENEGADO</div><button onclick="openModal('welcome-modal')">Cerrar</button></div></div>
-    
+
+    <!-- Modal de error de Enol -->
     <div id="enol-error-modal" class="modal"><div class="modal-content"><div style="color:red; font-weight:bold;">CREDENCIALES INCORRECTAS</div><button onclick="closeModals(); openModal('welcome-modal');">Cerrar</button></div></div>
-    
+
+    <!-- Modal de calendario -->
     <div id="calendario-modal" class="modal"><div class="modal-content"><h3 id="cal-title">AÑADIR PARTIDO</h3><input type="hidden" id="cal-index"><input type="text" id="cal-e1" placeholder="EQUIPO 1"><input type="text" id="cal-e2" placeholder="EQUIPO 2"><input type="text" id="cal-hora" placeholder="DIA Y HORA"><button onclick="saveData('calendario')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    
+
+    <!-- Modal de clausulazos -->
     <div id="clausulazos-modal" class="modal"><div class="modal-content"><h3 id="cl-title">NUEVO CLAUSULAZO</h3><input type="hidden" id="cl-index"><textarea id="cl-text" rows="4" placeholder="Escribe el clausulazo..."></textarea><button onclick="saveData('clausulazos')">PUBLICAR</button><button onclick="closeModals()">CERRAR</button></div></div>
-    
+
+    <!-- Modal de goleadores -->
     <div id="goleadores-modal" class="modal"><div class="modal-content"><h3 id="g-title">AÑADIR JUGADOR</h3><input type="hidden" id="g-index"><input type="text" id="g-name" placeholder="NOMBRE"><input type="number" id="g-goals" placeholder="GOLES"><input type="number" id="g-pj" placeholder="PJ"><button onclick="saveData('goleadores')">GUARDAR</button><button onclick="closeModals()">CERRAR</button></div></div>
    
+    <!-- Modal de clasificación (con carga de archivo) -->
     <div id="clasificacion-modal" class="modal">
         <div class="modal-content">
             <h3 id="c-title">AÑADIR/EDITAR EQUIPO</h3>
             <input type="hidden" id="c-index">
             <input type="text" id="c-team" placeholder="CLUB (Ej: PINGÜINOS LOCOS)">
+            
+            <!-- Campo para subir imagen -->
+            <label style="color:#00e5ff; font-size:0.8rem; display:block; text-align:left; margin-top:10px;">SUBIR LOGO:</label>
+            <input type="file" id="c-logo-file" accept="image/*" onchange="previewLogo()">
+            <img id="logo-preview" class="logo-preview" src="#" alt="Vista previa" style="display:none;">
+            
+            <input type="text" id="c-logo" placeholder="O PEGA URL DEL LOGO">
             <input type="number" id="c-pj" placeholder="PARTIDOS JUGADOS (PJ)">
             <input type="number" id="c-g" placeholder="GANADOS (G)">
             <input type="number" id="c-e" placeholder="EMPATES (E)">
@@ -741,6 +962,7 @@
         </div>
     </div>
     
+    <!-- Modal de autenticación de Enol -->
     <div id="enol-auth-modal" class="modal">
         <div class="modal-content">
             <h3>ACCESO PARA ENOL</h3>
@@ -752,63 +974,7 @@
         </div>
     </div>
 
-    <div id="ultimos-partidos-modal" class="modal">
-        <div class="modal-content modal-content-full">
-            <h1 style="color:#ff00ea; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 20px;">ÚLTIMOS PARTIDOS</h1>
-            
-            <button id="add-partido-btn" class="btn-add-partido" style="display:none;" onclick="openEditPartidoModal()">+ AÑADIR PARTIDO</button>
-            
-            <div id="partidos-grid" class="ultimos-partidos-grid"></div>
-            
-            <div class="cerrar-btn-container">
-                <button onclick="closeModals()" style="background: #333; width: 200px; margin: 0 auto;">CERRAR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="edit-partido-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="edit-partido-title">AÑADIR PARTIDO</h3>
-            <input type="hidden" id="partido-index">
-            
-            <select id="partido-equipo1">
-                <option value="">SELECCIONAR EQUIPO 1</option>
-                <option value="Pingüinos Locos">Pingüinos Locos</option>
-                <option value="Pajillas">Pajillas</option>
-                <option value="Atlético de Jhonsy">Atlético de Jhonsy</option>
-            </select>
-            
-            <select id="partido-equipo2">
-                <option value="">SELECCIONAR EQUIPO 2</option>
-                <option value="Pingüinos Locos">Pingüinos Locos</option>
-                <option value="Pajillas">Pajillas</option>
-                <option value="Atlético de Jhonsy">Atlético de Jhonsy</option>
-            </select>
-            
-            <input type="text" id="partido-dia" placeholder="DÍA (Ej: Sábado 15 Marzo)">
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
-                <input type="number" id="partido-goles1" placeholder="GOLES EQUIPO 1" min="0">
-                <input type="number" id="partido-goles2" placeholder="GOLES EQUIPO 2" min="0">
-            </div>
-            
-            <div class="goleadores-partido">
-                <h4 style="color:#ff00ea; margin-bottom: 10px;">GOLEADORES EQUIPO 1</h4>
-                <div id="goleadores-equipo1-container"></div>
-                <button onclick="addGoleadorInput('equipo1')" style="background: #00e5ff; color: #000; padding: 5px; font-size: 0.8rem;">+ AÑADIR GOLEADOR</button>
-                
-                <h4 style="color:#00e5ff; margin: 15px 0 10px;">GOLEADORES EQUIPO 2</h4>
-                <div id="goleadores-equipo2-container"></div>
-                <button onclick="addGoleadorInput('equipo2')" style="background: #00e5ff; color: #000; padding: 5px; font-size: 0.8rem;">+ AÑADIR GOLEADOR</button>
-            </div>
-            
-            <button onclick="savePartido()">GUARDAR PARTIDO</button>
-            <button onclick="closeModals()" style="background: #333;">CANCELAR</button>
-        </div>
-    </div>
-
     <script>
-        // Весь JavaScript ПОЛНОСТЬЮ БЕЗ ИЗМЕНЕНИЙ
         const BIN_ID = '69a1d862ae596e708f5006cd';
         const API_KEY = '$2a$10$.NLuB1Db9xzsid6tI3pxOu9Z59ibyaa5h74.q26Iik5b0DZVu/DS.';
         const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
@@ -819,14 +985,28 @@
             calendario: [], 
             teams: {}, 
             accessLogs: [],
-            ultimosPartidos: []
+            ultimosPartidos: [] 
         };
         let isAdmin = false;
         let isEnolMode = false;
         let currentOpenTeam = "";
         const captains = ["Enol", "Moreno", "Carlos Fernández"];
         
-        // Все функции остаются без изменений
+        // Función para previsualizar el logo seleccionado
+        function previewLogo() {
+            const file = document.getElementById('c-logo-file').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('c-logo').value = e.target.result;
+                    const preview = document.getElementById('logo-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
         function syncGoleadoresWithTeams() {
             const playerGoalsMap = new Map();
             
@@ -928,7 +1108,7 @@
                 
                 document.getElementById('btn-logs-header').style.display = 'none';
                 document.getElementById('add-player-btn').style.display = 'none';
-                document.getElementById('add-partido-btn').style.display = 'none';
+                document.getElementById('add-partido-full-btn').style.display = 'none';
                 
                 localStorage.setItem('user_name', 'Enol');
                 document.getElementById('welcome-name').innerHTML = `BIENVENIDO ENOL`;
@@ -1049,14 +1229,16 @@
         }
         
         function login() {
-            const u = document.getElementById('user').value, p = document.getElementById('pass').value;
-            if(u === '67' && p === '12') {
+            const u = document.getElementById('user').value;
+            const p = document.getElementById('pass').value;
+            
+            if(u === 'Ы' && p === 'И') {
                 isAdmin = true;
                 isEnolMode = false;
                 document.querySelectorAll('.edit-btn').forEach(b => b.style.display = 'block');
                 document.getElementById('btn-logs-header').style.display = 'block';
                 document.getElementById('add-player-btn').style.display = 'block';
-                document.getElementById('add-partido-btn').style.display = 'block';
+                document.getElementById('add-partido-full-btn').style.display = 'inline-block';
                 render();
                 renderLogs();
                 closeModals();
@@ -1074,41 +1256,6 @@
                 if (data) {
                     globalData = data;
                     if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
-                    
-                    // Datos de ejemplo para que coincida con la imagen
-                    if (globalData.goleadores.length === 0) {
-                        globalData.goleadores = [
-                            { name: "Enol", goals: 5, pj: 2 },
-                            { name: "Carlos Fern", goals: 4, pj: 3 },
-                            { name: "Moreno", goals: 3, pj: 4 },
-                            { name: "Fran", goals: 2, pj: 5 },
-                            { name: "Javito", goals: 1, pj: 5 },
-                            { name: "Pou", goals: 2, pj: 3 }
-                        ];
-                    }
-                    
-                    if (globalData.calendario.length === 0) {
-                        globalData.calendario = [
-                            { e1: "Atlético", e2: "Pajillas", hora: "JUEVES" },
-                            { e1: "Atlético", e2: "Pingüinos", hora: "VIERNES" }
-                        ];
-                    }
-                    
-                    if (globalData.clausulazos.length === 0) {
-                        globalData.clausulazos = [
-                            { title: "NOTICIA", body: "Atlético ha comprado a Ángel 38.000.000" },
-                            { title: "NOTICIA", body: "JAVI ha sido comprado al Pingüinos por 8.000.000!" }
-                        ];
-                    }
-                    
-                    if (globalData.clasificacion.length === 0) {
-                        globalData.clasificacion = [
-                            { team: "Pingüinos Locos", pj: 2, g: 1, e: 0, p: 1, gf: 9, gc: 4, pts: 3 },
-                            { team: "Pajillas", pj: 3, g: 1, e: 1, p: 1, gf: 9, gc: 11, pts: 4 },
-                            { team: "Atlético de Johnny", pj: 3, g: 0, e: 2, p: 1, gf: 8, gc: 11, pts: 2 }
-                        ];
-                    }
-                    
                     syncGoleadoresWithTeams();
                     render();
                     if(currentOpenTeam) renderTeamPlayers();
@@ -1116,7 +1263,7 @@
                     if(isAdmin) {
                         renderLogs();
                         document.getElementById('add-player-btn').style.display = 'block';
-                        document.getElementById('add-partido-btn').style.display = 'block';
+                        document.getElementById('add-partido-full-btn').style.display = 'inline-block';
                     }
                    
                     const savedName = localStorage.getItem('user_name');
@@ -1143,6 +1290,16 @@
         function showTeam(name) {
             currentOpenTeam = name;
             document.getElementById('team-name-title').innerText = name;
+            
+            const team = globalData.clasificacion.find(t => t.team === name);
+            const logoImg = document.getElementById('team-modal-logo');
+            if (team && team.logo) {
+                logoImg.src = team.logo;
+                logoImg.style.display = 'block';
+            } else {
+                logoImg.style.display = 'none';
+            }
+            
             document.getElementById('admin-team-controls').style.display = (isAdmin && !isEnolMode) ? 'block' : 'none';
             renderTeamPlayers(); 
             openModal('team-list-modal');
@@ -1153,11 +1310,11 @@
             
             if (players.length === 0) {
                 if (currentOpenTeam === "Pingüinos Locos") {
-                    players = [{ n: "Enol", g: 5, pj: 2 }, { n: "Eiden", g: 0, pj: 0 }, { n: "Fajardo", g: 0, pj: 0 }, { n: "Unai", g: 0, pj: 0 }, { n: "Andrés", g: 0, pj: 0 }, { n: "Javi", g: 1, pj: 5 }];
+                    players = [{ n: "Enol", g: 0, pj: 0 }, { n: "Eiden", g: 0, pj: 0 }, { n: "Fajardo", g: 0, pj: 0 }, { n: "Unai", g: 0, pj: 0 }, { n: "Andrés", g: 0, pj: 0 }, { n: "Javi", g: 0, pj: 0 }];
                 } else if (currentOpenTeam === "Pajillas") {
-                    players = [{ n: "Carlos Fernández", g: 4, pj: 3 }, { n: "Carlos Gutiérrez", g: 0, pj: 0 }, { n: "Jacobo", g: 0, pj: 0 }, { n: "Fran", g: 2, pj: 5 }];
+                    players = [{ n: "Carlos Fernández", g: 0, pj: 0 }, { n: "Carlos Gutiérrez", g: 0, pj: 0 }, { n: "Jacobo", g: 0, pj: 0 }, { n: "Fran", g: 0, pj: 0 }];
                 } else if (currentOpenTeam === "Atlético de Jhonsy") {
-                    players = [{ n: "Moreno", g: 3, pj: 4 }, { n: "Marc", g: 0, pj: 0 }, { n: "Rodri", g: 0, pj: 0 }, { n: "Pou", g: 2, pj: 3 }, { n: "Ángel", g: 0, pj: 0 }];
+                    players = [{ n: "Moreno", g: 0, pj: 0 }, { n: "Marc", g: 0, pj: 0 }, { n: "Rodri", g: 0, pj: 0 }, { n: "Pou", g: 0, pj: 0 }, { n: "Ángel", g: 0, pj: 0 }];
                 }
             }
             
@@ -1235,6 +1392,7 @@
             } else if (type === 'clasificacion') {
                 document.getElementById('c-index').value = index;
                 document.getElementById('c-team').value = item.team || '';
+                document.getElementById('c-logo').value = item.logo || '';
                 document.getElementById('c-pj').value = item.pj || 0;
                 document.getElementById('c-g').value = item.g || 0;
                 document.getElementById('c-e').value = item.e || 0;
@@ -1243,6 +1401,16 @@
                 document.getElementById('c-gc').value = item.gc || 0;
                 document.getElementById('c-money').value = item.money || '';
                 document.getElementById('c-form').value = item.form || "";
+                
+                // Mostrar vista previa del logo si existe
+                const preview = document.getElementById('logo-preview');
+                if (item.logo) {
+                    preview.src = item.logo;
+                    preview.style.display = 'block';
+                } else {
+                    preview.style.display = 'none';
+                }
+                
                 openModal('clasificacion-modal');
             } else if (type === 'calendario') {
                 document.getElementById('cal-index').value = index; 
@@ -1263,6 +1431,10 @@
                 return;
             }
             document.querySelectorAll(`#${id} input, #${id} textarea`).forEach(i => i.value = "");
+            // Ocultar preview de logo si es el modal de clasificación
+            if (id === 'clasificacion-modal') {
+                document.getElementById('logo-preview').style.display = 'none';
+            }
             openModal(id);
         }
         
@@ -1278,6 +1450,7 @@
                 let item = (idx !== "") ? globalData[type][idx] : {};
                
                 item.team = document.getElementById('c-team').value;
+                item.logo = document.getElementById('c-logo').value;
                 item.pj = parseInt(document.getElementById('c-pj').value) || 0;
                 item.g = parseInt(document.getElementById('c-g').value) || 0;
                 item.e = parseInt(document.getElementById('c-e').value) || 0;
@@ -1382,7 +1555,10 @@
           
             let html = `
                 <div class="team-info-card">
-                    <div class="team-name-big">${team.team}</div>
+                    <div class="team-header-with-logo">
+                        ${team.logo ? `<img class="team-logo-big" src="${team.logo}" alt="${team.team}" onerror="this.style.display='none'">` : ''}
+                        <div class="team-name-big">${team.team}</div>
+                    </div>
                     <div class="team-info-stats">
                         <div class="stat-item">
                             <div class="stat-label">PUNTOS</div>
@@ -1441,220 +1617,217 @@
             document.getElementById('team-info-content').innerHTML = html;
             openModal('team-info-modal');
         }
-
-        function openUltimosPartidos() {
+        
+        // ================== Funciones para ÚLTIMOS PARTIDOS ==================
+        function openModalFull(id) {
+            document.getElementById(id).style.display = 'block';
             renderUltimosPartidos();
-            openModal('ultimos-partidos-modal');
         }
 
-        function renderUltimosPartidos() {
-            const grid = document.getElementById('partidos-grid');
-            let html = '';
-            
-            const partidosOrdenados = [...(globalData.ultimosPartidos || [])].reverse();
-            
-            partidosOrdenados.forEach((partido, idx) => {
-                const goles1 = partido.goles1 || 0;
-                const goles2 = partido.goles2 || 0;
-                const resultadoClass = goles1 > goles2 ? 'goleadores-1' : (goles2 > goles1 ? 'goleadores-2' : '');
-                
-                let goleadoresPreview = '';
-                if (partido.goleadores1 && partido.goleadores1.length > 0) {
-                    goleadoresPreview += `<div><span class="goleador-nombre-equipo1">${partido.equipo1}:</span> `;
-                    partido.goleadores1.forEach((g, i) => {
-                        goleadoresPreview += `${g.nombre} <span class="goles-destacados">(${g.goles})</span>`;
-                        if (i < partido.goleadores1.length - 1) goleadoresPreview += ', ';
-                    });
-                    goleadoresPreview += '</div>';
-                }
-                
-                if (partido.goleadores2 && partido.goleadores2.length > 0) {
-                    goleadoresPreview += `<div><span class="goleador-nombre-equipo2">${partido.equipo2}:</span> `;
-                    partido.goleadores2.forEach((g, i) => {
-                        goleadoresPreview += `${g.nombre} <span class="goles-destacados">(${g.goles})</span>`;
-                        if (i < partido.goleadores2.length - 1) goleadoresPreview += ', ';
-                    });
-                    goleadoresPreview += '</div>';
-                }
-                
-                html += `
-                    <div class="partido-card">
-                        <div class="admin-partido-controls" style="display:${isAdmin ? 'flex' : 'none'}">
-                            <div class="btn-partido-edit" onclick="event.stopPropagation(); openEditPartidoModal(${globalData.ultimosPartidos.indexOf(partido)})">✎</div>
-                            <div class="btn-partido-del" onclick="event.stopPropagation(); eliminarPartido(${globalData.ultimosPartidos.indexOf(partido)})">✖</div>
-                        </div>
-                        <div class="partido-header">
-                            ${partido.dia || 'Sin fecha'}
-                        </div>
-                        <div class="partido-equipos">
-                            <div class="partido-equipo">${partido.equipo1}</div>
-                            <div class="partido-resultado ${resultadoClass}">${goles1} - ${goles2}</div>
-                            <div class="partido-equipo">${partido.equipo2}</div>
-                        </div>
-                        ${goleadoresPreview ? `<div class="partido-goleadores-preview">${goleadoresPreview}</div>` : ''}
-                    </div>
-                `;
-            });
-            
-            if (partidosOrdenados.length === 0) {
-                html = '<p style="text-align:center; color:#777; padding:50px;">No hay partidos registrados</p>';
-            }
-            
-            grid.innerHTML = html;
+        function closeModalFull() {
+            document.querySelectorAll('.modal-full').forEach(m => m.style.display = 'none');
         }
 
-        function openEditPartidoModal(index = null) {
-            if (!isAdmin) {
-                alert("Solo el administrador puede gestionar partidos");
-                return;
-            }
-            
-            document.getElementById('edit-partido-title').innerText = index !== null ? 'EDITAR PARTIDO' : 'AÑADIR PARTIDO';
-            document.getElementById('partido-index').value = index !== null ? index : '';
-            
-            if (index !== null) {
-                const partido = globalData.ultimosPartidos[index];
-                document.getElementById('partido-equipo1').value = partido.equipo1 || '';
-                document.getElementById('partido-equipo2').value = partido.equipo2 || '';
-                document.getElementById('partido-dia').value = partido.dia || '';
-                document.getElementById('partido-goles1').value = partido.goles1 || 0;
-                document.getElementById('partido-goles2').value = partido.goles2 || 0;
-                
-                renderGoleadoresInputs('equipo1', partido.goleadores1 || []);
-                renderGoleadoresInputs('equipo2', partido.goleadores2 || []);
-            } else {
-                document.getElementById('partido-equipo1').value = '';
-                document.getElementById('partido-equipo2').value = '';
-                document.getElementById('partido-dia').value = '';
-                document.getElementById('partido-goles1').value = 0;
-                document.getElementById('partido-goles2').value = 0;
-                renderGoleadoresInputs('equipo1', []);
-                renderGoleadoresInputs('equipo2', []);
-            }
-            
-            closeModals();
-            openModal('edit-partido-modal');
+        function abrirModalAddPartido() {
+            document.getElementById('partido-modal-title').innerText = 'AÑADIR PARTIDO';
+            document.getElementById('partido-index').value = '';
+            document.getElementById('partido-equipo1').value = '';
+            document.getElementById('partido-equipo2').value = '';
+            document.getElementById('partido-resultado').value = '';
+            openModal('partido-modal');
         }
 
-        function renderGoleadoresInputs(equipo, goleadores) {
-            const container = document.getElementById(`goleadores-${equipo}-container`);
-            container.innerHTML = '';
-            
-            goleadores.forEach((goleador, idx) => {
-                const div = document.createElement('div');
-                div.className = 'goleador-item';
-                div.style.marginBottom = '10px';
-                div.innerHTML = `
-                    <input type="text" class="goleador-nombre-${equipo}" value="${goleador.nombre}" placeholder="Nombre del jugador" style="width: 60%; margin-right: 5px;">
-                    <input type="number" class="goleador-goles-${equipo}" value="${goleador.goles}" placeholder="Goles" min="1" style="width: 30%;">
-                    <span onclick="this.parentElement.remove()" style="cursor:pointer; color:#ff4444; margin-left:5px;">✖</span>
-                `;
-                container.appendChild(div);
-            });
+        function editarPartido(e, index) {
+            e.stopPropagation(); // Предотвращаем открытие деталей
+            const p = globalData.ultimosPartidos[index];
+            document.getElementById('partido-modal-title').innerText = 'EDITAR PARTIDO';
+            document.getElementById('partido-index').value = index;
+            document.getElementById('partido-equipo1').value = p.equipo1;
+            document.getElementById('partido-equipo2').value = p.equipo2;
+            document.getElementById('partido-resultado').value = p.resultado;
+            openModal('partido-modal');
         }
 
-        function addGoleadorInput(equipo) {
-            const container = document.getElementById(`goleadores-${equipo}-container`);
-            const div = document.createElement('div');
-            div.className = 'goleador-item';
-            div.style.marginBottom = '10px';
-            div.innerHTML = `
-                <input type="text" class="goleador-nombre-${equipo}" placeholder="Nombre del jugador" style="width: 60%; margin-right: 5px;">
-                <input type="number" class="goleador-goles-${equipo}" placeholder="Goles" min="1" style="width: 30%;">
-                <span onclick="this.parentElement.remove()" style="cursor:pointer; color:#ff4444; margin-left:5px;">✖</span>
-            `;
-            container.appendChild(div);
-        }
-
-        function savePartido() {
-            const index = document.getElementById('partido-index').value;
-            const equipo1 = document.getElementById('partido-equipo1').value;
-            const equipo2 = document.getElementById('partido-equipo2').value;
-            
-            if (!equipo1 || !equipo2) {
-                alert("Selecciona ambos equipos");
-                return;
-            }
-            
-            if (equipo1 === equipo2) {
-                alert("Los equipos deben ser diferentes");
-                return;
-            }
-            
-            const partido = {
-                equipo1: equipo1,
-                equipo2: equipo2,
-                dia: document.getElementById('partido-dia').value,
-                goles1: parseInt(document.getElementById('partido-goles1').value) || 0,
-                goles2: parseInt(document.getElementById('partido-goles2').value) || 0,
-                goleadores1: [],
-                goleadores2: []
-            };
-            
-            document.querySelectorAll('.goleador-nombre-equipo1').forEach((input, i) => {
-                const nombre = input.value.trim();
-                const golesInput = document.querySelectorAll('.goleador-goles-equipo1')[i];
-                const goles = parseInt(golesInput?.value) || 1;
-                if (nombre) {
-                    partido.goleadores1.push({ nombre: nombre, goles: goles });
-                    
-                    if (globalData.teams && globalData.teams[equipo1]) {
-                        const jugador = globalData.teams[equipo1].find(j => j.n === nombre);
-                        if (jugador) {
-                            jugador.g = (jugador.g || 0) + goles;
-                            jugador.pj = (jugador.pj || 0) + 1;
-                        }
-                    }
-                }
-            });
-            
-            document.querySelectorAll('.goleador-nombre-equipo2').forEach((input, i) => {
-                const nombre = input.value.trim();
-                const golesInput = document.querySelectorAll('.goleador-goles-equipo2')[i];
-                const goles = parseInt(golesInput?.value) || 1;
-                if (nombre) {
-                    partido.goleadores2.push({ nombre: nombre, goles: goles });
-                    
-                    if (globalData.teams && globalData.teams[equipo2]) {
-                        const jugador = globalData.teams[equipo2].find(j => j.n === nombre);
-                        if (jugador) {
-                            jugador.g = (jugador.g || 0) + goles;
-                            jugador.pj = (jugador.pj || 0) + 1;
-                        }
-                    }
-                }
-            });
-            
-            if (index === '') {
-                if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
-                globalData.ultimosPartidos.push(partido);
-            } else {
-                globalData.ultimosPartidos[index] = partido;
-            }
-            
-            syncGoleadoresWithTeams();
-            
-            closeModals();
-            renderUltimosPartidos();
-            render();
-            sync();
-        }
-
-        function eliminarPartido(index) {
-            if (!isAdmin) return;
+        function eliminarPartido(e, index) {
+            e.stopPropagation();
             if (confirm("¿Eliminar este partido?")) {
                 globalData.ultimosPartidos.splice(index, 1);
                 renderUltimosPartidos();
                 sync();
             }
         }
-        
+
+        function guardarPartido() {
+            const idx = document.getElementById('partido-index').value;
+            const equipo1 = document.getElementById('partido-equipo1').value.trim();
+            const equipo2 = document.getElementById('partido-equipo2').value.trim();
+            const resultado = document.getElementById('partido-resultado').value.trim();
+            
+            if (!equipo1 || !equipo2 || !resultado) {
+                alert("Todos los campos son obligatorios");
+                return;
+            }
+
+            // Si es nuevo, inicializar goles vacíos
+            const partido = { 
+                equipo1, 
+                equipo2, 
+                resultado,
+                goles: {
+                    [equipo1]: [],
+                    [equipo2]: []
+                }
+            };
+            
+            if (idx === "") {
+                globalData.ultimosPartidos.unshift(partido);
+            } else {
+                // Conservar los goles existentes al editar
+                const old = globalData.ultimosPartidos[parseInt(idx)];
+                partido.goles = old.goles || { [equipo1]: [], [equipo2]: [] };
+                globalData.ultimosPartidos[parseInt(idx)] = partido;
+            }
+            
+            renderUltimosPartidos();
+            closeModals();
+            sync();
+        }
+
+        function verDetallePartido(index) {
+            const partido = globalData.ultimosPartidos[index];
+            if (!partido) return;
+
+            // Asegurar estructura de goles
+            if (!partido.goles) {
+                partido.goles = {};
+                partido.goles[partido.equipo1] = [];
+                partido.goles[partido.equipo2] = [];
+            }
+
+            let html = `
+                <div class="detalle-partido">
+                    <div class="detalle-header">${partido.equipo1} - ${partido.equipo2}</div>
+                    <div class="detalle-resultado">${partido.resultado}</div>
+                    <div class="goleadores-grid">
+                        <div class="goleadores-col">
+                            <h3>${partido.equipo1}</h3>
+                            <div id="goleadores-${index}-eq1">
+            `;
+            
+            const golesEq1 = partido.goles[partido.equipo1] || [];
+            golesEq1.forEach((goleador, i) => {
+                html += `
+                    <div class="goleador-item">
+                        <span class="goleador-nombre">${goleador}</span>
+                        <div class="goleador-acciones" style="display:${isAdmin && !isEnolMode ? 'flex' : 'none'}">
+                            <button class="btn-edit-partido" onclick="eliminarGoleador(${index}, '${partido.equipo1}', ${i})">✖</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                            </div>
+                            ${isAdmin && !isEnolMode ? `<button class="btn-add-goleador" onclick="abrirModalAddGoleador(${index}, '${partido.equipo1}')">+ AÑADIR GOLEADOR</button>` : ''}
+                        </div>
+                        <div class="goleadores-col">
+                            <h3>${partido.equipo2}</h3>
+                            <div id="goleadores-${index}-eq2">
+            `;
+
+            const golesEq2 = partido.goles[partido.equipo2] || [];
+            golesEq2.forEach((goleador, i) => {
+                html += `
+                    <div class="goleador-item">
+                        <span class="goleador-nombre">${goleador}</span>
+                        <div class="goleador-acciones" style="display:${isAdmin && !isEnolMode ? 'flex' : 'none'}">
+                            <button class="btn-edit-partido" onclick="eliminarGoleador(${index}, '${partido.equipo2}', ${i})">✖</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                            </div>
+                            ${isAdmin && !isEnolMode ? `<button class="btn-add-goleador" onclick="abrirModalAddGoleador(${index}, '${partido.equipo2}')">+ AÑADIR GOLEADOR</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detalle-partido-content').innerHTML = html;
+            openModal('detalle-partido-modal');
+        }
+
+        function abrirModalAddGoleador(partidoIdx, equipo) {
+            document.getElementById('add-goleador-title').innerText = `AÑADIR GOLEADOR - ${equipo}`;
+            document.getElementById('goleador-partido-idx').value = partidoIdx;
+            document.getElementById('goleador-equipo').value = equipo;
+            document.getElementById('goleador-nombre').value = '';
+            openModal('add-goleador-modal');
+        }
+
+        function guardarGoleador() {
+            const partidoIdx = parseInt(document.getElementById('goleador-partido-idx').value);
+            const equipo = document.getElementById('goleador-equipo').value;
+            const nombre = document.getElementById('goleador-nombre').value.trim();
+            
+            if (!nombre) {
+                alert("Ingresa un nombre");
+                return;
+            }
+
+            const partido = globalData.ultimosPartidos[partidoIdx];
+            if (!partido.goles) partido.goles = {};
+            if (!partido.goles[equipo]) partido.goles[equipo] = [];
+            
+            partido.goles[equipo].push(nombre);
+            
+            closeModals();
+            // Переоткрыть детали, чтобы обновить список
+            verDetallePartido(partidoIdx);
+            sync();
+        }
+
+        function eliminarGoleador(partidoIdx, equipo, goleadorIdx) {
+            if (!isAdmin || isEnolMode) return;
+            const partido = globalData.ultimosPartidos[partidoIdx];
+            if (partido.goles && partido.goles[equipo]) {
+                partido.goles[equipo].splice(goleadorIdx, 1);
+                verDetallePartido(partidoIdx);
+                sync();
+            }
+        }
+
+        function renderUltimosPartidos() {
+            const list = document.getElementById('ultimos-partidos-list');
+            let html = '';
+            
+            if (!globalData.ultimosPartidos || globalData.ultimosPartidos.length === 0) {
+                html = '<div style="text-align:center; color:#888; padding:50px;">No hay partidos registrados</div>';
+            } else {
+                globalData.ultimosPartidos.forEach((p, idx) => {
+                    html += `
+                        <div class="partido-item" onclick="verDetallePartido(${idx})">
+                            <span class="partido-info">${p.equipo1} - ${p.equipo2}  ${p.resultado}</span>
+                            <div class="partido-admin-tools" style="display:${isAdmin && !isEnolMode ? 'flex' : 'none'}" onclick="event.stopPropagation()">
+                                <button class="btn-edit-partido" onclick="editarPartido(event, ${idx})">✎</button>
+                                <button class="btn-del-partido" onclick="eliminarPartido(event, ${idx})">✖</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            list.innerHTML = html;
+        }
+
+        // ================== Основной рендер ==================
         function render() {
             const disp = (isAdmin && !isEnolMode) ? 'inline-block' : 'none';
             
             syncGoleadoresWithTeams();
             
-            // TOP GOLEADORES 
+            // TOP GOLEADORES
             let gHtml = `<div class="goleadores-scroll-container">`;
             gHtml += `<table><tr><th>NOMBRE</th><th>G</th><th>PJ</th><th></th></tr>`;
             
@@ -1700,7 +1873,7 @@
             gHtml += `</div>`;
             document.getElementById('goleadores-table').innerHTML = gHtml;
             
-            // CLASIFICACIÓN 
+            // CLASIFICACIÓN
             let cHtml = `<table><tr><th>CLUB</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th><th></th></tr>`;
             
             [...globalData.clasificacion]
@@ -1724,7 +1897,12 @@
                     const dgStr = dg > 0 ? `+${dg}` : dg;
                     
                     cHtml += `<tr class="${rowClass} clasificacion-equipo" onclick="showTeamInfo('${i.team}')">
-                        <td>${i.team}</td>
+                        <td>
+                            <div class="team-cell">
+                                ${i.logo ? `<img class="team-logo-small" src="${i.logo}" alt="${i.team}" onerror="this.style.display='none'">` : ''}
+                                <span class="team-name-with-logo">${i.team}</span>
+                            </div>
+                        </td>
                         <td>${i.pj || 0}</td>
                         <td>${i.g || 0}</td>
                         <td>${i.e || 0}</td>
@@ -1732,7 +1910,7 @@
                         <td>${i.gf || 0}</td>
                         <td>${i.gc || 0}</td>
                         <td style="color:${dg > 0 ? '#00ff88' : dg < 0 ? '#ff4444' : '#888'}; font-weight:bold;">${dgStr}</td>
-                        <td style="color:#ff00ea; font-weight:bold; font-size: 0.45rem;">${i.pts}</td>
+                        <td style="color:#ff00ea; font-weight:bold;">${i.pts}</td>
                         <td><div class="admin-controls" style="display:${disp}">
                             <span class="btn-mini btn-edit" onclick="event.stopPropagation(); openEditModal('clasificacion', ${oi})">✎</span>
                             <span class="btn-mini btn-del" onclick="event.stopPropagation(); deleteItem('clasificacion', ${oi})">X</span>
@@ -1741,15 +1919,13 @@
                 });
             document.getElementById('clasificacion-table').innerHTML = cHtml + `</table>`;
             
-            // CALENDARIO
-            let calHtml = `<table><tr><th>PARTIDO</th><th>DÍA</th><th></th></tr>`;
+            let calHtml = `<table><tr><th>PARTIDO</th><th>DIA</th><th></th></tr>`;
             globalData.calendario.forEach((c, idx) => {
                 calHtml += `<tr><td>${c.e1} VS ${c.e2}</td><td>${c.hora}</td>
                 <td><div class="admin-controls" style="display:${disp}"><span class="btn-mini btn-edit" onclick="openEditModal('calendario', ${idx})">✎</span><span class="btn-mini btn-del" onclick="deleteItem('calendario', ${idx})">X</span></div></td></tr>`;
             });
             document.getElementById('calendario-table').innerHTML = calHtml + `</table>`;
             
-            // CLAUSULAZOS
             let clHtml = '';
             globalData.clausulazos.forEach((cl, idx) => {
                 const enolEdit = (isEnolMode) ? 'inline-block' : disp;
@@ -1763,6 +1939,38 @@
                 </div>`;
             });
             document.getElementById('clausulazos-list').innerHTML = clHtml || 'Sin noticias';
+
+            // Actualizar logos en el modal de plantillas
+            const pinguinos = globalData.clasificacion.find(t => t.team === 'Pingüinos Locos');
+            const jhonsy = globalData.clasificacion.find(t => t.team === 'Atlético de Jhonsy');
+            const pajillas = globalData.clasificacion.find(t => t.team === 'Pajillas');
+            
+            if (pinguinos && pinguinos.logo) {
+                document.getElementById('logo-pinguinos').src = pinguinos.logo;
+                document.getElementById('logo-pinguinos').style.display = 'inline-block';
+            } else {
+                document.getElementById('logo-pinguinos').style.display = 'none';
+            }
+            
+            if (jhonsy && jhonsy.logo) {
+                document.getElementById('logo-jhonsy').src = jhonsy.logo;
+                document.getElementById('logo-jhonsy').style.display = 'inline-block';
+            } else {
+                document.getElementById('logo-jhonsy').style.display = 'none';
+            }
+            
+            if (pajillas && pajillas.logo) {
+                document.getElementById('logo-pajillas').src = pajillas.logo;
+                document.getElementById('logo-pajillas').style.display = 'inline-block';
+            } else {
+                document.getElementById('logo-pajillas').style.display = 'none';
+            }
+
+            document.getElementById('add-partido-full-btn').style.display = (isAdmin && !isEnolMode) ? 'inline-block' : 'none';
+            
+            if (document.getElementById('ultimos-partidos-full').style.display === 'block') {
+                renderUltimosPartidos();
+            }
         }
         
         function openModal(id) {
