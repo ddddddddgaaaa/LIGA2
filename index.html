@@ -163,41 +163,55 @@
             flex-direction: column;
             gap: 15px;
         }
-        .partido-item {
-            background: rgba(255,255,255,0.03);
-            border-left: 5px solid #ff00ea;
-            padding: 15px 20px;
-            border-radius: 15px;
+        /* Nuevo estilo para tarjetas de partidos en neón */
+        .partido-neon-card {
+            background: rgba(20,20,40,0.9);
+            border: 2px solid #ff00ea;
+            border-radius: 20px;
+            padding: 20px 25px;
+            box-shadow: 0 0 25px #ff00ea66, inset 0 0 15px #ff00ea33;
+            cursor: pointer;
+            transition: 0.3s;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            transition: 0.2s;
+            position: relative;
         }
-        .partido-item:hover {
-            background: rgba(255,0,234,0.1);
-            border-left-width: 8px;
+        .partido-neon-card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 35px #ff00ea, inset 0 0 20px #ff00ea66;
+            border-color: #00e5ff;
         }
-        .partido-info {
+        .partido-neon-teams {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            gap: 40px;
+            flex: 1;
+            justify-content: center;
         }
-        .partido-teams {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: white;
+        .partido-neon-team {
+            text-align: center;
+            min-width: 120px;
         }
-        .partido-score {
-            font-size: 2rem;
+        .partido-neon-team .team-name {
+            color: #ff00ea;
+            font-size: 1.6rem;
             font-weight: bold;
-            color: #00e5ff;
-            text-shadow: 0 0 15px #00e5ff, 0 0 30px #00e5ff;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px #ff00ea;
             letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .partido-neon-team .team-score {
+            color: #00e5ff;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 0 0 20px #00e5ff, 0 0 40px #00e5ff;
+            line-height: 1;
         }
         .partido-admin-tools {
             display: flex;
             gap: 10px;
+            margin-left: 20px;
         }
         .partido-admin-tools button {
             background: none;
@@ -207,12 +221,15 @@
             width: auto;
             margin: 0;
             padding: 5px 10px;
-        }
-        .btn-edit-partido {
             color: #00e5ff;
+            text-shadow: 0 0 8px currentColor;
         }
-        .btn-del-partido {
+        .partido-admin-tools .btn-del-partido {
             color: #ff4444;
+        }
+        /* Mantener el estilo antiguo por si acaso, pero no se usará */
+        .partido-item {
+            display: none;
         }
 
         /* Modal de detalle de partido */
@@ -753,6 +770,38 @@
             border: 2px solid #ff00ea;
             display: block;
         }
+        /* Botones +1 y -1 PJ en la plantilla - agrupados */
+        .admin-team-controls-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .pj-btn {
+            background: #00e5ff;
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+            box-shadow: 0 0 10px #00e5ff;
+            flex: 1 1 auto;
+            min-width: 100px;
+        }
+        .pj-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00e5ff;
+        }
+        .pj-btn.minus {
+            background: #ffaa00;
+            box-shadow: 0 0 10px #ffaa00;
+        }
+        .pj-btn.minus:hover {
+            box-shadow: 0 0 20px #ffaa00;
+        }
     </style>
 </head>
 <body>
@@ -915,7 +964,11 @@
                 <h2 id="team-name-title" style="color:#ff00ea; text-transform: uppercase;"></h2>
             </div>
             <div id="admin-team-controls" style="display:none; margin-bottom:10px;">
-                <button onclick="addPlayerPrompt()" style="padding:5px; font-size:0.7rem; width:auto; background:#00e5ff;">+ AÑADIR JUGADOR</button>
+                <div class="admin-team-controls-buttons">
+                    <button onclick="addPlayerPrompt()" class="pj-btn" style="background:#00e5ff;">+ AÑADIR JUGADOR</button>
+                    <button onclick="addPjToAllInTeam()" class="pj-btn">+1 PJ A TODOS</button>
+                    <button onclick="restarPjToAllInTeam()" class="pj-btn minus">-1 PJ A TODOS</button>
+                </div>
             </div>
             <div id="players-list-content" class="player-grid"></div>
             <button style="margin-top:20px; background: #333;" onclick="openModal('plantillas-modal')">VOLVER</button>
@@ -1346,6 +1399,38 @@
                 </div>`;
             });
             document.getElementById('players-list-content').innerHTML = html;
+        }
+        
+        // Función para añadir +1 PJ a todos los jugadores del equipo actual
+        function addPjToAllInTeam() {
+            if (!isAdmin || isEnolMode) return;
+            if (!globalData.teams[currentOpenTeam]) return;
+            
+            globalData.teams[currentOpenTeam].forEach(player => {
+                player.pj = (player.pj || 0) + 1;
+            });
+            
+            syncGoleadoresWithTeams();
+            renderTeamPlayers();
+            render();
+            sync();
+        }
+
+        // Función para restar -1 PJ a todos (sin bajar de 0)
+        function restarPjToAllInTeam() {
+            if (!isAdmin || isEnolMode) return;
+            if (!globalData.teams[currentOpenTeam]) return;
+            
+            globalData.teams[currentOpenTeam].forEach(player => {
+                if (player.pj > 0) {
+                    player.pj -= 1;
+                }
+            });
+            
+            syncGoleadoresWithTeams();
+            renderTeamPlayers();
+            render();
+            sync();
         }
         
         function editPlayer(idx) {
@@ -1818,11 +1903,22 @@
                 html = '<div style="text-align:center; color:#888; padding:50px;">No hay partidos registrados</div>';
             } else {
                 globalData.ultimosPartidos.forEach((p, idx) => {
+                    // Dividir el resultado en goles de equipo1 y equipo2
+                    const goles = p.resultado.split('-').map(g => g.trim());
+                    const golesEq1 = goles[0] || '0';
+                    const golesEq2 = goles[1] || '0';
+                    
                     html += `
-                        <div class="partido-item" onclick="verDetallePartido(${idx})">
-                            <div class="partido-info">
-                                <div class="partido-teams">${p.equipo1} - ${p.equipo2}</div>
-                                <div class="partido-score">${p.resultado}</div>
+                        <div class="partido-neon-card" onclick="verDetallePartido(${idx})">
+                            <div class="partido-neon-teams">
+                                <div class="partido-neon-team">
+                                    <div class="team-name">${p.equipo1}</div>
+                                    <div class="team-score">${golesEq1}</div>
+                                </div>
+                                <div class="partido-neon-team">
+                                    <div class="team-name">${p.equipo2}</div>
+                                    <div class="team-score">${golesEq2}</div>
+                                </div>
                             </div>
                             <div class="partido-admin-tools" style="display:${isAdmin && !isEnolMode ? 'flex' : 'none'}" onclick="event.stopPropagation()">
                                 <button class="btn-edit-partido" onclick="editarPartido(event, ${idx})">✎</button>
