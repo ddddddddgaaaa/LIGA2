@@ -1320,7 +1320,28 @@
                 const data = await res.json();
                 if (data) {
                     globalData = data;
+                    
+                    // Asegurar que existan los equipos principales en clasificacion
+                    const equiposBase = ["Pingüinos Locos", "Atlético de Jhonsy", "Pajillas"];
+                    if (!globalData.clasificacion) globalData.clasificacion = [];
+                    equiposBase.forEach(teamName => {
+                        if (!globalData.clasificacion.some(t => t.team === teamName)) {
+                            globalData.clasificacion.push({ 
+                                team: teamName, 
+                                pj: 0, g: 0, e: 0, p: 0, gf: 0, gc: 0, pts: 0, 
+                                money: "0€", form: "", logo: "" 
+                            });
+                        }
+                    });
+                    
+                    // Asegurar estructura teams
+                    if (!globalData.teams) globalData.teams = {};
+                    equiposBase.forEach(teamName => {
+                        if (!globalData.teams[teamName]) globalData.teams[teamName] = [];
+                    });
+                    
                     if (!globalData.ultimosPartidos) globalData.ultimosPartidos = [];
+                    
                     syncGoleadoresWithTeams();
                     render();
                     if(currentOpenTeam) renderTeamPlayers();
@@ -1362,6 +1383,7 @@
                 logoImg.src = team.logo;
                 logoImg.style.display = 'block';
             } else {
+                logoImg.src = '';
                 logoImg.style.display = 'none';
             }
             
@@ -2059,6 +2081,7 @@
                 document.getElementById('logo-pinguinos').src = pinguinos.logo;
                 document.getElementById('logo-pinguinos').style.display = 'inline-block';
             } else {
+                document.getElementById('logo-pinguinos').src = '';
                 document.getElementById('logo-pinguinos').style.display = 'none';
             }
             
@@ -2066,6 +2089,7 @@
                 document.getElementById('logo-jhonsy').src = jhonsy.logo;
                 document.getElementById('logo-jhonsy').style.display = 'inline-block';
             } else {
+                document.getElementById('logo-jhonsy').src = '';
                 document.getElementById('logo-jhonsy').style.display = 'none';
             }
             
@@ -2073,6 +2097,7 @@
                 document.getElementById('logo-pajillas').src = pajillas.logo;
                 document.getElementById('logo-pajillas').style.display = 'inline-block';
             } else {
+                document.getElementById('logo-pajillas').src = '';
                 document.getElementById('logo-pajillas').style.display = 'none';
             }
 
