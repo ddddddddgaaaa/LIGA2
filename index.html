@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Бот для прокачек от 0savelka0 - BLUE NEON</title>
+    <title>Бот для прокачек от vadyms22</title>
     <style>
         :root {
             --bg-color: #020205;
@@ -943,56 +943,14 @@
                 cloudDb = firebase.firestore();
                 cloudReady = true;
                 await loadParticipantProfilesFromCloud();
-                await loadMainDataFromCloud();
-                subscribeMainDataFromCloud();
-                subscribeRigFromCloud();
+                // подписка и загрузка общего состояния
+                await loadAppStateFromCloud();
+                subscribeRigFromCloud(); // подписка на изменения подкрутки в реальном времени
+                subscribeAppStateFromCloud();
             } catch (error) {
                 cloudReady = false;
                 console.error('Firebase init error:', error);
             }
-        }
-
-        // Загрузить историю и топ из облака
-        async function loadMainDataFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                const doc = await cloudDb.collection('mainData').doc('data').get();
-                if (doc.exists) {
-                    const d = doc.data();
-                    if (d.globalHistory) globalHistory = d.globalHistory;
-                    if (d.leaders) leaders = d.leaders;
-                    saveToStorage();
-                    renderLeaderboard();
-                }
-            } catch (e) { console.error('loadMainData error:', e); }
-        }
-
-        // Подписка на изменения истории и топа в реальном времени
-        function subscribeMainDataFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                cloudDb.collection('mainData').doc('data').onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        if (d.globalHistory) globalHistory = d.globalHistory;
-                        if (d.leaders) leaders = d.leaders;
-                        saveToStorage();
-                        renderLeaderboard();
-                    }
-                });
-            } catch (e) { console.error('subscribeMainData error:', e); }
-        }
-
-        // Сохранить историю и топ в облако
-        async function syncMainDataToCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                await cloudDb.collection('mainData').doc('data').set({
-                    globalHistory,
-                    leaders,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                });
-            } catch (e) { console.error('syncMainData error:', e); }
         }
         function saveToStorage() {
             localStorage.setItem('bot_top_leaders', JSON.stringify(leaders));
@@ -1000,6 +958,84 @@
             localStorage.setItem('bot_participant_profiles', JSON.stringify(participantProfiles));
             localStorage.setItem('bot_participant_states', JSON.stringify(participantStates));
             localStorage.setItem('bot_channel_name', currentChannelName);
+            // push snapshot to cloud (debounced)
+            cloudSaveAppStateDebounced();
+        }
+
+        // ===== Firebase app state sync =====
+        let _cloudSaveTimeout = null;
+        async function cloudSaveAppState() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const snapshot = {
+                    leaders: leaders || [],
+                    globalHistory: globalHistory || [],
+                    participantProfiles: participantProfiles || {},
+                    participantStates: participantStates || {},
+                    participants: Array.from(participants || []),
+                    channelName: currentChannelName || '',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                };
+                await cloudDb.collection('app').doc('appState').set(snapshot, { merge: true });
+            } catch (e) {
+                console.error('cloudSaveAppState error:', e);
+            }
+        }
+
+        function cloudSaveAppStateDebounced() {
+            if (_cloudSaveTimeout) clearTimeout(_cloudSaveTimeout);
+            _cloudSaveTimeout = setTimeout(() => {
+                cloudSaveAppState();
+                _cloudSaveTimeout = null;
+            }, 800);
+        }
+
+        async function loadAppStateFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const doc = await cloudDb.collection('app').doc('appState').get();
+                if (!doc.exists) return;
+                const data = doc.data() || {};
+                if (Array.isArray(data.leaders) && data.leaders.length) leaders = data.leaders;
+                if (Array.isArray(data.globalHistory) && data.globalHistory.length) globalHistory = data.globalHistory;
+                if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                if (data.participantStates) participantStates = Object.assign({}, participantStates, data.participantStates);
+                if (Array.isArray(data.participants)) {
+                    participants = new Set(data.participants);
+                }
+                saveToStorage();
+                renderLeaderboard();
+                updateFullParticipantsList();
+            } catch (e) {
+                console.error('loadAppStateFromCloud error:', e);
+            }
+        }
+
+        function subscribeAppStateFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                cloudDb.collection('app').doc('appState').onSnapshot((doc) => {
+                    if (!doc.exists) return;
+                    const data = doc.data() || {};
+                    // apply remote updates but avoid overwriting local transient changes blindly
+                    if (Array.isArray(data.leaders)) {
+                        leaders = data.leaders;
+                        renderLeaderboard();
+                    }
+                    if (Array.isArray(data.globalHistory)) {
+                        globalHistory = data.globalHistory;
+                        saveToStorage();
+                    }
+                    if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                    if (data.participantStates) participantStates = Object.assign({}, participantStates, data.participantStates);
+                    if (Array.isArray(data.participants)) {
+                        participants = new Set(data.participants);
+                        updateFullParticipantsList();
+                    }
+                });
+            } catch (e) {
+                console.error('subscribeAppStateFromCloud error:', e);
+            }
         }
         function applyTheme(themeName) {
             const theme = THEMES[themeName] || THEMES.pink;
@@ -1129,8 +1165,8 @@
             closeAuthModal();
         }
         function renderLeaderboard() { leaders.sort((a,b) => b.amount - a.amount); const container = document.getElementById('leaderboard'); container.innerHTML = ''; leaders.forEach((item, i) => { container.innerHTML += `<div class="leader-item"><div class="leader-row" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${i+1}.</b> ${item.name}</span><div class="btn-group" style="display:flex; align-items:center; gap:5px;"><b style="color:var(--accent-neon-blue);">${item.amount.toLocaleString()} ₽</b><button class="btn-edit-row" onclick="editLeader(${i})" style="background:none; border:none; color:var(--accent-neon-blue); cursor:pointer;">✏️</button><button onclick="deleteLeader(${i})" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px;">🗑️</button></div></div></div>`; }); saveToStorage(); }
-        function editLeader(index) { let l = leaders[index]; let name = prompt('Никнейм:', l.name); let amount = prompt('Сумма вывода (₽):', l.amount); let deposits = prompt('Сумма депозитов (₽):', l.deposits || 0); let tg = prompt('Telegram:', l.tg || getSavedTelegram(l.name) || ''); let site = prompt('Сайт:', l.site || ''); if (name !== null) { l.name = name; l.amount = parseFloat(amount) || 0; l.deposits = parseFloat(deposits) || 0; l.tg = tg; l.site = site; saveParticipantTelegram(l.name, tg); syncParticipantTelegramToCloud(l.name, tg); renderLeaderboard(); syncMainDataToCloud(); } }
-        function deleteLeader(index) { if(confirm('Удалить игрока из топа?')) { leaders.splice(index, 1); renderLeaderboard(); syncMainDataToCloud(); } }
+        function editLeader(index) { let l = leaders[index]; let name = prompt('Никнейм:', l.name); let amount = prompt('Сумма вывода (₽):', l.amount); let deposits = prompt('Сумма депозитов (₽):', l.deposits || 0); let tg = prompt('Telegram:', l.tg || getSavedTelegram(l.name) || ''); let site = prompt('Сайт:', l.site || ''); if (name !== null) { l.name = name; l.amount = parseFloat(amount) || 0; l.deposits = parseFloat(deposits) || 0; l.tg = tg; l.site = site; saveParticipantTelegram(l.name, tg); syncParticipantTelegramToCloud(l.name, tg); renderLeaderboard(); } }
+        function deleteLeader(index) { if(confirm('Удалить игрока из топа?')) { leaders.splice(index, 1); renderLeaderboard(); } }
         function copyParticipants() { const list = getActiveParticipants().map((u, i) => `${i + 1}. ${u}`).join('\n'); if (list) { navigator.clipboard.writeText(list).then(() => { alert('Список участников скопирован в буфер обмена!'); }).catch(err => { alert('Ошибка при копировании: ' + err); }); } else { alert('Список участников пуст!'); } }
         function toggleParticipantActive(name, active) {
             setParticipantActive(name, active);
@@ -1241,10 +1277,10 @@
         }
         function pasteParticipants() { openImportParticipants(); }
         setInterval(() => { if (timerRunning && timerSeconds > 0) { timerSeconds--; updateTimerDisplay(); if(timerSeconds === 0) playAlarm(); } }, 1000);
-        function saveWinnerStats() { const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; const tg = document.getElementById('win-tg-input').value.trim(); const site = document.getElementById('win-site-input').value.trim() || '---'; if (tg) { saveParticipantTelegram(currentWinner, tg); syncParticipantTelegramToCloud(currentWinner, tg); } if(amt > 0 || dep > 0) { let existing = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase()); if(existing) { existing.amount += amt; if(!existing.deposits) existing.deposits = 0; existing.deposits += dep; if(tg) existing.tg = tg; if(site !== '---') existing.site = site; } else { leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); } } globalHistory.push({ name: currentWinner, amount: amt, deposit: dep, site: site, tg: tg || '---', rerolls: rerollCount, date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() }); rerollCount = 0; renderLeaderboard(); syncMainDataToCloud(); closeModals(); }
+        function saveWinnerStats() { const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; const tg = document.getElementById('win-tg-input').value.trim(); const site = document.getElementById('win-site-input').value.trim() || '---'; if (tg) { saveParticipantTelegram(currentWinner, tg); syncParticipantTelegramToCloud(currentWinner, tg); } if(amt > 0 || dep > 0) { let existing = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase()); if(existing) { existing.amount += amt; if(!existing.deposits) existing.deposits = 0; existing.deposits += dep; if(tg) existing.tg = tg; if(site !== '---') existing.site = site; } else { leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); } } globalHistory.push({ name: currentWinner, amount: amt, deposit: dep, site: site, tg: tg || '---', rerolls: rerollCount, date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() }); rerollCount = 0; renderLeaderboard(); closeModals(); }
         function openStats() { const stats = {}; globalHistory.forEach(h => { const siteName = h.site || '---'; if(!stats[siteName]) stats[siteName] = { count: 0, sum: 0, deps: 0 }; stats[siteName].count++; stats[siteName].sum += (h.amount || 0); stats[siteName].deps += (h.deposit || 0); }); const body = document.getElementById('stats-body'); body.innerHTML = ''; Object.keys(stats).sort().forEach(site => { body.innerHTML += `<tr><td><b>${site}</b></td><td>${stats[site].count}</td><td>${stats[site].sum.toLocaleString()} ₽</td><td>${stats[site].deps.toLocaleString()} ₽</td><td><button class="btn-edit-row" style="color:var(--accent-neon-blue); background:none; border:none; cursor:pointer;" onclick="editProjectName('${site}')" title="Переименовать проект">✏️</button><button class="btn-delete-row" style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteProjectRecords('${site}')" title="Удалить все записи по проекту">🗑️</button></td></tr>`; }); document.getElementById('stats-modal').style.display = 'flex'; }
-        function editProjectName(oldName) { let newName = prompt('Новое название проекта:', oldName); if (newName && newName !== oldName) { globalHistory.forEach(h => { if (h.site === oldName) h.site = newName; }); leaders.forEach(l => { if (l.site === oldName) l.site = newName; }); saveToStorage(); syncMainDataToCloud(); openStats(); renderLeaderboard(); } }
-        function deleteProjectRecords(siteName) { if(confirm(`Удалить ВСЕ записи истории по проекту \"${siteName}\"? Это обновит статистику.`)) { globalHistory = globalHistory.filter(h => h.site !== siteName); saveToStorage(); syncMainDataToCloud(); openStats(); } }
+        function editProjectName(oldName) { let newName = prompt('Новое название проекта:', oldName); if (newName && newName !== oldName) { globalHistory.forEach(h => { if (h.site === oldName) h.site = newName; }); leaders.forEach(l => { if (l.site === oldName) l.site = newName; }); saveToStorage(); openStats(); renderLeaderboard(); } }
+        function deleteProjectRecords(siteName) { if(confirm(`Удалить ВСЕ записи истории по проекту \"${siteName}\"? Это обновит статистику.`)) { globalHistory = globalHistory.filter(h => h.site !== siteName); saveToStorage(); openStats(); } }
         function openHistory() {
             const body = document.getElementById('history-body');
             body.innerHTML = '';
@@ -1258,8 +1294,8 @@
             });
             document.getElementById('history-modal').style.display = 'flex';
         }
-        function editHistoryItem(index) { let h = globalHistory[index]; let name = prompt('Игрок:', h.name); let tg = prompt('Telegram:', h.tg || getSavedTelegram(h.name) || ''); let site = prompt('Проект:', h.site); let amount = prompt('Вывод (₽):', h.amount); let deposit = prompt('Депозит (₽):', h.deposit); let date = prompt('Дата и время:', h.date); if (name !== null) { h.name = name; h.tg = tg; h.site = site; h.amount = parseFloat(amount) || 0; h.deposit = parseFloat(deposit) || 0; h.date = date; saveParticipantTelegram(h.name, tg); syncParticipantTelegramToCloud(h.name, tg); saveToStorage(); syncMainDataToCloud(); openHistory(); renderLeaderboard(); } }
-        function deleteHistoryItem(index) { if(confirm('Удалить эту запись из истории?')) { globalHistory.splice(index, 1); saveToStorage(); syncMainDataToCloud(); openHistory(); } }
+        function editHistoryItem(index) { let h = globalHistory[index]; let name = prompt('Игрок:', h.name); let tg = prompt('Telegram:', h.tg || getSavedTelegram(h.name) || ''); let site = prompt('Проект:', h.site); let amount = prompt('Вывод (₽):', h.amount); let deposit = prompt('Депозит (₽):', h.deposit); let date = prompt('Дата и время:', h.date); if (name !== null) { h.name = name; h.tg = tg; h.site = site; h.amount = parseFloat(amount) || 0; h.deposit = parseFloat(deposit) || 0; h.date = date; saveParticipantTelegram(h.name, tg); syncParticipantTelegramToCloud(h.name, tg); saveToStorage(); openHistory(); renderLeaderboard(); } }
+        function deleteHistoryItem(index) { if(confirm('Удалить эту запись из истории?')) { globalHistory.splice(index, 1); saveToStorage(); openHistory(); } }
         function editWinnerCounter(type) { if (!currentWinner) return; let val = prompt('Введите новое значение:'); if (val !== null) { if (type === 'count') document.getElementById('win-count-stat').innerText = val; if (type === 'sum') document.getElementById('win-sum-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; if (type === 'dep') document.getElementById('win-dep-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; } }
         function showWinnerRef(name) {
             closeModals();
@@ -1333,7 +1369,6 @@
                 });
                 // Синхронизируем рерол в облако
                 syncRerollToCloud(currentWinner, rerollCount);
-                syncMainDataToCloud();
                 saveToStorage();
             }
             closeModals();
