@@ -777,6 +777,7 @@
         let currentRotation = 0;
         let currentCodeword = "22";
         let selectedImportFormat = 'csv';
+        let autoSpinEnabled = false;
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
@@ -1397,8 +1398,8 @@
             // Нам нужно: startAngle + winnerIdx * sliceAngle + sliceAngle/2 = -π/2 + 2πk
             // => startAngle = -π/2 - winnerIdx * sliceAngle - sliceAngle/2 + 2πk
             const fullSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 4));
-            // Небольшой случайный сдвиг внутри сектора (не до края, ±40% от размера сектора)
-            const jitter = (Math.random() - 0.5) * sliceAngle * 0.8;
+            // Очень маленький сдвиг внутри сектора — только для визуальной естественности
+            const jitter = (Math.random() - 0.5) * sliceAngle * 0.3;
             const endAngle = -Math.PI / 2 - (winnerIdx * sliceAngle + sliceAngle / 2) - fullSpins + jitter;
 
             const startAngle = 0;
@@ -1407,7 +1408,6 @@
             function animate(timestamp) {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // ease out quart
                 const ease = 1 - Math.pow(1 - progress, 4);
                 const currentAngle = startAngle + (endAngle - startAngle) * ease;
                 drawWheel(currentAngle);
@@ -1420,17 +1420,23 @@
                         showWinnerRef(winner);
                         document.getElementById('roll-button').disabled = false;
                     } else {
-                        document.getElementById('elim-log').innerText = 'ВЫБЫЛ: ' + winner;
+                        // Показываем кто выбыл
+                        document.getElementById('elim-log').innerText = '❌ ВЫБЫЛ: ' + winner;
                         playTick();
+                        // Удаляем выбывшего
                         wheelParticipants.splice(winnerIdx, 1);
-                        if (wheelParticipants.length === 1) {
+
+                        if (wheelParticipants.length === 0) {
+                            document.getElementById('roll-button').disabled = false;
+                        } else if (wheelParticipants.length === 1) {
+                            // Последний оставшийся — победитель
                             setTimeout(() => {
+                                drawWheel(0);
                                 showWinnerRef(wheelParticipants[0]);
                                 document.getElementById('roll-button').disabled = false;
-                            }, 1200);
-                        } else if (wheelParticipants.length === 0) {
-                            document.getElementById('roll-button').disabled = false;
+                            }, 1500);
                         } else {
+                            // Перерисовываем колесо без выбывшего и разблокируем кнопку
                             setTimeout(() => {
                                 drawWheel(0);
                                 if (autoSpinEnabled) {
@@ -1438,7 +1444,7 @@
                                 } else {
                                     document.getElementById('roll-button').disabled = false;
                                 }
-                            }, 900);
+                            }, 1000);
                         }
                     }
                 }
