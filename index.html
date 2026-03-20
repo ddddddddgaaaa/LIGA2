@@ -660,6 +660,7 @@
             <option value="yellow">Желтый</option>
             <option value="cyan">Бирюзовый</option>
         </select>
+        <div id="cloud-status" style="margin-left:12px; font-size:12px; color:#94a3b8;">Cloud: —</div>
     </div>
     <div class="container">
         <div class="panel menu-panel">
@@ -989,8 +990,11 @@
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 };
                 await cloudDb.collection('app').doc('appState').set(snapshot, { merge: true });
+                console.log('cloudSaveAppState: saved snapshot');
+                try { setCloudStatus('saved', 'green'); } catch(e){}
             } catch (e) {
                 console.error('cloudSaveAppState error:', e);
+                try { setCloudStatus('save error', 'red'); } catch(err){}
             }
         }
 
@@ -1008,6 +1012,8 @@
                 const doc = await cloudDb.collection('app').doc('appState').get();
                 if (!doc.exists) return;
                 const data = doc.data() || {};
+                console.log('loadAppStateFromCloud: data=', data);
+                try { setCloudStatus('loaded', 'green'); } catch(e){}
                 if (Array.isArray(data.leaders) && data.leaders.length) leaders = data.leaders;
                 if (Array.isArray(data.globalHistory) && data.globalHistory.length) globalHistory = data.globalHistory;
                 if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
@@ -1020,6 +1026,7 @@
                 updateFullParticipantsList();
             } catch (e) {
                 console.error('loadAppStateFromCloud error:', e);
+                try { setCloudStatus('load error', 'red'); } catch(err){}
             }
         }
 
@@ -1029,6 +1036,8 @@
                 cloudDb.collection('app').doc('appState').onSnapshot((doc) => {
                     if (!doc.exists) return;
                     const data = doc.data() || {};
+                    console.log('subscribeAppStateFromCloud: snapshot', data);
+                    try { setCloudStatus('remote update', 'green'); } catch(e){}
                     // apply remote updates but avoid overwriting local transient changes blindly
                     if (Array.isArray(data.leaders)) {
                         leaders = data.leaders;
@@ -1048,6 +1057,14 @@
             } catch (e) {
                 console.error('subscribeAppStateFromCloud error:', e);
             }
+        }
+        function setCloudStatus(text, color) {
+            try {
+                const el = document.getElementById('cloud-status');
+                if (!el) return;
+                el.innerText = 'Cloud: ' + text;
+                el.style.color = color === 'green' ? '#34d399' : (color === 'red' ? '#ef4444' : '#94a3b8');
+            } catch (e) { console.warn('setCloudStatus error', e); }
         }
         function applyTheme(themeName) {
             const theme = THEMES[themeName] || THEMES.pink;
