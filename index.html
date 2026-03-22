@@ -782,7 +782,7 @@
             cloudSaveAppStateDebounced();
         }
 
-        function openStats() {
+        function openStats() { hideNickDisplay();
             const stats = {};
             globalHistory.forEach(h => { const s = h.site||'---'; if(!stats[s]) stats[s]={count:0,sum:0,deps:0}; stats[s].count++; stats[s].sum+=(h.amount||0); stats[s].deps+=(h.deposit||0); });
             const body = document.getElementById('stats-body'); body.innerHTML = '';
@@ -792,7 +792,7 @@
         function editProjectName(oldName) { let newName = prompt('Новое название проекта:', oldName); if (newName && newName !== oldName) { globalHistory.forEach(h => { if(h.site===oldName) h.site=newName; }); leaders.forEach(l => { if(l.site===oldName) l.site=newName; }); saveToStorage(); cloudSaveAppStateDebounced(); openStats(); renderLeaderboard(); } }
         function deleteProjectRecords(siteName) { if(confirm(`Удалить ВСЕ записи по "${siteName}"?`)) { globalHistory = globalHistory.filter(h => h.site!==siteName); leaders = leaders.filter(l => globalHistory.some(h => h.name.toLowerCase()===l.name.toLowerCase())); saveToStorage(); cloudSaveAppStateDebounced(); openStats(); renderLeaderboard(); } }
 
-        function openHistory() {
+        function openHistory() { hideNickDisplay();
             const body = document.getElementById('history-body'); body.innerHTML = '';
             [...globalHistory].reverse().forEach((h, index) => {
                 const realIndex = globalHistory.length - 1 - index;
@@ -808,7 +808,7 @@
         function deleteHistoryItem(index) { if(confirm('Удалить запись?')) { const d = globalHistory[index]; globalHistory.splice(index,1); if(!globalHistory.some(h => h.name.toLowerCase()===d.name.toLowerCase())) leaders=leaders.filter(l => l.name.toLowerCase()!==d.name.toLowerCase()); saveToStorage(); cloudSaveAppStateDebounced(); openHistory(); renderLeaderboard(); } }
         function editWinnerCounter(type) { if(!currentWinner) return; let val = prompt('Новое значение:'); if(val !== null) { if(type==='count') document.getElementById('win-count-stat').innerText=val; if(type==='sum') document.getElementById('win-sum-stat').innerText=parseInt(val).toLocaleString()+' ₽'; if(type==='dep') document.getElementById('win-dep-stat').innerText=parseInt(val).toLocaleString()+' ₽'; } }
 
-        function showWinnerRef(name) {
+        function showWinnerRef(name) { hideNickDisplay();
             closeModals();
             currentWinner = name; winTimerActive = true;
             const winNick = document.getElementById('win-nick');
@@ -844,7 +844,7 @@
 
         function resetWheelParticipants() { if(confirm('Сбросить участников рулетки?')) { wheelParticipants=[]; try { localStorage.removeItem('bot_wheel_participants'); } catch(e){} document.getElementById('elim-log').innerText=''; const nl = document.getElementById('arrow-label'); if(nl) nl.style.display='none'; drawWheel(0); } }
 
-        function openWheel() {
+        function openWheel() { hideNickDisplay();
             if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) wheelParticipants = getActiveParticipants();
             document.getElementById('wheel-modal').style.display = 'flex';
             const autos = document.getElementById('autoskip-checkbox'); if (autos) autos.checked = !!autoSpinEnabled;
@@ -1034,6 +1034,11 @@
             autoSpinEnabled = false;
             const autos = document.getElementById('autoskip-checkbox'); if (autos) autos.checked = false;
             const nl = document.getElementById('arrow-label'); if (nl) nl.style.display = 'none';
+            // Показываем ник когда вернулись на главный экран
+            const nick = document.getElementById('user-nick-el'); if (nick && currentChannelName) nick.style.display = 'block';
+        }
+        function hideNickDisplay() {
+            const nick = document.getElementById('user-nick-el'); if (nick) nick.style.display = 'none';
         }
 
         async function resetAll() { if(confirm('ПОЛНЫЙ СБРОС УЧАСТНИКОВ?')) { await updateParticipantsInFirebase([], true); userRolesCache={}; userMessages={}; rerollCount=0; saveToStorage(); } }
