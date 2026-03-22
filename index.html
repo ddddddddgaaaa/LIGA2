@@ -912,7 +912,7 @@
                 // Центр сектора по радиусу (середина между центром и краем)
                 const textMid = r * 0.58;
                 // Шрифт крупнее — минимум 9px, максимум 22px
-                let fontSize = Math.max(9, Math.min(22, Math.floor(220 / p.length)));
+                let fontSize = Math.max(12, Math.min(28, Math.floor(320 / p.length)));
                 let displayName = String(name || '');
                 ctx.font = `bold ${fontSize}px Inter`;
                 const maxW = r * 0.62;
