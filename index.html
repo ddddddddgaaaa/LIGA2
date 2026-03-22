@@ -125,7 +125,22 @@
         .win-response-msg { background: rgba(15,23,42,0.9) !important; border-left: 4px solid var(--accent-neon-blue) !important; border-radius: 8px !important; color: #e0f2fe !important; padding: 8px 14px !important; margin: 6px 0 !important; }
         #win-nick.winner-responded, #win-status-label.winner-responded { color: var(--accent-success-soft) !important; text-shadow: 0 0 18px rgba(34,197,94,0.7) !important; }
         #win-timer-label.timer-responded { color: var(--accent-success-soft) !important; background: rgba(34,197,94,0.25) !important; border-color: var(--accent-success) !important; }
-        .middle-split { display: flex; gap: 15px; height: 100%; }
+        #participation-header {
+            text-align: center;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-neon-blue);
+            padding: 10px 8px 6px;
+            animation: participationPulse 2.5s ease-in-out infinite;
+            line-height: 1.4;
+        }
+        @keyframes participationPulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); letter-spacing: 2px; }
+            50% { opacity: 1; transform: scale(1.04); letter-spacing: 3px; }
+        }
         .red-participants { flex: 1; border: 3px solid var(--section-accent); border-radius: 18px; background: var(--dark-purple); display: flex; flex-direction: column; overflow: hidden; }
         .red-participants h4 { margin: 0; padding: 12px 15px; background: var(--section-accent-panel); color: var(--soft-light); font-weight: 700; font-size: 13px; letter-spacing: 1px; border-bottom: 1px solid var(--section-accent-border); }
         #full-participants-list { flex: 1; overflow-y: auto; padding: 12px; font-size: 14.5px; line-height: 1.65; color: #e0e7ff; max-height: calc(21 * 36px); }
@@ -171,7 +186,7 @@
             align-items: center;
         }
         /* Надпись над стрелкой */
-        #arrow-nick-label {
+        #arrow-label {
             position: absolute;
             top: -52px;
             left: 50%;
@@ -255,6 +270,7 @@
             <div class="watermark">(TG - vadymtm90)</div>
         </div>
         <div class="panel" style="padding: 15px;">
+            <div id="participation-header" style="margin-bottom:8px;">ДЛЯ УЧАСТИЯ В ПРОКАЧКЕ «22» В ЧАТ</div>
             <div class="middle-split">
                 <div class="red-participants">
                     <h4>СПИСОК УЧАСТНИКОВ <span id="user-count" style="font-size: 18px; color: var(--accent-neon-blue); font-weight: 800;">0</span></h4>
@@ -289,7 +305,7 @@
             <!-- Обёртка колеса: стрелка и ник позиционируются относительно неё -->
             <div class="wheel-wrapper" id="wheel-wrapper">
                 <!-- Ник над стрелкой -->
-                <div id="arrow-nick-label"></div>
+                <div id="arrow-label"></div>
                 <!-- Стрелка -->
                 <div id="wheel-arrow"></div>
                 <!-- Колесо -->
@@ -387,7 +403,7 @@
                 <input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)">
                 <input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)">
                 <input type="text" id="win-tg-input" placeholder="Telegram @username">
-                <select id="win-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0;"><option value="---">---</option></select>
+                <select id="win-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0;"><option value="---">---</option><option>Кб</option><option>СкинБро</option><option>СкинХаус</option><option>Жабка</option><option>Мэджик</option><option>Дино</option><option>Ретух</option><option>BountyStars</option><option>Upgrader</option></select>
                 <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
                 <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
                 <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
@@ -429,7 +445,7 @@
         let selectedImportFormat = 'csv';
         let autoSpinEnabled = false;
         let wheelParticipants = [];
-        const wheelColors = ['#e11d48','#0891b2','#16a34a','#9333ea','#ea580c','#0d9488','#dc2626','#2563eb','#15803d','#7c3aed','#c2410c','#0e7490'];
+        const wheelColors = ['#0f172a','#1e1b4b','#172554','#14281d','#2d1b4e','#1c1917','#1e3a5f','#0d2137','#1a0533','#0f2517','#2a1a0e','#1f1135'];
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const FIREBASE_CONFIG = window.FIREBASE_CONFIG;
         const THEMES = {
@@ -690,7 +706,11 @@
         function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
         function toggleTimer() { timerRunning = !timerRunning; if(audioCtx.state === 'suspended') audioCtx.resume(); }
         function enableTimerEdit() { timerRunning = false; const d = document.getElementById('timer'), inp = document.getElementById('timer-input'); d.style.display = 'none'; inp.style.display = 'block'; inp.value = d.innerText; inp.focus(); inp.onblur = () => { let p = inp.value.split(':').map(Number).reverse(); timerSeconds = (p[0]||0)+(p[1]||0)*60+(p[2]||0)*3600; updateTimerDisplay(); inp.style.display='none'; d.style.display='block'; }; }
-        function changeCodeword() { let nw = prompt('Новое кодовое слово (сейчас: '+currentCodeword+'):'); if (nw !== null && nw.trim() !== '') { currentCodeword = nw.trim(); document.getElementById('codeword-display').innerText = currentCodeword; } }
+        function updateParticipationHeader() {
+            const el = document.getElementById('participation-header');
+            if (el) el.textContent = `ДЛЯ УЧАСТИЯ В ПРОКАЧКЕ «${currentCodeword}» В ЧАТ`;
+        }
+        function changeCodeword() { let nw = prompt('Новое кодовое слово (сейчас: '+currentCodeword+'):'); if (nw !== null && nw.trim() !== '') { currentCodeword = nw.trim(); document.getElementById('codeword-display').innerText = currentCodeword; updateParticipationHeader(); } }
         function parseImportedParticipants(raw) { if (!raw.trim()) return []; return raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => l.replace(/^\d+\s*([.):-])?\s*/, '').trim()).filter(Boolean); }
         function openImportParticipants() { document.getElementById('import-participants-modal').style.display = 'flex'; updateImportApplyState(); }
         function setImportFormat(format) { selectedImportFormat = format; }
@@ -793,14 +813,14 @@
             window.winInt = setInterval(() => { if(winTimerActive) { s++; let sec=s%60, min=Math.floor(s/60), hr=Math.floor(min/60); document.getElementById('win-timer-label').innerText=`${hr.toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; } }, 1000);
         }
 
-        function resetWheelParticipants() { if(confirm('Сбросить участников рулетки?')) { wheelParticipants=[]; try { localStorage.removeItem('bot_wheel_participants'); } catch(e){} document.getElementById('elim-log').innerText=''; const nl = document.getElementById('arrow-nick-label'); if(nl) nl.style.display='none'; drawWheel(0); } }
+        function resetWheelParticipants() { if(confirm('Сбросить участников рулетки?')) { wheelParticipants=[]; try { localStorage.removeItem('bot_wheel_participants'); } catch(e){} document.getElementById('elim-log').innerText=''; const nl = document.getElementById('arrow-label'); if(nl) nl.style.display='none'; drawWheel(0); } }
 
         function openWheel() {
             if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) wheelParticipants = getActiveParticipants();
             document.getElementById('wheel-modal').style.display = 'flex';
             const autos = document.getElementById('autoskip-checkbox'); if (autos) autos.checked = !!autoSpinEnabled;
             document.getElementById('elim-log').innerText = '';
-            const nl = document.getElementById('arrow-nick-label'); if(nl) nl.style.display='none';
+            const nl = document.getElementById('arrow-label'); if(nl) nl.style.display='none';
             setSpinMode('elimination');
             drawWheel(0);
         }
@@ -891,7 +911,7 @@
 
         // Показываем ник того на кого указывает стрелка
         function updateNickLabel(angle) {
-            const nl = document.getElementById('arrow-nick-label');
+            const nl = document.getElementById('arrow-label');
             if (!nl) return;
             const p = wheelParticipants || [];
             if (p.length === 0) { nl.style.display = 'none'; return; }
@@ -940,7 +960,7 @@
                 // Останавливаемся
                 drawWheel(endAngle);
                 // Показываем ник победителя над стрелкой жирно
-                const nl = document.getElementById('arrow-nick-label');
+                const nl = document.getElementById('arrow-label');
                 if (nl) { nl.innerText = winner; nl.style.display = 'block'; }
 
                 if (mode === 'normal') {
@@ -981,7 +1001,7 @@
             winTimerActive = false; clearInterval(window.winInt);
             autoSpinEnabled = false;
             const autos = document.getElementById('autoskip-checkbox'); if (autos) autos.checked = false;
-            const nl = document.getElementById('arrow-nick-label'); if (nl) nl.style.display = 'none';
+            const nl = document.getElementById('arrow-label'); if (nl) nl.style.display = 'none';
         }
 
         async function resetAll() { if(confirm('ПОЛНЫЙ СБРОС УЧАСТНИКОВ?')) { await updateParticipantsInFirebase([], true); userRolesCache={}; userMessages={}; rerollCount=0; saveToStorage(); } }
@@ -1050,6 +1070,7 @@
         try { loadSiteOptionsFromCloud(); subscribeSiteOptionsFromCloud(); } catch(e) { try { renderSiteSelects(); renderSiteOptionsList(); } catch(_){} }
         renderLeaderboard();
         updateFullParticipantsList();
+        updateParticipationHeader();
         try { wheelParticipants = JSON.parse(localStorage.getItem('bot_wheel_participants')||'[]'); } catch(e) { wheelParticipants=[]; }
         applyTheme(localStorage.getItem('bot_theme_name') || 'pink');
         updateChannelUi();
