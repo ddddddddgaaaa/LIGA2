@@ -836,11 +836,11 @@
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead>……
             <th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th>
         </thead><tbody id="history-body"></tbody>
-    </table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+     …</table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead>……
             <th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th>
         </thead><tbody id="stats-body"></tbody>
-    </table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+     …</table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="wheel-modal" class="modal">
         <div class="modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
@@ -848,7 +848,7 @@
                 <!-- Стрелка с дополнительным элементом для отображения ника -->
                 <div style="position: relative; display: inline-block;">
                     <div style="position: absolute; top: -55px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #fff; z-index: 10;"></div>
-                    <div id="arrow-label" class="arrow-label" style="display: none;"></div>
+                    <div id="arrow-label" class="arrow-label"></div>
                 </div>
                 <canvas id="wheelCanvas" width="700" height="700"></canvas>
             </div>
@@ -2068,9 +2068,6 @@
             currentRotation = 0;
             setSpinMode('elimination');
             drawWheel(0);
-            // Скрываем надпись над стрелкой при открытии
-            const arrowLabel = document.getElementById('arrow-label');
-            if (arrowLabel) arrowLabel.style.display = 'none';
         }
         function reSpinToHome() {
             rerollCount++;
@@ -2131,6 +2128,26 @@
         }
 
         function executeSpin() { if (wheelParticipants.length === 0) return; document.getElementById('roll-button').disabled = true; startSpin(selectedSpinMode); }
+
+        // Функция обновления надписи над стрелкой
+        function updateArrowLabel(angle) {
+            const participants = wheelParticipants || [];
+            const n = participants.length;
+            const arrowLabel = document.getElementById('arrow-label');
+            if (n === 0) {
+                arrowLabel.innerText = '';
+                arrowLabel.style.display = 'none';
+                return;
+            }
+            arrowLabel.style.display = 'block';
+            // Стрелка направлена вверх (угол -π/2)
+            const arrowAngle = -Math.PI / 2;
+            const slice = (Math.PI * 2) / n;
+            // Приводим угол направления стрелки в систему координат колеса
+            let adjusted = (arrowAngle - angle + 2 * Math.PI) % (2 * Math.PI);
+            const idx = Math.floor(adjusted / slice) % n;
+            arrowLabel.innerText = participants[idx];
+        }
 
         function drawWheel(angle) {
             const canvas = document.getElementById('wheelCanvas');
@@ -2224,6 +2241,9 @@
             ctx.arc(cx, cy, 12, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
             ctx.fill();
+
+            // Обновляем надпись над стрелкой после отрисовки
+            updateArrowLabel(angle);
         }
 
         function startSpin(mode) {
