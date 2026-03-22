@@ -176,8 +176,12 @@
         .auth-form input { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 10px; }
         .auth-note { margin-top: 12px; color: #94a3b8; font-size: 12px; }
         @keyframes textGlow { 0%, 100% { text-shadow: 0 0 10px rgba(255,20,147,0.5); opacity: 0.8; transform: scale(1); } 50% { text-shadow: 0 0 20px rgba(255,20,147,0.8); opacity: 1; transform: scale(1.15); } }
-        /* user-nick-display — только внутри меню панели */
-        .menu-nick-display {
+        /* Ник канала — fixed справа сверху, показывается только после входа */
+        .user-nick-display {
+            position: fixed;
+            top: 14px;
+            right: 18px;
+            z-index: 10001;
             font-size: 12px;
             color: var(--accent-neon-blue);
             font-weight: 700;
@@ -185,11 +189,10 @@
             text-transform: uppercase;
             padding: 8px 14px;
             border-radius: 10px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(15, 23, 42, 0.94);
             border: 1px solid var(--panel-border);
-            text-align: center;
-            margin-bottom: 12px;
-            animation: textGlow 2s ease-in-out infinite;
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
+            display: none;
         }
 
         /* ===== СТРЕЛКА И КОЛЕСО — КЛЮЧЕВЫЕ СТИЛИ ===== */
@@ -270,7 +273,6 @@
                 <div class="menu-wave wave-a"></div><div class="menu-wave wave-b"></div>
             </div>
             <div style="flex: 1;"></div>
-            <div id="menu-nick-display" class="menu-nick-display">---</div>
             <button class="btn-main" onclick="resetAll()">Сброс участников</button>
             <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">22</span></button>
             <button class="btn-main btn-purple" onclick="openWheel()">РУЛЕТКА</button>
@@ -661,8 +663,20 @@
             const title = document.querySelector('.orange-chat h3');
             if (title) title.textContent = currentChannelName ? `TWITCH CHAT ${currentChannelName.toUpperCase()}` : 'TWITCH CHAT';
             document.title = currentChannelName ? `Бот — ${currentChannelName}` : 'Бот для прокачек';
-            let display = document.getElementById('menu-nick-display');
-            if (display) display.textContent = currentChannelName ? currentChannelName.toUpperCase() : '---';
+            // Ник справа сверху — создаём один раз, показываем только когда канал задан
+            let display = document.getElementById('user-nick-el');
+            if (!display) {
+                display = document.createElement('div');
+                display.id = 'user-nick-el';
+                display.className = 'user-nick-display';
+                document.body.appendChild(display);
+            }
+            if (currentChannelName) {
+                display.textContent = currentChannelName.toUpperCase();
+                display.style.display = 'block';
+            } else {
+                display.style.display = 'none';
+            }
         }
         function openAuthModal() { document.getElementById('auth-channel-input').value = ''; document.getElementById('auth-modal').style.display = 'flex'; }
         function openAuthHelp() { alert('Введите Twitch ник. Если аккаунт не найден — введите пароль для регистрации. Пароли хранятся в зашифрованном виде.'); }
@@ -894,22 +908,20 @@
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(angle + i * slice + slice / 2);
-                // Середина сектора по радиусу: от центра до края, берём середину видимой части
-                const textMid = r * 0.55; // середина между центром и краем
-                let fontSize = Math.max(7, Math.min(18, Math.floor(180 / p.length)));
+                // Центр сектора по радиусу (середина между центром и краем)
+                const textMid = r * 0.58;
+                // Шрифт крупнее — минимум 9px, максимум 22px
+                let fontSize = Math.max(9, Math.min(22, Math.floor(220 / p.length)));
                 let displayName = String(name || '');
                 ctx.font = `bold ${fontSize}px Inter`;
-                const maxW = r * 0.58;
+                const maxW = r * 0.62;
                 while (ctx.measureText(displayName).width > maxW && displayName.length > 1) displayName = displayName.slice(0, -1) + '…';
-                // Центрируем текст по середине сектора
-                const textWidth = ctx.measureText(displayName).width;
-                const textX = textMid - textWidth / 2;
                 ctx.fillStyle = '#fff';
                 ctx.shadowBlur = 5;
                 ctx.shadowColor = 'rgba(0,0,0,0.95)';
                 ctx.textBaseline = 'middle';
-                ctx.textAlign = 'left';
-                ctx.fillText(displayName, textX, 0);
+                ctx.textAlign = 'center';
+                ctx.fillText(displayName, textMid, 0);
                 ctx.restore();
             });
             // Обводка
