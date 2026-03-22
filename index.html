@@ -963,6 +963,14 @@
     <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore-compat.js"></script>
     <script>
+        // Инициализация списка сайтов с нужными значениями, если их нет
+        const defaultSites = ["Кб", "СкинБро", "СкинХаус", "Жабка", "Мэджик", "Дино", "Ретух", "BountyStars", "Upgrader"];
+        let siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
+        if (!siteOptions.length) {
+            siteOptions = [...defaultSites];
+            localStorage.setItem('bot_site_options', JSON.stringify(siteOptions));
+        }
+
         let leaders = JSON.parse(localStorage.getItem('bot_top_leaders')) || [];
         let globalHistory = JSON.parse(localStorage.getItem('bot_global_history')) || [];
         let participantProfiles = JSON.parse(localStorage.getItem('bot_participant_profiles')) || {};
@@ -1314,8 +1322,6 @@
         }
 
         // ===== Site options =====
-        let siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
-
         function saveSiteOptionsLocal() {
             localStorage.setItem('bot_site_options', JSON.stringify(siteOptions || []));
         }
