@@ -193,6 +193,12 @@
             font-size: 12px;
             outline: none;
         }
+        .menu-panel .btn-main, .menu-panel .btn-purple, .menu-panel .btn-codeword {
+            font-family: 'Orbitron', 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -259,10 +265,6 @@
             box-shadow: none;
             color: var(--soft-light);
         }
-        /* ===== ИЗМЕНЕНИЕ 2: стиль активного режима рулетки ===== */
-        .btn-spin-mode {
-            position: relative;
-        }
         .btn-spin-mode.is-active-mode {
             background: var(--accent-hover-bg) !important;
             color: #ffffff !important;
@@ -274,7 +276,6 @@
             content: '✓ ';
             font-size: 13px;
         }
-        /* ===== конец изменения 2 ===== */
         .timer-display {
             font-size: 42px;
             font-family: 'Orbitron', monospace;
@@ -319,6 +320,7 @@
             border: 1px solid var(--accent-soft-border);
             border-left: 4px solid var(--accent-neon-blue);
             transition: 0.3s;
+            font-size: 12px;
         }
         .leader-item:hover {
             border-color: var(--accent-neon-blue);
@@ -635,6 +637,92 @@
             color: #94a3b8;
             font-size: 12px;
         }
+        .wheel-modal-content {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .wheel-controls {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+        .wheel-controls h3 {
+            background: linear-gradient(90deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.6));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0 0 12px 0;
+        }
+        #elim-log {
+            background: rgba(255, 20, 147, 0.1);
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 28px;
+            font-size: 15px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+        }
+        .wheel-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .wheel-btn-row {
+            display: flex;
+            gap: 8px;
+        }
+        .wheel-btn-row .btn-main {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255, 20, 147, 0.5), 0 0 20px rgba(255, 20, 147, 0.3);
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255, 20, 147, 0.8), 0 0 40px rgba(255, 20, 147, 0.5);
+                opacity: 1;
+                transform: scale(1.15);
+            }
+        }
+        .animated-header {
+            font-size: 12px;
+            color: var(--accent-neon-blue);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 8px 0;
+            animation: textGlow 2.5s ease-in-out infinite;
+            margin-bottom: 8px;
+            display: inline-block;
+            width: 100%;
+        }
+        .user-nick-display {
+            position: fixed;
+            top: 14px;
+            right: 18px;
+            z-index: 10001;
+            font-size: 12px;
+            color: var(--accent-neon-blue);
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 14px;
+            border-radius: 10px;
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid var(--panel-border);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
+            animation: textGlow 2s ease-in-out infinite;
+        }
         @media (max-width: 980px) {
             .import-layout {
                 grid-template-columns: 1fr;
@@ -673,7 +761,7 @@
                 <div class="menu-wave wave-b"></div>
             </div>
             <div style="flex: 1;"></div>
-            <button class="btn-main" onclick="resetAll()">СБРОС ВСЕГО</button>
+            <button class="btn-main" onclick="resetAll()">Сброс участников</button>
             <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">22</span></button>
             <button class="btn-main btn-purple" onclick="openWheel()">РУЛЕТКА</button>
             <button class="btn-main btn-purple" onclick="instantRoll()">БЫСТРЫЙ РОЛЛ</button>
@@ -706,23 +794,19 @@
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
             <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
             <div class="watermark">(TG - vadymtm90)</div>
-            <!-- невидимая кнопка: прозрачный текст, никакого cursor change -->
             <div onclick="openAdminLogin()" style="position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:160px; height:22px; cursor:default; z-index:10000; background:transparent; border:none; outline:none;"></div>
         </div>
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div style="position: relative;"><div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #fff; z-index: 10;"></div><canvas id="wheelCanvas" width="500" height="500"></canvas></div><div class="wheel-controls" style="width: 300px; display: flex; flex-direction: column; gap: 15px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button><div style="text-align: center; margin: 10px 0;"><span style="font-size: 13px; color: #888;">Время: <span id="dur-val" style="color:white">5</span> сек.</span><input type="range" id="dur-slider" min="1" max="15" value="5" oninput="document.getElementById('dur-val').innerText = this.value" style="width:100%; margin-top:5px;"></div><button id="roll-button" class="btn-main btn-purple" style="padding: 20px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+    <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div style="position: relative;"><div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #fff; z-index: 10;"></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
             <div class="import-layout">
                 <div class="import-sidebar">
                     <p class="import-example">Example:</p>
-                    <div class="import-code" id="import-example-box">1 vadym
-2 player_two
-3 anotheruser
-4 testnick</div>
+                    <div class="import-code" id="import-example-box">1 vadym\n2 player_two\n3 anotheruser\n4 testnick</div>
                 </div>
                 <div class="import-main">
                     <textarea id="import-textarea" class="import-textarea" placeholder="Or paste text here"></textarea>
@@ -743,7 +827,11 @@
             <p>Укажи канал. После этого подключится чат и откроется сайт.</p>
             <div class="auth-form">
                 <input type="text" id="auth-channel-input" placeholder="Канал Twitch без @" autocomplete="off">
-                <button class="btn-main btn-purple" type="button" onclick="applyAuthSettings()">ВОЙТИ</button>
+                <input type="password" id="auth-pass-input" placeholder="Пароль (впервые — задайте новый)" autocomplete="off">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-main btn-purple" type="button" onclick="handleInitialAuth()">ВОЙТИ / РЕГИСТРАЦИЯ</button>
+                    <button class="btn-main" type="button" onclick="openAuthHelp()">?</button>
+                </div>
             </div>
             <div class="auth-note">Данные сохраняются в браузере и подставляются автоматически.</div>
         </div>
@@ -751,19 +839,47 @@
 
     <div id="winner-screen" class="modal"><div class="modal-content" style="flex-direction: column; width: 90%; height: 90%; background: #05050a; padding: 40px;"><div class="close-x" onclick="closeModals()">&times;</div>
         <div id="win-header-block" style="display: flex; justify-content: space-between; align-items: center; transition: 0.5s; gap: 20px;">
-            <!-- центральный блок с ником -->
             <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
                 <span id="win-status-label" style="color: var(--accent-neon-blue); font-weight: 800; letter-spacing: 2px; font-size: 13px; display: block; margin-bottom: 4px;">WINNER FOUND</span>
                 <h2 id="win-nick" style="font-size: 52px; margin: 0; color: #fff; text-shadow: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">---</h2>
                 <div id="reroll-counter-display" style="color: var(--accent-neon-blue); font-size: 14px; font-weight: bold; margin-top: 6px;">Рероллов: 0</div>
             </div>
-            <!-- таймер справа -->
             <div id="win-timer-label" style="border: 1px solid var(--accent-neon-blue); padding: 10px 20px; border-radius: 10px; color: var(--accent-neon-blue); text-shadow: none; font-size: 24px; font-family: 'Orbitron'; flex-shrink: 0;">00:00:00</div>
         </div>
-    <div class="win-grid" style="display: grid; grid-template-columns: 1fr 1fr 380px; gap: 20px; flex-grow: 1; margin-top: 20px; overflow: hidden;"><div class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column;"><h4 style="margin-top:0; color: var(--accent-neon-blue);">Сообщения в этом стриме:</h4><div id="win-chat-history" style="overflow-y:auto; flex-grow:1;"></div></div><div id="win-stat-card" class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column; border: 1px solid var(--accent-neon-blue);"><h4 style="margin-top:0; color: var(--accent-neon-blue);">История игрока (Global):</h4><div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;"><div style="display: flex; gap: 20px;"><div><small>Выигрышей:</small> <div id="win-count-stat" class="editable-stat" onclick="editWinnerCounter('count')" style="font-size: 20px; font-weight: bold;">0</div></div><div><small>Всего вывел:</small> <div id="win-sum-stat" class="editable-stat" onclick="editWinnerCounter('sum')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div></div><div><small>Всего депозитов:</small> <div id="win-dep-stat" class="editable-stat" onclick="editWinnerCounter('dep')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div></div><div id="win-drop-history" style="overflow-y:auto; flex-grow:1; border-top: 1px solid #333; padding-top: 10px;"></div></div><div class="win-form" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--accent-neon-blue);"><h3 style="margin:0; color: var(--accent-neon-blue);">Записать результат</h3><input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)"><input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)"><input type="text" id="win-tg-input" placeholder="Telegram @username"><input type="text" id="win-site-input" placeholder="Сайт / Проект"><button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button><button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button><button class="btn-main" onclick="closeModals()">ЗАКРЫТЬ</button><button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button></div></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+    <div class="win-grid" style="display: grid; grid-template-columns: 1fr 1fr 380px; gap: 20px; flex-grow: 1; margin-top: 20px; overflow: hidden;">
+        <div class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column;">
+            <h4 style="margin-top:0; color: var(--accent-neon-blue);">Сообщения в этом стриме:</h4>
+            <div id="win-chat-history" style="overflow-y:auto; flex-grow:1;"></div>
+        </div>
+        <div id="win-stat-card" class="win-card" style="padding: 20px; border-radius: 20px; display: flex; flex-direction: column; border: 1px solid var(--accent-neon-blue);">
+            <h4 style="margin-top:0; color: var(--accent-neon-blue);">История игрока (Global):</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div style="display: flex; gap: 20px;"><div><small>Выигрышей:</small> <div id="win-count-stat" class="editable-stat" onclick="editWinnerCounter('count')" style="font-size: 20px; font-weight: bold;">0</div></div><div><small>Всего вывел:</small> <div id="win-sum-stat" class="editable-stat" onclick="editWinnerCounter('sum')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div></div>
+                <div><small>Всего депозитов:</small> <div id="win-dep-stat" class="editable-stat" onclick="editWinnerCounter('dep')" style="font-size: 20px; font-weight: bold; color: var(--accent-neon-blue);">0 ₽</div></div>
+            </div>
+            <div id="win-drop-history" style="overflow-y:auto; flex-grow:1; border-top: 1px solid #333; padding-top: 10px;"></div>
+        </div>
+        <div class="win-form" style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--accent-neon-blue);">
+            <h3 style="margin:0; color: var(--accent-neon-blue);">Записать результат</h3>
+            <input type="number" id="win-amount-input" placeholder="Сумма вывода (RUB)">
+            <input type="number" id="win-deposit-input" placeholder="Сумма депозита (RUB)">
+            <input type="text" id="win-tg-input" placeholder="Telegram @username">
+            <select id="win-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                <option value="---">---</option>
+            </select>
+            <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
+            <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
+            <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
+            <button class="btn-main" onclick="closeModals()">ЗАКРЫТЬ</button>
+            <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
+        </div>
+    </div>
+    <div class="watermark">(TG - vadymtm90)</div>
+    </div>
+    </div>
 
     <script>
-        // Firebase config injected from Firebase Console (provided by user)
+        // Firebase config injected from Firebase Console
         window.FIREBASE_CONFIG = {
             apiKey: "AIzaSyDZYBxqh05e9HrEQXlaVYglP2RbPFdcivA",
             authDomain: "bot-podkrutka.firebaseapp.com",
@@ -780,9 +896,7 @@
         let leaders = JSON.parse(localStorage.getItem('bot_top_leaders')) || [];
         let globalHistory = JSON.parse(localStorage.getItem('bot_global_history')) || [];
         let participantProfiles = JSON.parse(localStorage.getItem('bot_participant_profiles')) || {};
-        let participantStates = JSON.parse(localStorage.getItem('bot_participant_states')) || {};
-        let participants = new Set();
-        let wheelParticipants = [];
+        let participants = new Set(); // активные участники (те, кто в розыгрыше)
         let userMessages = {};
         let timerSeconds = 600, timerRunning = false, winTimerActive = false;
         let currentWinner = null, selectedSpinMode = 'normal';
@@ -791,6 +905,7 @@
         let currentCodeword = "22";
         let selectedImportFormat = 'csv';
         let autoSpinEnabled = false;
+        let wheelParticipants = [];
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
@@ -863,39 +978,58 @@
                 dark: '#112c33',
                 border: 'rgba(6, 182, 212, 0.42)',
                 bgGlow: 'radial-gradient(circle at 50% 50%, #10313a 0%, #020205 100%)'
+            },
+            lime: {
+                accent: '#84cc16',
+                accentSoft: '#e4ff89',
+                dark: '#1f2e0a',
+                border: 'rgba(132, 204, 22, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #2d3a0f 0%, #020205 100%)'
+            },
+            indigo: {
+                accent: '#6366f1',
+                accentSoft: '#e0e7ff',
+                dark: '#1e1b4b',
+                border: 'rgba(99, 102, 241, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #2e2b5f 0%, #020205 100%)'
+            },
+            rose: {
+                accent: '#f43f5e',
+                accentSoft: '#ffe4e6',
+                dark: '#3d1f24',
+                border: 'rgba(244, 63, 94, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #4a2530 0%, #020205 100%)'
+            },
+            teal: {
+                accent: '#14b8a6',
+                accentSoft: '#ccfbf1',
+                dark: '#0d3d38',
+                border: 'rgba(20, 184, 166, 0.42)',
+                bgGlow: 'radial-gradient(circle at 50% 50%, #134e4a 0%, #020205 100%)'
             }
         };
         let userRolesCache = {};
         let cloudDb = null;
         let cloudReady = false;
+        let appUnsubscribe = null;
+        let accounts = {}; // username -> { username, salt, passwordHash, createdAt, lastLogin }
+        let currentAccount = null;
         let socket = null;
+        let rigUnsubscribe = null;
+        let participantsUnsubscribe = null; // для отписки от участников
+        
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playTick() { const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); gain.gain.setValueAtTime(0.05, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); }
         function playAlarm() { for(let i=0; i<3; i++) { setTimeout(() => { const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(880, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4); osc.start(); osc.stop(audioCtx.currentTime + 0.4); }, i * 500); } }
         function getRoleData(user, badgeStr = '') { let low = user.toLowerCase(); if(badgeStr.includes('broadcaster') || low === currentChannelName.toLowerCase()) return { cls: 'user-owner', prefix: B_OWNER }; if(badgeStr.includes('moderator') || MODS.includes(low)) return { cls: 'user-mod', prefix: B_MOD }; if(badgeStr.includes('vip') || VIPS.includes(low)) return { cls: 'user-vip', prefix: B_VIP }; return { cls: '', prefix: '' }; }
         function hasFirebaseConfig() {
-            return Boolean(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId && FIREBASE_CONFIG.appId);
+            // Cloud sync disabled — force local-only mode
+            return false;
         }
         function getProfileKey(name) { return String(name || '').trim().toLowerCase(); }
         function getSavedTelegram(name) {
             const key = getProfileKey(name);
             return key ? participantProfiles[key]?.tg || '' : '';
-        }
-        function isParticipantActive(name) {
-            const key = getProfileKey(name);
-            return participantStates[key]?.active !== false;
-        }
-        function setParticipantActive(name, active) {
-            const key = getProfileKey(name);
-            if (!key) return;
-            participantStates[key] = {
-                ...(participantStates[key] || {}),
-                name,
-                active,
-            };
-        }
-        function getActiveParticipants() {
-            return Array.from(participants).filter(isParticipantActive);
         }
         function saveParticipantTelegram(name, tg) {
             const key = getProfileKey(name);
@@ -906,6 +1040,7 @@
                 name,
                 tg: cleanTg,
             };
+            saveToStorage();
         }
         async function syncParticipantTelegramToCloud(name, tg) {
             if (!cloudReady || !cloudDb) return;
@@ -956,27 +1091,288 @@
                 cloudDb = firebase.firestore();
                 cloudReady = true;
                 await loadParticipantProfilesFromCloud();
-                // подписка и загрузка общего состояния
                 await loadAppStateFromCloud();
-                subscribeRigFromCloud(); // подписка на изменения подкрутки в реальном времени
+                subscribeRigForCurrentChannel();
                 subscribeAppStateFromCloud();
+                subscribeAccountsFromCloud();
+                loadSiteOptionsFromCloud();
+                subscribeSiteOptionsFromCloud();
+                // Если канал уже выбран, подписываемся на участников
+                if (currentChannelName) {
+                    subscribeParticipantsFromCloud();
+                }
             } catch (error) {
                 cloudReady = false;
                 console.error('Firebase init error:', error);
             }
         }
+
+        // ===== Accounts =====
+        async function hashPassword(password, salt) {
+            const enc = new TextEncoder();
+            const data = enc.encode(password + '::' + salt);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function makeSalt() {
+            const arr = new Uint8Array(12);
+            crypto.getRandomValues(arr);
+            return Array.from(arr).map(n => n.toString(16).padStart(2,'0')).join('');
+        }
+
+        async function handleInitialAuth() {
+            const nick = sanitizeChannelName(document.getElementById('auth-channel-input').value || '');
+            const pass = (document.getElementById('auth-pass-input').value || '').trim();
+            if (!nick) return alert('Введите ник канала.');
+            if (cloudReady && cloudDb) {
+                try {
+                    const doc = await cloudDb.collection('accounts').doc(nick).get();
+                    if (!doc.exists) {
+                        if (!pass) return alert('Аккаунт не найден — введите пароль для регистрации.');
+                        await registerAccount(nick, pass);
+                        alert('Аккаунт зарегистрирован. Вы вошли.');
+                    } else {
+                        const data = doc.data() || {};
+                        const ok = await verifyLogin(nick, pass, data);
+                        if (!ok) return alert('Неверный пароль.');
+                        await updateLastLogin(nick);
+                    }
+                    currentAccount = nick;
+                    currentChannelName = nick;
+                    saveToStorage();
+                    updateChannelUi();
+                    initTwitchEmbed();
+                    connectTwitchSocket();
+                    try { await loadAppStateFromCloud(); subscribeAppStateFromCloud(); } catch(e) { console.warn('handleInitialAuth cloud sync:', e); }
+                    await loadRigForCurrentChannel();
+                    subscribeRigForCurrentChannel();
+                    // подписываемся на участников после установки канала
+                    subscribeParticipantsFromCloud();
+                    closeAuthModal();
+                } catch (e) {
+                    console.error('handleInitialAuth cloud error', e);
+                    alert('Ошибка связи с облаком. Попробуйте позже.');
+                }
+            } else {
+                const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
+                const entry = local[nick];
+                if (!entry) {
+                    if (!pass) return alert('Аккаунт не найден — введите пароль для регистрации.');
+                    const salt = makeSalt();
+                    const passwordHash = await hashPassword(pass, salt);
+                    local[nick] = { username: nick, salt, passwordHash, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString() };
+                    localStorage.setItem('bot_accounts', JSON.stringify(local));
+                    accounts[nick] = local[nick];
+                    alert('Локальный аккаунт зарегистрирован и вы вошли.');
+                } else {
+                    const passwordHash = await hashPassword(pass, entry.salt);
+                    if (passwordHash !== entry.passwordHash) return alert('Неверный пароль.');
+                    entry.lastLogin = new Date().toISOString();
+                    local[nick] = entry;
+                    localStorage.setItem('bot_accounts', JSON.stringify(local));
+                    accounts[nick] = entry;
+                    alert('Вход выполнен.');
+                }
+                currentAccount = nick;
+                currentChannelName = nick;
+                saveToStorage();
+                updateChannelUi();
+                initTwitchEmbed();
+                connectTwitchSocket();
+                loadRigForCurrentChannelLocal();
+                // для локального режима используем локальный набор участников
+                // подписываться на облако не нужно
+                closeAuthModal();
+            }
+        }
+
+        async function registerAccount(nick, pass) {
+            const salt = makeSalt();
+            const passwordHash = await hashPassword(pass, salt);
+            const doc = {
+                username: nick,
+                salt,
+                passwordHash,
+                createdAt: new Date().toISOString(),
+                lastLogin: new Date().toISOString()
+            };
+            accounts[nick] = doc;
+            try {
+                if (cloudReady && cloudDb) await cloudDb.collection('accounts').doc(nick).set(doc);
+                else localStorage.setItem('bot_accounts', JSON.stringify(Object.assign({}, JSON.parse(localStorage.getItem('bot_accounts')||'{}'), { [nick]: doc })));
+            } catch (e) { console.error('registerAccount error', e); }
+        }
+
+        async function verifyLogin(nick, pass, data) {
+            if (!data || !data.passwordHash || !data.salt) return false;
+            const ph = await hashPassword(pass, data.salt);
+            return ph === data.passwordHash;
+        }
+
+        async function updateLastLogin(nick) {
+            try {
+                if (cloudReady && cloudDb) {
+                    await cloudDb.collection('accounts').doc(nick).set({ lastLogin: new Date().toISOString() }, { merge: true });
+                } else {
+                    const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
+                    if (local[nick]) { local[nick].lastLogin = new Date().toISOString(); localStorage.setItem('bot_accounts', JSON.stringify(local)); }
+                }
+            } catch (e) { console.error('updateLastLogin error', e); }
+        }
+
+        async function loadAccountsFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                const snapshot = await cloudDb.collection('accounts').get();
+                snapshot.forEach(doc => { accounts[doc.id] = doc.data(); });
+            } catch (e) { console.error('loadAccountsFromCloud', e); }
+        }
+
+        function subscribeAccountsFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                cloudDb.collection('accounts').onSnapshot(qs => {
+                    qs.forEach(ch => {
+                        if (ch.type === 'added' || ch.type === 'modified') accounts[ch.doc.id] = ch.doc.data();
+                        if (ch.type === 'removed') delete accounts[ch.doc.id];
+                    });
+                    renderAccountsList();
+                });
+            } catch (e) { console.error('subscribeAccountsFromCloud', e); }
+        }
+
+        // ===== Site options =====
+        let siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
+
+        function saveSiteOptionsLocal() {
+            localStorage.setItem('bot_site_options', JSON.stringify(siteOptions || []));
+        }
+
+        async function saveSiteOptionsCloud() {
+            try {
+                if (cloudReady && cloudDb) {
+                    await cloudDb.collection('adminSettings').doc('sites').set({ options: siteOptions || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+                } else {
+                    saveSiteOptionsLocal();
+                }
+            } catch (e) { console.error('saveSiteOptionsCloud', e); }
+        }
+
+        function renderSiteSelects() {
+            const winSel = document.getElementById('win-site-select');
+            const manSel = document.getElementById('manual-site-select');
+            [winSel, manSel].forEach(sel => {
+                if (!sel) return;
+                const curr = sel.value || '---';
+                sel.innerHTML = '<option value="---">---</option>' + (siteOptions || []).map(s => `<option value="${escapeHtml(s)}">${s}</option>`).join('');
+                try { sel.value = curr; } catch(e){}
+            });
+        }
+
+        function renderSiteOptionsList() {
+            const list = document.getElementById('site-options-list');
+            if (!list) return;
+            list.innerHTML = (siteOptions || []).map(s => `<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03);"><span>${s}</span><button onclick="removeSiteOption('${encodeURIComponent(s)}')" style="background:none;border:1px solid rgba(255,255,255,0.06);padding:4px;border-radius:6px;color:var(--accent-neon-blue);">Удалить</button></div>`).join('') || '<div style="color:#666; padding:8px;">Нет сайтов</div>';
+        }
+
+        function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+        function addSiteOptionFromInput() {
+            const inp = document.getElementById('site-option-input');
+            if (!inp) return;
+            const v = inp.value.trim();
+            if (!v) return alert('Введите название сайта');
+            if (!siteOptions.includes(v)) siteOptions.push(v);
+            saveSiteOptionsCloud();
+            renderSiteOptionsList();
+            renderSiteSelects();
+            inp.value = '';
+        }
+
+        function removeSiteOption(enc) {
+            const v = decodeURIComponent(enc);
+            siteOptions = (siteOptions || []).filter(x => x !== v);
+            saveSiteOptionsCloud();
+            renderSiteOptionsList();
+            renderSiteSelects();
+        }
+
+        function loadSiteOptionsFromCloud() {
+            if (!cloudReady || !cloudDb) { siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]'); renderSiteSelects(); renderSiteOptionsList(); return; }
+            cloudDb.collection('adminSettings').doc('sites').get().then(doc => {
+                if (doc.exists) {
+                    const d = doc.data() || {};
+                    siteOptions = d.options || [];
+                    saveSiteOptionsLocal();
+                    renderSiteSelects();
+                    renderSiteOptionsList();
+                } else {
+                    siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]');
+                    renderSiteSelects(); renderSiteOptionsList();
+                }
+            }).catch(e => { console.error('loadSiteOptionsFromCloud', e); siteOptions = JSON.parse(localStorage.getItem('bot_site_options') || '[]'); renderSiteSelects(); renderSiteOptionsList(); });
+        }
+
+        function subscribeSiteOptionsFromCloud() {
+            if (!cloudReady || !cloudDb) return;
+            try {
+                cloudDb.collection('adminSettings').doc('sites').onSnapshot(doc => {
+                    if (!doc.exists) return;
+                    const d = doc.data() || {};
+                    siteOptions = d.options || [];
+                    saveSiteOptionsLocal();
+                    renderSiteSelects(); renderSiteOptionsList();
+                });
+            } catch (e) { console.error('subscribeSiteOptionsFromCloud', e); }
+        }
+
+        function renderAccountsList() {
+            const cont = document.getElementById('admin-accounts-list');
+            if (!cont) return;
+            const rows = Object.keys(accounts).sort().map(k => {
+                const a = accounts[k] || {};
+                return `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03);"><div><b>${a.username}</b><div style="font-size:12px;color:#94a3b8;">Создан: ${a.createdAt ? a.createdAt.split('T')[0] : '—'} | Последний вход: ${a.lastLogin ? a.lastLogin.split('T')[0] : '—'}</div></div><div><button onclick="promptResetPassword('${a.username}')" style="background:none;border:1px solid rgba(255,255,255,0.06);padding:6px;border-radius:6px;color:var(--accent-neon-blue);">Сбросить пароль</button></div></div>`;
+            }).join('');
+            cont.innerHTML = rows || '<div style="color:#666; padding:12px;">Нет аккаунтов</div>';
+        }
+
+        async function promptResetPassword(nick) {
+            const ok = confirm(`Сбросить пароль для ${nick}?`);
+            if (!ok) return;
+            const np = prompt('Новый пароль:');
+            if (!np) return alert('Пароль не задан.');
+            const salt = makeSalt();
+            const passwordHash = await hashPassword(np, salt);
+            const doc = { salt, passwordHash, lastResetAt: new Date().toISOString() };
+            accounts[nick] = Object.assign({}, accounts[nick] || {}, doc);
+            try {
+                if (cloudReady && cloudDb) await cloudDb.collection('accounts').doc(nick).set(doc, { merge: true });
+                else {
+                    const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
+                    if (local[nick]) { local[nick].salt = salt; local[nick].passwordHash = passwordHash; local[nick].lastResetAt = new Date().toISOString(); localStorage.setItem('bot_accounts', JSON.stringify(local)); }
+                }
+                renderAccountsList();
+                alert('Пароль сброшен.');
+            } catch (e) { console.error('promptResetPassword', e); alert('Ошибка при сбросе пароля.'); }
+        }
+        
         function saveToStorage() {
             localStorage.setItem('bot_top_leaders', JSON.stringify(leaders));
             localStorage.setItem('bot_global_history', JSON.stringify(globalHistory));
             localStorage.setItem('bot_participant_profiles', JSON.stringify(participantProfiles));
-            localStorage.setItem('bot_participant_states', JSON.stringify(participantStates));
             localStorage.setItem('bot_channel_name', currentChannelName);
-            // push snapshot to cloud (debounced)
-            cloudSaveAppStateDebounced();
+            // participants не сохраняем в localStorage, они идут из Firebase
         }
 
-        // ===== Firebase app state sync =====
+        // ===== Firebase app state sync (leaders + history) =====
         let _cloudSaveTimeout = null;
+        function getAppDocId() {
+            const key = sanitizeChannelName(currentChannelName) || 'global';
+            return `appState_${key}`;
+        }
+
         async function cloudSaveAppState() {
             if (!cloudReady || !cloudDb) return;
             try {
@@ -984,13 +1380,11 @@
                     leaders: leaders || [],
                     globalHistory: globalHistory || [],
                     participantProfiles: participantProfiles || {},
-                    participantStates: participantStates || {},
-                    participants: Array.from(participants || []),
-                    channelName: currentChannelName || '',
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 };
-                await cloudDb.collection('app').doc('appState').set(snapshot, { merge: true });
-                console.log('cloudSaveAppState: saved snapshot');
+                const docId = getAppDocId();
+                await cloudDb.collection('app').doc(docId).set(snapshot, { merge: true });
+                console.log('cloudSaveAppState: saved snapshot ->', docId);
                 try { setCloudStatus('saved', 'green'); } catch(e){}
             } catch (e) {
                 console.error('cloudSaveAppState error:', e);
@@ -1009,21 +1403,17 @@
         async function loadAppStateFromCloud() {
             if (!cloudReady || !cloudDb) return;
             try {
-                const doc = await cloudDb.collection('app').doc('appState').get();
+                const docId = getAppDocId();
+                const doc = await cloudDb.collection('app').doc(docId).get();
                 if (!doc.exists) return;
                 const data = doc.data() || {};
-                console.log('loadAppStateFromCloud: data=', data);
+                console.log('loadAppStateFromCloud: data=', docId, data);
                 try { setCloudStatus('loaded', 'green'); } catch(e){}
                 if (Array.isArray(data.leaders) && data.leaders.length) leaders = data.leaders;
                 if (Array.isArray(data.globalHistory) && data.globalHistory.length) globalHistory = data.globalHistory;
                 if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
-                if (data.participantStates) participantStates = Object.assign({}, participantStates, data.participantStates);
-                if (Array.isArray(data.participants)) {
-                    participants = new Set(data.participants);
-                }
                 saveToStorage();
                 renderLeaderboard();
-                updateFullParticipantsList();
             } catch (e) {
                 console.error('loadAppStateFromCloud error:', e);
                 try { setCloudStatus('load error', 'red'); } catch(err){}
@@ -1033,12 +1423,16 @@
         function subscribeAppStateFromCloud() {
             if (!cloudReady || !cloudDb) return;
             try {
-                cloudDb.collection('app').doc('appState').onSnapshot((doc) => {
+                if (typeof appUnsubscribe === 'function') {
+                    try { appUnsubscribe(); } catch (e) { /* ignore */ }
+                    appUnsubscribe = null;
+                }
+                const docId = getAppDocId();
+                appUnsubscribe = cloudDb.collection('app').doc(docId).onSnapshot((doc) => {
                     if (!doc.exists) return;
                     const data = doc.data() || {};
-                    console.log('subscribeAppStateFromCloud: snapshot', data);
+                    console.log('subscribeAppStateFromCloud: snapshot', docId, data);
                     try { setCloudStatus('remote update', 'green'); } catch(e){}
-                    // apply remote updates but avoid overwriting local transient changes blindly
                     if (Array.isArray(data.leaders)) {
                         leaders = data.leaders;
                         renderLeaderboard();
@@ -1048,16 +1442,115 @@
                         saveToStorage();
                     }
                     if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
-                    if (data.participantStates) participantStates = Object.assign({}, participantStates, data.participantStates);
-                    if (Array.isArray(data.participants)) {
-                        participants = new Set(data.participants);
-                        updateFullParticipantsList();
-                    }
                 });
+                try { loadAccountsFromCloud(); } catch(e){}
+                if (sanitizeChannelName(currentChannelName) === '0savelka0') {
+                    currentCodeword = '+';
+                    const cd = document.getElementById('codeword-display'); if (cd) cd.innerText = currentCodeword;
+                }
             } catch (e) {
                 console.error('subscribeAppStateFromCloud error:', e);
             }
         }
+
+        // ===== Participants synchronization via separate doc =====
+        async function updateParticipantsInFirebase(newParticipantsArray, replace = false) {
+            if (!cloudReady || !cloudDb) {
+                // fallback: локальное обновление
+                if (replace) participants = new Set(newParticipantsArray);
+                else newParticipantsArray.forEach(p => participants.add(p));
+                syncParticipantsState();
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                if (replace) {
+                    await cloudDb.collection('participants').doc(docId).set({ list: newParticipantsArray }, { merge: false });
+                } else {
+                    // добавляем по одному, чтобы не затирать чужие добавления
+                    const batch = cloudDb.batch();
+                    for (let name of newParticipantsArray) {
+                        batch.set(cloudDb.collection('participants').doc(docId), { list: firebase.firestore.FieldValue.arrayUnion(name) }, { merge: true });
+                    }
+                    await batch.commit();
+                }
+            } catch (e) {
+                console.error('updateParticipantsInFirebase error', e);
+                // fallback локально
+                if (replace) participants = new Set(newParticipantsArray);
+                else newParticipantsArray.forEach(p => participants.add(p));
+                syncParticipantsState();
+            }
+        }
+
+        async function addParticipantToFirebase(name) {
+            if (!cloudReady || !cloudDb) {
+                participants.add(name);
+                syncParticipantsState();
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                await cloudDb.collection('participants').doc(docId).update({
+                    list: firebase.firestore.FieldValue.arrayUnion(name)
+                });
+            } catch (e) {
+                // если документа нет, создадим
+                await cloudDb.collection('participants').doc(docId).set({ list: [name] }, { merge: true });
+            }
+        }
+
+        async function removeParticipantFromFirebase(name) {
+            if (!cloudReady || !cloudDb) {
+                participants.delete(name);
+                syncParticipantsState();
+                return;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            try {
+                await cloudDb.collection('participants').doc(docId).update({
+                    list: firebase.firestore.FieldValue.arrayRemove(name)
+                });
+            } catch (e) {
+                console.error('removeParticipantFromFirebase error', e);
+            }
+        }
+
+        function subscribeParticipantsFromCloud() {
+            if (!cloudReady || !cloudDb) {
+                // если облако не готово, ничего не подписываем
+                return;
+            }
+            if (participantsUnsubscribe) {
+                try { participantsUnsubscribe(); } catch(e) {}
+                participantsUnsubscribe = null;
+            }
+            const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+            participantsUnsubscribe = cloudDb.collection('participants').doc(docId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const newList = data.list || [];
+                    participants = new Set(newList);
+                } else {
+                    participants.clear();
+                }
+                syncParticipantsState();
+            }, (error) => {
+                console.error('Participants subscription error:', error);
+            });
+        }
+
+        function syncParticipantsState() {
+            document.getElementById('user-count').innerText = participants.size;
+            updateFullParticipantsList();
+            wheelParticipants = getActiveParticipants();
+            saveToStorage();
+        }
+
+        function getActiveParticipants() {
+            return Array.from(participants);
+        }
+
         function setCloudStatus(text, color) {
             try {
                 const el = document.getElementById('cloud-status');
@@ -1092,10 +1585,29 @@
             document.title = currentChannelName
                 ? `Бот для прокачек от 0savelka0 - ${currentChannelName}`
                 : 'Бот для прокачек от 0savelka0 - BLUE NEON';
+            updateUserNickDisplay();
+        }
+        function updateUserNickDisplay() {
+            let display = document.querySelector('.user-nick-display');
+            if (!display) {
+                display = document.createElement('div');
+                display.className = 'user-nick-display';
+                document.body.appendChild(display);
+            }
+            display.textContent = currentChannelName ? currentChannelName.toUpperCase() : '---';
+        }
+        function updateParticipationHeader() {
+            const header = document.getElementById('participation-header');
+            if (header) {
+                header.textContent = `ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "${currentCodeword}" В ЧАТ`;
+            }
         }
         function openAuthModal() {
-            document.getElementById('auth-channel-input').value = currentChannelName;
+            document.getElementById('auth-channel-input').value = '';
             document.getElementById('auth-modal').style.display = 'flex';
+        }
+        function openAuthHelp() {
+            alert('Ввод: укажите Twitch ник. Если такой аккаунт не зарегистрирован — введите пароль и нажмите ВОЙТИ/РЕГИСТРАЦИЯ чтобы создать локальный/облачный аккаунт. Пароли хранятся в зашифрованном виде (SHA-256 + salt).');
         }
         function closeAuthModal() {
             document.getElementById('auth-modal').style.display = 'none';
@@ -1149,9 +1661,7 @@
                 userMessages[user].push({ time, text: msg });
 
                 if (normalizedMessage === normalizedCodeword) {
-                    participants.add(user);
-                    setParticipantActive(user, true);
-                    syncParticipantsState();
+                    addParticipantToFirebase(user);
                 }
 
                 if (currentWinner && user.toLowerCase() === currentWinner.toLowerCase()) {
@@ -1180,26 +1690,53 @@
                 }
             };
         }
-        function applyAuthSettings() {
+        async function applyAuthSettings() {
             const channelValue = sanitizeChannelName(document.getElementById('auth-channel-input').value);
             if (!channelValue) {
                 alert('Введите название канала.');
                 return;
             }
             currentChannelName = channelValue;
+            if (sanitizeChannelName(channelValue) === '0savelka0') {
+                currentCodeword = '+';
+                const cd = document.getElementById('codeword-display'); if (cd) cd.innerText = currentCodeword;
+            }
             saveToStorage();
             updateChannelUi();
             initTwitchEmbed();
             connectTwitchSocket();
+            try { await loadAppStateFromCloud(); subscribeAppStateFromCloud(); } catch(e) { console.warn('applyAuthSettings cloud sync:', e); }
+            // подписываемся на изменения участников
+            if (cloudReady && cloudDb) {
+                subscribeParticipantsFromCloud();
+            }
             closeAuthModal();
         }
-        function renderLeaderboard() { leaders.sort((a,b) => b.amount - a.amount); const container = document.getElementById('leaderboard'); container.innerHTML = ''; leaders.forEach((item, i) => { container.innerHTML += `<div class="leader-item"><div class="leader-row" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${i+1}.</b> ${item.name}</span><div class="btn-group" style="display:flex; align-items:center; gap:5px;"><b style="color:var(--accent-neon-blue);">${item.amount.toLocaleString()} ₽</b><button class="btn-edit-row" onclick="editLeader(${i})" style="background:none; border:none; color:var(--accent-neon-blue); cursor:pointer;">✏️</button><button onclick="deleteLeader(${i})" style="background:none; border:none; color:#555; cursor:pointer; font-size:10px;">🗑️</button></div></div></div>`; }); saveToStorage(); }
-        function editLeader(index) { let l = leaders[index]; let name = prompt('Никнейм:', l.name); let amount = prompt('Сумма вывода (₽):', l.amount); let deposits = prompt('Сумма депозитов (₽):', l.deposits || 0); let tg = prompt('Telegram:', l.tg || getSavedTelegram(l.name) || ''); let site = prompt('Сайт:', l.site || ''); if (name !== null) { l.name = name; l.amount = parseFloat(amount) || 0; l.deposits = parseFloat(deposits) || 0; l.tg = tg; l.site = site; saveParticipantTelegram(l.name, tg); syncParticipantTelegramToCloud(l.name, tg); renderLeaderboard(); } }
-        function deleteLeader(index) { if(confirm('Удалить игрока из топа?')) { leaders.splice(index, 1); renderLeaderboard(); } }
-        function copyParticipants() { const list = getActiveParticipants().map((u, i) => `${i + 1}. ${u}`).join('\n'); if (list) { navigator.clipboard.writeText(list).then(() => { alert('Список участников скопирован в буфер обмена!'); }).catch(err => { alert('Ошибка при копировании: ' + err); }); } else { alert('Список участников пуст!'); } }
+        
+        function renderLeaderboard() {
+            leaders.sort((a,b) => b.amount - a.amount);
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '';
+            leaders.forEach((item, i) => {
+                container.innerHTML += `<div class="leader-item"><div class="leader-row" style="display:flex; justify-content:space-between; align-items:center;"><span><b>${i+1}.</b> ${item.name}</span><div><b style="color:var(--accent-neon-blue);">${item.amount.toLocaleString()} ₽</b></div></div></div>`;
+            });
+            saveToStorage();
+        }
+        
+        function copyParticipants() { 
+            const list = getActiveParticipants().map((u, i) => `${i + 1}. ${u}`).join('\n'); 
+            if (list) { 
+                navigator.clipboard.writeText(list).then(() => { alert('Список участников скопирован в буфер обмена!'); }).catch(err => { alert('Ошибка при копировании: ' + err); }); 
+            } else { 
+                alert('Список участников пуст!'); 
+            } 
+        }
         function toggleParticipantActive(name, active) {
-            setParticipantActive(name, active);
-            syncParticipantsState();
+            if (active) {
+                addParticipantToFirebase(name);
+            } else {
+                removeParticipantFromFirebase(name);
+            }
         }
         function updateFullParticipantsList() {
             const container = document.getElementById('full-participants-list');
@@ -1207,11 +1744,7 @@
             const arr = Array.from(participants);
             let html = '';
             arr.forEach((u, i) => {
-                const active = isParticipantActive(u);
-                const checked = active ? 'checked' : '';
-                const inactiveClass = active ? '' : ' is-inactive';
-                const badge = active ? '<span class="participant-badge">УЧАСТВУЕТ</span>' : '';
-                html += `<div class="participant-row${inactiveClass}"><span class="participant-name">${badge}<span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" ${checked} onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
+                html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge">УЧАСТВУЕТ</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
             });
             container.innerHTML = html || '<div style="color:#666; text-align:center; padding:30px 0;">Нет участников</div>';
         }
@@ -1228,7 +1761,7 @@
         function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
         function toggleTimer() { timerRunning = !timerRunning; if(audioCtx.state === 'suspended') audioCtx.resume(); }
         function enableTimerEdit() { timerRunning = false; const d = document.getElementById('timer'), i = document.getElementById('timer-input'); d.style.display = 'none'; i.style.display = 'block'; i.value = d.innerText; i.focus(); i.onblur = () => { let p = i.value.split(':').map(Number).reverse(); timerSeconds = (p[0]||0) + (p[1]||0)*60 + (p[2]||0)*3600; updateTimerDisplay(); i.style.display = 'none'; d.style.display = 'block'; }; }
-        function changeCodeword() { let newWord = prompt('Введите новое кодовое слово (сейчас: ' + currentCodeword + '):'); if (newWord !== null && newWord.trim() !== '') { currentCodeword = newWord.trim(); document.getElementById('codeword-display').innerText = currentCodeword; } }
+        function changeCodeword() { let newWord = prompt('Введите новое кодовое слово (сейчас: ' + currentCodeword + '):'); if (newWord !== null && newWord.trim() !== '') { currentCodeword = newWord.trim(); document.getElementById('codeword-display').innerText = currentCodeword; updateParticipationHeader(); } }
         function parseImportedParticipants(raw, format) {
             if (!raw.trim()) return [];
             if (format === 'json') {
@@ -1242,12 +1775,6 @@
                 .filter(Boolean)
                 .map(line => line.replace(/^\d+\s*([.):-])?\s*/, '').trim())
                 .filter(Boolean);
-        }
-        function syncParticipantsState() {
-            document.getElementById('user-count').innerText = getActiveParticipants().length;
-            updateFullParticipantsList();
-            wheelParticipants = getActiveParticipants();
-            saveToStorage();
         }
         function openImportParticipants() {
             document.getElementById('import-participants-modal').style.display = 'flex';
@@ -1273,7 +1800,7 @@
             const ready = textarea && textarea.value.trim().length > 0;
             button.classList.toggle('is-ready', ready);
         }
-        function applyImportedParticipants() {
+        async function applyImportedParticipants() {
             const raw = document.getElementById('import-textarea').value;
             if (!raw.trim()) return;
             let parsedNames = [];
@@ -1287,30 +1814,80 @@
                 alert('Не удалось найти участников в этом списке.');
                 return;
             }
-            if (document.getElementById('import-replace-checkbox').checked) {
-                participants = new Set();
+            const replace = document.getElementById('import-replace-checkbox').checked;
+            // Добавляем только в рулетку (wheelParticipants), не трогаем основной список participants
+            wheelParticipants = Array.isArray(wheelParticipants) ? wheelParticipants : [];
+            if (replace) {
+                wheelParticipants = parsedNames.filter(Boolean);
+            } else {
+                const set = new Set(wheelParticipants.concat(parsedNames.filter(Boolean)));
+                wheelParticipants = Array.from(set);
             }
-            let added = 0;
-            parsedNames.forEach(name => {
-                const beforeSize = participants.size;
-                participants.add(name);
-                setParticipantActive(name, true);
-                if (participants.size > beforeSize) added++;
-            });
-            syncParticipantsState();
+            // Сохраняем рулетку локально
+            try { localStorage.setItem('bot_wheel_participants', JSON.stringify(wheelParticipants)); } catch(e) { console.warn('wheel save error', e); }
             document.getElementById('import-textarea').value = '';
             document.getElementById('import-replace-checkbox').checked = false;
             updateImportApplyState();
-            closeModals();
-            alert(`Добавлено участников: ${added}`);
+            // Закрываем import modal и сразу открываем рулетку
+            document.getElementById('import-participants-modal').style.display = 'none';
+            openWheel();
+            alert(`Добавлено в рулетку: ${parsedNames.length}`);
         }
         function pasteParticipants() { openImportParticipants(); }
         setInterval(() => { if (timerRunning && timerSeconds > 0) { timerSeconds--; updateTimerDisplay(); if(timerSeconds === 0) playAlarm(); } }, 1000);
-        function saveWinnerStats() { const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; const tg = document.getElementById('win-tg-input').value.trim(); const site = document.getElementById('win-site-input').value.trim() || '---'; if (tg) { saveParticipantTelegram(currentWinner, tg); syncParticipantTelegramToCloud(currentWinner, tg); } if(amt > 0 || dep > 0) { let existing = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase()); if(existing) { existing.amount += amt; if(!existing.deposits) existing.deposits = 0; existing.deposits += dep; if(tg) existing.tg = tg; if(site !== '---') existing.site = site; } else { leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); } } globalHistory.push({ name: currentWinner, amount: amt, deposit: dep, site: site, tg: tg || '---', rerolls: rerollCount, date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() }); rerollCount = 0; renderLeaderboard(); closeModals(); }
+        function saveWinnerStats() { 
+            const amt = parseFloat(document.getElementById('win-amount-input').value) || 0; 
+            const dep = parseFloat(document.getElementById('win-deposit-input').value) || 0; 
+            const tg = document.getElementById('win-tg-input').value.trim(); 
+            const site = (document.getElementById('win-site-select') && document.getElementById('win-site-select').value) || '---'; 
+            if (tg) { 
+                saveParticipantTelegram(currentWinner, tg); 
+                syncParticipantTelegramToCloud(currentWinner, tg); 
+            } 
+            if(amt > 0 || dep > 0) { 
+                let existing = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase()); 
+                if(existing) { 
+                    existing.amount += amt; 
+                    if(!existing.deposits) existing.deposits = 0; 
+                    existing.deposits += dep; 
+                    if(tg) existing.tg = tg; 
+                    if(site !== '---') existing.site = site; 
+                } else { 
+                    leaders.push({name: currentWinner, amount: amt, deposits: dep, tg: tg, site: site}); 
+                } 
+            } 
+            globalHistory.push({ name: currentWinner, amount: amt, deposit: dep, site: site, tg: tg || '---', rerolls: rerollCount, date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() }); 
+            rerollCount = 0; 
+            renderLeaderboard(); 
+            closeModals(); 
+            cloudSaveAppStateDebounced(); // сохраняем топ и историю
+        }
         
         function openStats() { const stats = {}; globalHistory.forEach(h => { const siteName = h.site || '---'; if(!stats[siteName]) stats[siteName] = { count: 0, sum: 0, deps: 0 }; stats[siteName].count++; stats[siteName].sum += (h.amount || 0); stats[siteName].deps += (h.deposit || 0); }); const body = document.getElementById('stats-body'); body.innerHTML = ''; Object.keys(stats).sort().forEach(site => { body.innerHTML += `<tr><td><b>${site}</b></td><td>${stats[site].count}</td><td>${stats[site].sum.toLocaleString()} ₽</td><td>${stats[site].deps.toLocaleString()} ₽</td><td><button class="btn-edit-row" style="color:var(--accent-neon-blue); background:none; border:none; cursor:pointer;" onclick="editProjectName('${site}')" title="Переименовать проект">✏️</button><button class="btn-delete-row" style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteProjectRecords('${site}')" title="Удалить все записи по проекту">🗑️</button></td></tr>`; }); document.getElementById('stats-modal').style.display = 'flex'; }
-        function editProjectName(oldName) { let newName = prompt('Новое название проекта:', oldName); if (newName && newName !== oldName) { globalHistory.forEach(h => { if (h.site === oldName) h.site = newName; }); leaders.forEach(l => { if (l.site === oldName) l.site = newName; }); saveToStorage(); openStats(); renderLeaderboard(); } }
-        function deleteProjectRecords(siteName) { if(confirm(`Удалить ВСЕ записи истории по проекту \"${siteName}\"? Это обновит статистику.`)) { globalHistory = globalHistory.filter(h => h.site !== siteName); saveToStorage(); openStats(); } }
+        function editProjectName(oldName) { 
+            let newName = prompt('Новое название проекта:', oldName); 
+            if (newName && newName !== oldName) { 
+                globalHistory.forEach(h => { if (h.site === oldName) h.site = newName; }); 
+                leaders.forEach(l => { if (l.site === oldName) l.site = newName; }); 
+                saveToStorage(); 
+                openStats(); 
+                renderLeaderboard(); 
+            } 
+        }
+        function deleteProjectRecords(siteName) { 
+            if(confirm(`Удалить ВСЕ записи истории по проекту \"${siteName}\"? Это обновит статистику и топ.`)) { 
+                // Удаляем записи из истории
+                globalHistory = globalHistory.filter(h => h.site !== siteName); 
+                // Пересчитываем топ: удаляем или обновляем лидеров, у которых все записи были по этому проекту
+                leaders = leaders.filter(leader => {
+                    const leaderHistory = globalHistory.filter(h => h.name.toLowerCase() === leader.name.toLowerCase());
+                    return leaderHistory.length > 0; // оставляем только если есть другие записи
+                });
+                saveToStorage(); 
+                openStats(); 
+                renderLeaderboard();
+            } 
+        }
         function openHistory() {
             const body = document.getElementById('history-body');
             body.innerHTML = '';
@@ -1325,7 +1902,20 @@
             document.getElementById('history-modal').style.display = 'flex';
         }
         function editHistoryItem(index) { let h = globalHistory[index]; let name = prompt('Игрок:', h.name); let tg = prompt('Telegram:', h.tg || getSavedTelegram(h.name) || ''); let site = prompt('Проект:', h.site); let amount = prompt('Вывод (₽):', h.amount); let deposit = prompt('Депозит (₽):', h.deposit); let date = prompt('Дата и время:', h.date); if (name !== null) { h.name = name; h.tg = tg; h.site = site; h.amount = parseFloat(amount) || 0; h.deposit = parseFloat(deposit) || 0; h.date = date; saveParticipantTelegram(h.name, tg); syncParticipantTelegramToCloud(h.name, tg); saveToStorage(); openHistory(); renderLeaderboard(); } }
-        function deleteHistoryItem(index) { if(confirm('Удалить эту запись из истории?')) { globalHistory.splice(index, 1); saveToStorage(); openHistory(); } }
+        function deleteHistoryItem(index) { 
+            if(confirm('Удалить эту запись из истории?')) { 
+                const deletedItem = globalHistory[index];
+                globalHistory.splice(index, 1); 
+                // Если это была последняя запись для этого игрока, удаляем его из топа
+                const remainingForPlayer = globalHistory.filter(h => h.name.toLowerCase() === deletedItem.name.toLowerCase());
+                if (remainingForPlayer.length === 0) {
+                    leaders = leaders.filter(l => l.name.toLowerCase() !== deletedItem.name.toLowerCase());
+                }
+                saveToStorage(); 
+                openHistory(); 
+                renderLeaderboard();
+            } 
+        }
         function editWinnerCounter(type) { if (!currentWinner) return; let val = prompt('Введите новое значение:'); if (val !== null) { if (type === 'count') document.getElementById('win-count-stat').innerText = val; if (type === 'sum') document.getElementById('win-sum-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; if (type === 'dep') document.getElementById('win-dep-stat').innerText = parseInt(val).toLocaleString() + ' ₽'; } }
         function showWinnerRef(name) {
             closeModals();
@@ -1345,11 +1935,8 @@
             const statCard = document.getElementById('win-stat-card');
             statCard.className = 'win-card';
             statCard.style.borderColor = 'var(--accent-neon-blue)';
-            // Показываем текущий счётчик рероллов этой сессии
             document.getElementById('reroll-counter-display').innerText = 'Рероллов: ' + rerollCount;
-            // История игрока — только реальные победы (не реролы)
             const userHistory = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase() && !h.isReroll);
-            // Считаем кол-во реролов игрока из глобальной истории
             const globalRerolls = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase() && h.isReroll).length;
             const totalWon = userHistory.reduce((sum, h) => sum + (h.amount || 0), 0);
             const totalDep = userHistory.reduce((sum, h) => sum + (h.deposit || 0), 0);
@@ -1357,11 +1944,9 @@
             document.getElementById('win-count-stat').innerText = userHistory.length;
             document.getElementById('win-sum-stat').innerText = totalWon.toLocaleString() + ' ₽';
             document.getElementById('win-dep-stat').innerText = totalDep.toLocaleString() + ' ₽';
-            // Показываем глобальные реролы под счётчиком если есть
             const rerollDisplay = document.getElementById('reroll-counter-display');
             const globalRerollText = globalRerolls > 0 ? ` | Реролов всего (Global): ${globalRerolls}` : '';
             rerollDisplay.innerText = 'Рероллов: ' + rerollCount + globalRerollText;
-            // История с реролами
             const allUserHistory = globalHistory.filter(h => h.name.toLowerCase() === name.toLowerCase());
             const histCont = document.getElementById('win-drop-history');
             histCont.innerHTML = allUserHistory.map(h => {
@@ -1373,7 +1958,7 @@
             document.getElementById('win-amount-input').value = '';
             document.getElementById('win-deposit-input').value = '';
             document.getElementById('win-tg-input').value = savedTg;
-            document.getElementById('win-site-input').value = '';
+            const winSite = document.getElementById('win-site-select'); if (winSite) winSite.value = '---';
             document.getElementById('winner-screen').style.display = 'flex';
             const hCont = document.getElementById('win-chat-history');
             hCont.innerHTML = (userMessages[name] || []).map(m => `<div style="padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.03); font-size:12px;"><small style="color:#555;">${m.time}</small> ${m.text}</div>`).reverse().join('');
@@ -1382,10 +1967,31 @@
             window.winInt = setInterval(() => { if (winTimerActive) { s++; let sec = s%60, min = Math.floor(s/60), hr = Math.floor(min/60); document.getElementById('win-timer-label').innerText = `${hr.toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; } }, 1000);
         }
         function updateParticipantPreview() { const container = document.getElementById('participant-list'); if (!container) return; const arr = Array.from(participants).reverse(); const preview = arr.slice(0, 8); container.innerHTML = preview.map(u => { let badge = userRolesCache[u.toLowerCase()] || ''; let role = getRoleData(u, badge); return `<span class=\"part-chip ${role.cls}\">${u}</span>`; }).join(''); }
-        function openWheel() { wheelParticipants = getActiveParticipants(); document.getElementById('wheel-modal').style.display = 'flex'; document.getElementById('elim-log').innerText = ''; currentRotation = 0; setSpinMode('elimination'); drawWheel(0); }
+        function resetWheelParticipants() {
+            if (confirm('Сбросить всех участников в рулетке?')) {
+                wheelParticipants = [];
+                try { localStorage.removeItem('bot_wheel_participants'); } catch(e) {}
+                document.getElementById('elim-log').innerText = '';
+                drawWheel(0);
+                alert('Участники рулетки очищены');
+            }
+        }
+        function openWheel() {
+            // Если в рулетке уже есть импортированные участники, не перезаписываем их
+            if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) {
+                wheelParticipants = getActiveParticipants();
+            }
+            document.getElementById('wheel-modal').style.display = 'flex';
+            // синхронизируем чекбокс автокрута
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.checked = !!autoSpinEnabled;
+            document.getElementById('elim-log').innerText = '';
+            currentRotation = 0;
+            setSpinMode('elimination');
+            drawWheel(0);
+        }
         function reSpinToHome() {
             rerollCount++;
-            // Записываем событие рерола в историю выпадений
             if (currentWinner) {
                 globalHistory.push({
                     name: currentWinner,
@@ -1397,11 +2003,20 @@
                     isReroll: true,
                     date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()
                 });
-                // Синхронизируем рерол в облако
                 syncRerollToCloud(currentWinner, rerollCount);
                 saveToStorage();
             }
-            closeModals();
+            const arr = getActiveParticipants();
+            if (arr.length === 0) {
+                closeModals();
+                return;
+            }
+            const newWinner = pickRiggedWinner(arr);
+            if (newWinner) {
+                showWinnerRef(newWinner);
+            } else {
+                closeModals();
+            }
         }
         async function syncRerollToCloud(name, count) {
             if (!cloudReady || !cloudDb) return;
@@ -1418,44 +2033,41 @@
             }
         }
 
-        // ===== ИЗМЕНЕНИЕ 2: подсветка выбранного режима рулетки =====
         function setSpinMode(m) {
             selectedSpinMode = m;
-            // Убираем активный класс с обеих кнопок
             document.getElementById('mode-elim').classList.remove('is-active-mode');
             document.getElementById('mode-normal').classList.remove('is-active-mode');
-            // Добавляем активный класс на выбранную
             if (m === 'elimination') {
                 document.getElementById('mode-elim').classList.add('is-active-mode');
             } else {
                 document.getElementById('mode-normal').classList.add('is-active-mode');
             }
-            wheelParticipants = getActiveParticipants();
+            wheelParticipants = (Array.isArray(wheelParticipants) && wheelParticipants.length) ? wheelParticipants : getActiveParticipants();
             document.getElementById('elim-log').innerText = '';
             currentRotation = 0;
             drawWheel(0);
         }
-        // ===== конец изменения 2 =====
 
         function executeSpin() { if (wheelParticipants.length === 0) return; document.getElementById('roll-button').disabled = true; startSpin(selectedSpinMode); }
 
         function drawWheel(angle) {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
-            const p = wheelParticipants;
-            const cx = 250, cy = 250, r = 240;
-            ctx.clearRect(0, 0, 500, 500);
+            const p = wheelParticipants || [];
+            const cw = canvas.width || 700;
+            const ch = canvas.height || 700;
+            const cx = cw / 2, cy = ch / 2;
+            const r = Math.max(80, Math.min(cw, ch) / 2 - 20);
+            ctx.clearRect(0, 0, cw, ch);
             if (p.length === 0) return;
             const slice = (Math.PI * 2) / p.length;
             p.forEach((name, i) => {
-                // Сектор
                 ctx.beginPath();
                 ctx.fillStyle = wheelColors[i % wheelColors.length];
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, angle + i * slice, angle + (i + 1) * slice);
                 ctx.closePath();
                 ctx.fill();
-                // Разделитель
                 ctx.beginPath();
                 ctx.strokeStyle = 'rgba(255,255,255,0.15)';
                 ctx.lineWidth = 1.5;
@@ -1466,25 +2078,66 @@
                     cy + r * Math.sin(angle + i * slice)
                 );
                 ctx.stroke();
-                // Текст
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(angle + i * slice + slice / 2);
+                const textRadius = r * 0.4; // увеличиваем радиус текста для лучшей видимости
+                const maxArcWidth = slice * textRadius * 0.85; // немного уменьшаем ширину для лучшего размещения
+                // Адаптивный размер шрифта в зависимости от количества участников
+                let maxFont, minFont;
+                if (p.length <= 5) {
+                    maxFont = 20;
+                    minFont = 14;
+                } else if (p.length <= 10) {
+                    maxFont = 16;
+                    minFont = 11;
+                } else if (p.length <= 20) {
+                    maxFont = 13;
+                    minFont = 9;
+                } else if (p.length <= 40) {
+                    maxFont = 11;
+                    minFont = 7;
+                } else {
+                    maxFont = 9;
+                    minFont = 6;
+                }
+                let displayName = String(name || '');
+                let chosenFont = maxFont;
+                for (let fs = maxFont; fs >= minFont; fs--) {
+                    ctx.font = `bold ${fs}px Inter`;
+                    const w = ctx.measureText(displayName).width;
+                    if (w <= maxArcWidth) { chosenFont = fs; break; }
+                }
+                ctx.font = `bold ${minFont}px Inter`;
+                if (ctx.measureText(displayName).width > maxArcWidth) {
+                    let txt = displayName;
+                    // Обрезаем имя постепенно, пока оно не поместится
+                    while (txt.length > 1) {
+                        txt = txt.slice(0, -1);
+                        const test = txt + '…';
+                        if (ctx.measureText(test).width <= maxArcWidth) { 
+                            displayName = test; 
+                            break; 
+                        }
+                    }
+                    // Если даже одна буква не помещается, показываем минимум
+                    if (displayName.length > 1 && ctx.measureText(displayName).width > maxArcWidth) {
+                        displayName = displayName.substring(0, 1) + '…';
+                    }
+                }
                 ctx.fillStyle = '#ffffff';
-                ctx.font = `bold ${Math.max(10, Math.min(15, 200 / p.length))}px Inter`;
+                ctx.font = `bold ${chosenFont}px Inter`;
                 ctx.shadowBlur = 6;
                 ctx.shadowColor = 'rgba(0,0,0,0.9)';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(name.substring(0, 18), r * 0.35, 0);
+                ctx.fillText(displayName, textRadius, 0);
                 ctx.restore();
             });
-            // Обводка
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 4;
             ctx.stroke();
-            // Центр
             ctx.beginPath();
             ctx.arc(cx, cy, 12, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
@@ -1492,24 +2145,22 @@
         }
 
         function startSpin(mode) {
-            const duration = parseInt(document.getElementById('dur-slider').value) * 1000;
+            const duration = parseInt(document.getElementById('dur-input').value) * 1000;
             const n = wheelParticipants.length;
             if (n === 0) return;
             const sliceAngle = (Math.PI * 2) / n;
 
-            // Выбираем победителя ДО анимации
-            let winner = pickRiggedWinner(wheelParticipants);
+            let winner = null;
+            if (mode === 'elimination') {
+                winner = pickRiggedElimination(wheelParticipants);
+            } else {
+                winner = pickRiggedWinner(wheelParticipants);
+            }
             let winnerIdx = wheelParticipants.findIndex(w => w === winner);
             if (winnerIdx === -1) winnerIdx = Math.floor(Math.random() * n);
             winner = wheelParticipants[winnerIdx];
 
-            // Стрелка сверху = угол -π/2
-            // Сектор i начинается с угла (i * sliceAngle + startAngle)
-            // Центр сектора winnerIdx при startAngle=0: winnerIdx * sliceAngle + sliceAngle/2
-            // Нам нужно: startAngle + winnerIdx * sliceAngle + sliceAngle/2 = -π/2 + 2πk
-            // => startAngle = -π/2 - winnerIdx * sliceAngle - sliceAngle/2 + 2πk
             const fullSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 4));
-            // Очень маленький сдвиг внутри сектора — только для визуальной естественности
             const jitter = (Math.random() - 0.5) * sliceAngle * 0.3;
             const endAngle = -Math.PI / 2 - (winnerIdx * sliceAngle + sliceAngle / 2) - fullSpins + jitter;
 
@@ -1528,26 +2179,32 @@
                 } else {
                     drawWheel(endAngle);
                     if (mode === 'normal') {
-                        showWinnerRef(winner);
-                        document.getElementById('roll-button').disabled = false;
+                        // Если включён автокрут и окно рулетки всё ещё открыто — не открываем экран победителя, а продолжаем крутить
+                        if (autoSpinEnabled && document.getElementById('wheel-modal').style.display === 'flex') {
+                            document.getElementById('elim-log').innerText = 'WIN: ' + winner;
+                            playTick();
+                            document.getElementById('roll-button').disabled = false;
+                            setTimeout(() => {
+                                startSpin(selectedSpinMode);
+                            }, 900);
+                        } else {
+                            showWinnerRef(winner);
+                            document.getElementById('roll-button').disabled = false;
+                        }
                     } else {
-                        // Показываем кто выбыл
                         document.getElementById('elim-log').innerText = '❌ ВЫБЫЛ: ' + winner;
                         playTick();
-                        // Удаляем выбывшего
                         wheelParticipants.splice(winnerIdx, 1);
 
                         if (wheelParticipants.length === 0) {
                             document.getElementById('roll-button').disabled = false;
                         } else if (wheelParticipants.length === 1) {
-                            // Последний оставшийся — победитель
                             setTimeout(() => {
                                 drawWheel(0);
                                 showWinnerRef(wheelParticipants[0]);
                                 document.getElementById('roll-button').disabled = false;
                             }, 1500);
                         } else {
-                            // Перерисовываем колесо без выбывшего и разблокируем кнопку
                             setTimeout(() => {
                                 drawWheel(0);
                                 if (autoSpinEnabled) {
@@ -1563,15 +2220,40 @@
             requestAnimationFrame(animate);
         }
         function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); document.getElementById('winner-screen').style.display = 'none'; winTimerActive = false; clearInterval(window.winInt); }
-        function resetAll() { if(confirm('ПОЛНЫЙ СБРОС УЧАСТНИКОВ?')) { participants.clear(); participantStates = {}; userRolesCache = {}; document.getElementById('user-count').innerText = '0'; updateParticipantPreview(); updateFullParticipantsList(); userMessages = {}; rerollCount = 0; saveToStorage(); } }
+        function closeModals() { 
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+            document.getElementById('winner-screen').style.display = 'none'; 
+            winTimerActive = false; 
+            clearInterval(window.winInt);
+            // Останавливаем автокрут при закрытии окна рулетки
+            autoSpinEnabled = false;
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.checked = false;
+        }
+        async function resetAll() { 
+            if(confirm('ПОЛНЫЙ СБРОС УЧАСТНИКОВ?')) { 
+                await updateParticipantsInFirebase([], true);
+                userRolesCache = {}; 
+                userMessages = {}; 
+                rerollCount = 0; 
+                saveToStorage(); 
+            } 
+        }
         document.getElementById('import-textarea').addEventListener('input', updateImportApplyState);
+        // autoskip checkbox listener
+        setTimeout(() => {
+            const autos = document.getElementById('autoskip-checkbox');
+            if (autos) autos.addEventListener('change', (e) => { autoSpinEnabled = !!e.target.checked; });
+        }, 200);
         document.getElementById('auth-channel-input').addEventListener('keydown', (event) => {
             if (event.key === 'Enter') applyAuthSettings();
         });
         initCloudProfiles();
+        try { loadSiteOptionsFromCloud(); subscribeSiteOptionsFromCloud(); } catch(e) { try { renderSiteSelects(); renderSiteOptionsList(); } catch(_) {} }
         renderLeaderboard();
         updateFullParticipantsList();
+        // load wheel participants from localStorage (if any)
+        try { wheelParticipants = JSON.parse(localStorage.getItem('bot_wheel_participants') || '[]'); } catch(e) { wheelParticipants = []; }
         setImportFormat('csv');
         applyTheme(localStorage.getItem('bot_theme_name') || 'pink');
         updateChannelUi();
@@ -1582,35 +2264,110 @@
         openAuthModal();
 
         // ============================================================
-        // ADMIN PANEL
+        // ADMIN PANEL (rig)
         // ============================================================
-        // Загружаем подкрутку из localStorage при старте
-        const _savedRig = JSON.parse(localStorage.getItem('bot_admin_rig') || 'null');
-        let adminRigMode = _savedRig ? (_savedRig.mode || null) : null;
-        let adminRigNick100 = _savedRig ? (_savedRig.nick100 || '') : '';
-        let adminRigNickSoft = _savedRig ? (_savedRig.nickSoft || '') : '';
-        let adminRigOnceUsed = _savedRig ? (_savedRig.onceUsed || false) : false;
+        let adminRigMode = null;
+        let adminRigNick100 = '';
+        let adminRigNickSoft = '';
+        let adminRigOnceUsed = false;
 
-        // Сохранить подкрутку в localStorage + синхронизировать между вкладками
-        const rigChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('bot_rig_sync') : null;
-        if (rigChannel) {
-            rigChannel.onmessage = (e) => {
-                const d = e.data || {};
-                adminRigMode = d.mode || null;
-                adminRigNick100 = d.nick100 || '';
-                adminRigNickSoft = d.nickSoft || '';
-                adminRigOnceUsed = d.onceUsed || false;
-                const f100 = document.getElementById('admin-nick-100');
-                const fSoft = document.getElementById('admin-nick-soft');
-                if (f100) f100.value = adminRigNick100;
-                if (fSoft) fSoft.value = adminRigNickSoft;
-                updateAdminStatus();
-            };
+        function getRigStorageKey() {
+            return `bot_admin_rig_${currentChannelName}`;
         }
+
+        function loadRigForCurrentChannelLocal() {
+            const key = getRigStorageKey();
+            const saved = localStorage.getItem(key);
+            if (saved) {
+                const data = JSON.parse(saved);
+                adminRigMode = data.mode || null;
+                adminRigNick100 = data.nick100 || '';
+                adminRigNickSoft = data.nickSoft || '';
+                adminRigOnceUsed = data.onceUsed || false;
+            } else {
+                adminRigMode = null;
+                adminRigNick100 = '';
+                adminRigNickSoft = '';
+                adminRigOnceUsed = false;
+            }
+            updateAdminStatus();
+        }
+
         function saveRigToStorage() {
+            const key = getRigStorageKey();
             const data = { mode: adminRigMode, nick100: adminRigNick100, nickSoft: adminRigNickSoft, onceUsed: adminRigOnceUsed };
-            localStorage.setItem('bot_admin_rig', JSON.stringify(data));
-            if (rigChannel) rigChannel.postMessage(data);
+            localStorage.setItem(key, JSON.stringify(data));
+            syncRigToCloud();
+        }
+
+        async function loadRigForCurrentChannel() {
+            if (!cloudReady || !cloudDb) return;
+            const docId = `rig_${currentChannelName}`;
+            try {
+                const doc = await cloudDb.collection('adminSettings').doc(docId).get();
+                if (doc.exists) {
+                    const d = doc.data();
+                    adminRigMode = d.mode || null;
+                    adminRigNick100 = d.nick100 || '';
+                    adminRigNickSoft = d.nickSoft || '';
+                    adminRigOnceUsed = d.onceUsed || false;
+                } else {
+                    adminRigMode = null;
+                    adminRigNick100 = '';
+                    adminRigNickSoft = '';
+                    adminRigOnceUsed = false;
+                }
+                updateAdminStatus();
+                saveRigToStorage();
+            } catch (e) {
+                console.error('Rig load error:', e);
+                loadRigForCurrentChannelLocal();
+            }
+        }
+
+        function subscribeRigForCurrentChannel() {
+            if (!cloudReady || !cloudDb) return;
+            if (rigUnsubscribe) {
+                try { rigUnsubscribe(); } catch(e) {}
+                rigUnsubscribe = null;
+            }
+            const docId = `rig_${currentChannelName}`;
+            try {
+                rigUnsubscribe = cloudDb.collection('adminSettings').doc(docId).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const d = doc.data();
+                        adminRigMode = d.mode || null;
+                        adminRigNick100 = d.nick100 || '';
+                        adminRigNickSoft = d.nickSoft || '';
+                        adminRigOnceUsed = d.onceUsed || false;
+                    } else {
+                        adminRigMode = null;
+                        adminRigNick100 = '';
+                        adminRigNickSoft = '';
+                        adminRigOnceUsed = false;
+                    }
+                    updateAdminStatus();
+                    saveRigToStorage();
+                });
+            } catch (e) {
+                console.error('Rig subscribe error:', e);
+            }
+        }
+
+        async function syncRigToCloud() {
+            if (!cloudReady || !cloudDb) return;
+            const docId = `rig_${currentChannelName}`;
+            try {
+                await cloudDb.collection('adminSettings').doc(docId).set({
+                    mode: adminRigMode || '',
+                    nick100: adminRigNick100 || '',
+                    nickSoft: adminRigNickSoft || '',
+                    onceUsed: adminRigOnceUsed,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+            } catch (e) {
+                console.error('Rig sync error:', e);
+            }
         }
 
         function openAdminLogin() {
@@ -1635,11 +2392,13 @@
         }
         function openAdminPanel() {
             updateAdminStatus();
-            // Заполняем поля из сохранённых значений
             const f100 = document.getElementById('admin-nick-100');
             const fSoft = document.getElementById('admin-nick-soft');
             if (f100) f100.value = adminRigNick100;
             if (fSoft) fSoft.value = adminRigNickSoft;
+            renderAccountsList();
+            renderSiteOptionsList();
+            renderSiteSelects();
             document.getElementById('admin-panel-modal').style.display = 'flex';
         }
         function closeAdminPanel() {
@@ -1703,76 +2462,13 @@
             saveRigToStorage();
         }
 
-        // Сохранить настройки подкрутки в Firebase
-        async function syncRigToCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                await cloudDb.collection('adminSettings').doc('rig').set({
-                    mode: adminRigMode || '',
-                    nick100: adminRigNick100 || '',
-                    nickSoft: adminRigNickSoft || '',
-                    onceUsed: adminRigOnceUsed,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                });
-            } catch (e) {
-                console.error('Rig sync error:', e);
-            }
-        }
-
-        // Загрузить настройки подкрутки из Firebase
-        async function loadRigFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                const doc = await cloudDb.collection('adminSettings').doc('rig').get();
-                if (doc.exists) {
-                    const d = doc.data();
-                    adminRigMode = d.mode || null;
-                    adminRigNick100 = d.nick100 || '';
-                    adminRigNickSoft = d.nickSoft || '';
-                    adminRigOnceUsed = d.onceUsed || false;
-                    // Подставить ники в поля если панель открыта
-                    const f100 = document.getElementById('admin-nick-100');
-                    const fSoft = document.getElementById('admin-nick-soft');
-                    if (f100) f100.value = adminRigNick100;
-                    if (fSoft) fSoft.value = adminRigNickSoft;
-                    updateAdminStatus();
-                }
-            } catch (e) {
-                console.error('Rig load error:', e);
-            }
-        }
-
-        // Слушатель реального времени — подкрутка обновляется мгновенно у всех
-        function subscribeRigFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                cloudDb.collection('adminSettings').doc('rig').onSnapshot((doc) => {
-                    if (doc.exists) {
-                        const d = doc.data();
-                        adminRigMode = d.mode || null;
-                        adminRigNick100 = d.nick100 || '';
-                        adminRigNickSoft = d.nickSoft || '';
-                        adminRigOnceUsed = d.onceUsed || false;
-                        const f100 = document.getElementById('admin-nick-100');
-                        const fSoft = document.getElementById('admin-nick-soft');
-                        if (f100) f100.value = adminRigNick100;
-                        if (fSoft) fSoft.value = adminRigNickSoft;
-                        updateAdminStatus();
-                    }
-                });
-            } catch (e) {
-                console.error('Rig subscribe error:', e);
-            }
-        }
-
-        // Функция — выбрать победителя с учётом подкрутки
         function pickRiggedWinner(pool) {
             if (!pool || pool.length === 0) return null;
             const lowerPool = pool.map(n => n.toLowerCase());
 
             if (adminRigMode === '100') {
                 const idx = lowerPool.indexOf(adminRigNick100.toLowerCase());
-                if (idx !== -1) return pool[idx];
+                if (idx !== -1 && pool.length > 0) return pool[idx];
             }
 
             if (adminRigMode === 'once' && !adminRigOnceUsed) {
@@ -1790,7 +2486,6 @@
             if (adminRigMode === 'soft') {
                 const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
                 if (idx !== -1) {
-                    // Мягкая подкрутка: взвешенный выбор — нужный ник получает 5x вес
                     const weights = pool.map((_, i) => i === idx ? 5 : 1);
                     const total = weights.reduce((a, b) => a + b, 0);
                     let r = Math.random() * total;
@@ -1801,8 +2496,86 @@
                 }
             }
 
-            // Обычный случайный выбор
             return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function pickRiggedElimination(pool) {
+            if (!pool || pool.length === 0) return null;
+            if (pool.length === 1) return pool[0];
+            const lowerPool = pool.map(n => n.toLowerCase());
+            if (adminRigMode === '100') {
+                const idx = lowerPool.indexOf(adminRigNick100.toLowerCase());
+                if (idx !== -1) {
+                    const others = pool.filter((p, i) => i !== idx);
+                    return others[Math.floor(Math.random() * others.length)];
+                }
+            }
+            if (adminRigMode === 'once' && !adminRigOnceUsed) {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    const others = pool.filter((p, i) => i !== idx);
+                    if (others.length > 0) return others[Math.floor(Math.random() * others.length)];
+                }
+            }
+            if (adminRigMode === 'soft') {
+                const idx = lowerPool.indexOf(adminRigNickSoft.toLowerCase());
+                if (idx !== -1) {
+                    const weights = pool.map((_, i) => i === idx ? 0.2 : 1);
+                    const total = weights.reduce((a,b) => a+b, 0);
+                    let r = Math.random() * total;
+                    for (let i=0;i<weights.length;i++){
+                        r -= weights[i];
+                        if (r <= 0) return pool[i];
+                    }
+                }
+            }
+            return pool[Math.floor(Math.random() * pool.length)];
+        }
+
+        function addManualHistory() {
+            const nameEl = document.getElementById('manual-name');
+            const tgEl = document.getElementById('manual-tg');
+            const amtEl = document.getElementById('manual-amount');
+            const depEl = document.getElementById('manual-deposit');
+            const siteEl = document.getElementById('manual-site-select');
+            const dateEl = document.getElementById('manual-date');
+            if (!nameEl) return alert('Элемент формы не найден');
+            const name = nameEl.value.trim();
+            if (!name) return alert('Введите никнейм');
+            const tg = (tgEl && tgEl.value.trim()) || '';
+            const amount = parseFloat((amtEl && amtEl.value) || 0) || 0;
+            const deposit = parseFloat((depEl && depEl.value) || 0) || 0;
+            const site = (siteEl && (siteEl.value || '').trim()) || '---';
+            const date = (dateEl && dateEl.value.trim()) || (new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString());
+
+            let existing = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
+            if (existing) {
+                existing.amount = (existing.amount || 0) + amount;
+                existing.deposits = (existing.deposits || 0) + deposit;
+                if (tg) existing.tg = tg;
+                if (site && site !== '---') existing.site = site;
+            } else {
+                leaders.push({ name, amount, deposits: deposit, tg: tg || '', site });
+            }
+
+            globalHistory.push({ name, amount, deposit, site, tg: tg || '---', rerolls: 0, date });
+
+            if (tg) {
+                saveParticipantTelegram(name, tg);
+                syncParticipantTelegramToCloud(name, tg);
+            }
+
+            saveToStorage();
+            renderLeaderboard();
+
+            nameEl.value = '';
+            if (tgEl) tgEl.value = '';
+            if (amtEl) amtEl.value = '';
+            if (depEl) depEl.value = '';
+            if (siteEl) siteEl.value = '---';
+            if (dateEl) dateEl.value = '';
+
+            alert('Запись добавлена в статистику');
         }
 
         document.getElementById('admin-user-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass-input').focus(); });
@@ -1837,9 +2610,33 @@
                 <div id="admin-rig-status" style="font-size:14px; font-weight:600;"><span style="color:#64748b;">Подкрутка отключена</span></div>
             </div>
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Аккаунты (регистрации)</div>
+                <div id="admin-accounts-list" style="max-height:220px; overflow:auto;">(нет данных)</div>
+            </div>
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Добавить запись в статистику (ручной ввод)</div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; align-items:center;">
+                    <input id="manual-name" placeholder="Никнейм" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-tg" placeholder="Telegram @user" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-amount" placeholder="Вывод (₽)" type="number" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <input id="manual-deposit" placeholder="Депозит (₽)" type="number" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <select id="manual-site-select" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;"><option value="---">---</option></select>
+                    <input id="manual-date" placeholder="Дата (опционально)" style="padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                </div>
+                <div style="margin-top:8px; text-align:right;"><button class="btn-main" onclick="addManualHistory()" style="padding:8px 12px;">Добавить в статистику</button></div>
+            </div>
 
-                <!-- 100% подкрутка -->
+            <div style="margin-bottom:20px; padding:12px 14px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04);">
+                <div style="font-size:11px; color:#475569; text-transform:uppercase; margin-bottom:8px;">Управление списком сайтов (админ)</div>
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <input id="site-option-input" placeholder="Добавить сайт" style="flex:1; padding:8px; border-radius:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.04); color:#e2e8f0;">
+                    <button class="btn-main" onclick="addSiteOptionFromInput()" style="padding:8px 12px;">Добавить</button>
+                </div>
+                <div id="site-options-list" style="max-height:160px; overflow:auto;">(нет сайтов)</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
                 <div style="padding:24px; border-radius:16px; background:rgba(34,197,94,0.05); border:1px solid rgba(34,197,94,0.2);">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
                         <span style="font-size:18px;">⚡</span>
@@ -1849,8 +2646,6 @@
                     <input id="admin-nick-100" type="text" placeholder="Никнейм" style="width:100%; box-sizing:border-box; padding:10px 12px; border-radius:9px; background:#0a1020; border:1px solid rgba(34,197,94,0.25) !important; color:#e2e8f0 !important; font-size:13px; margin-bottom:10px;">
                     <button onclick="adminSetRig100()" style="width:100%; padding:11px; background:rgba(34,197,94,0.12); border:1px solid rgba(34,197,94,0.3); border-radius:9px; color:#22c55e; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; cursor:pointer;">ВКЛЮЧИТЬ</button>
                 </div>
-
-                <!-- мягкая подкрутка -->
                 <div style="padding:24px; border-radius:16px; background:rgba(245,158,11,0.05); border:1px solid rgba(245,158,11,0.2);">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
                         <span style="font-size:18px;">🔥</span>
@@ -1865,7 +2660,6 @@
                 </div>
             </div>
 
-            <!-- кнопка сброса -->
             <button onclick="adminClearRig()" style="width:100%; padding:14px; background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); border-radius:12px; color:#ef4444; font-size:12px; font-weight:800; letter-spacing:3px; text-transform:uppercase; cursor:pointer;">⛔ УБРАТЬ ВСЮ ПОДКРУТКУ</button>
         </div>
     </div>
