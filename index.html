@@ -2043,6 +2043,9 @@
                 try { localStorage.removeItem('bot_wheel_participants'); } catch(e) {}
                 document.getElementById('elim-log').innerText = '';
                 drawWheel(0);
+                // Скрываем надпись над стрелкой при сбросе
+                const arrowLabel = document.getElementById('arrow-label');
+                if (arrowLabel) arrowLabel.style.display = 'none';
                 alert('Участники рулетки очищены');
             }
         }
@@ -2251,14 +2254,12 @@
                     requestAnimationFrame(animate);
                 } else {
                     drawWheel(endAngle);
-                    // Показываем имя над стрелкой
+                    // Показываем имя над стрелкой (всегда после остановки)
                     const arrowLabel = document.getElementById('arrow-label');
                     if (arrowLabel) {
                         arrowLabel.innerText = winner;
                         arrowLabel.style.display = 'block';
-                        setTimeout(() => {
-                            if (arrowLabel) arrowLabel.style.opacity = '0.9';
-                        }, 10);
+                        arrowLabel.style.opacity = '0.9';
                     }
 
                     if (mode === 'normal') {
@@ -2312,7 +2313,7 @@
             autoSpinEnabled = false;
             const autos = document.getElementById('autoskip-checkbox');
             if (autos) autos.checked = false;
-            // Скрываем надпись над стрелкой
+            // Скрываем надпись над стрелкой при закрытии окна рулетки
             const arrowLabel = document.getElementById('arrow-label');
             if (arrowLabel) arrowLabel.style.display = 'none';
         }
