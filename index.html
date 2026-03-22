@@ -894,17 +894,22 @@
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(angle + i * slice + slice / 2);
-                const textR = r * 0.55;
+                // Середина сектора по радиусу: от центра до края, берём середину видимой части
+                const textMid = r * 0.55; // середина между центром и краем
                 let fontSize = Math.max(7, Math.min(18, Math.floor(180 / p.length)));
                 let displayName = String(name || '');
                 ctx.font = `bold ${fontSize}px Inter`;
-                const maxW = r * 0.55;
+                const maxW = r * 0.58;
                 while (ctx.measureText(displayName).width > maxW && displayName.length > 1) displayName = displayName.slice(0, -1) + '…';
+                // Центрируем текст по середине сектора
+                const textWidth = ctx.measureText(displayName).width;
+                const textX = textMid - textWidth / 2;
                 ctx.fillStyle = '#fff';
                 ctx.shadowBlur = 5;
                 ctx.shadowColor = 'rgba(0,0,0,0.95)';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(displayName, textR * 0.3, 0);
+                ctx.textAlign = 'left';
+                ctx.fillText(displayName, textX, 0);
                 ctx.restore();
             });
             // Обводка
