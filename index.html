@@ -353,7 +353,7 @@
         </div>
     </div>
 
-    <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+    <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead> <tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
 
     <!-- РУЛЕТКА — стрелка строго над центром колеса -->
@@ -491,7 +491,7 @@
         let currentAnimationId = null;
         let spinCanceled = false;
         let spinTimeoutId = null;
-        let precomputedWheelLabels = []; // { text, font, maxWidth }
+        let precomputedWheelLabels = []; // { text, font }
         // ----------------------------------------------------------------
 
         const defaultSites = ["Кб", "СкинБро", "СкинХаус", "Жабка", "Мэджик", "Дино", "Ретух", "BountyStars", "Upgrader"];
@@ -690,7 +690,13 @@
                 syncParticipantsState();
             }, (e) => { console.error('Participants subscription error:', e); });
         }
-        function syncParticipantsState() { document.getElementById('user-count').innerText = participants.size; updateFullParticipantsList(); wheelParticipants = getActiveParticipants(); precomputeWheelLabels(); saveToStorage(); }
+        function syncParticipantsState() { 
+            document.getElementById('user-count').innerText = participants.size; 
+            updateFullParticipantsList(); 
+            // НЕ обновляем wheelParticipants автоматически, чтобы не сбросить список в рулетке при изменении участников 
+            // Но когда рулетка закрыта и открывается заново, мы перезагрузим из participants
+            saveToStorage(); 
+        }
         function getActiveParticipants() { return Array.from(participants); }
         function setCloudStatus(text, color) { try { const el = document.getElementById('cloud-status'); if (!el) return; el.innerText = 'Cloud: ' + text; el.style.color = color; } catch(e){} }
 
@@ -798,9 +804,16 @@
             try { parsedNames = parseImportedParticipants(raw); } catch(e) { alert('Ошибка: '+e.message); return; }
             if (!parsedNames.length) { alert('Участников не найдено.'); return; }
             const replace = document.getElementById('import-replace-checkbox').checked;
-            wheelParticipants = Array.isArray(wheelParticipants) ? wheelParticipants : [];
-            if (replace) { wheelParticipants = [...parsedNames]; } else { const s = new Set([...wheelParticipants, ...parsedNames]); wheelParticipants = Array.from(s); }
-            try { localStorage.setItem('bot_wheel_participants', JSON.stringify(wheelParticipants)); } catch(e){}
+            if (replace) {
+                // Заменяем в общем списке участников
+                await updateParticipantsInFirebase(parsedNames, true);
+                wheelParticipants = [...parsedNames];
+            } else {
+                // Добавляем к существующим
+                for (let p of parsedNames) await addParticipantToFirebase(p);
+                const existing = getActiveParticipants();
+                wheelParticipants = [...new Set([...existing, ...parsedNames])];
+            }
             precomputeWheelLabels();
             document.getElementById('import-textarea').value = '';
             document.getElementById('import-replace-checkbox').checked = false;
@@ -890,7 +903,7 @@
             window.winInt = setInterval(() => { if(winTimerActive) { s++; let sec=s%60, min=Math.floor(s/60), hr=Math.floor(min/60); document.getElementById('win-timer-label').innerText=`${hr.toString().padStart(2,'0')}:${(min%60).toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; } }, 1000);
         }
 
-        function resetWheelParticipants() { if(confirm('Сбросить участников рулетки?')) { wheelParticipants=[]; precomputeWheelLabels(); try { localStorage.removeItem('bot_wheel_participants'); } catch(e){} document.getElementById('elim-log').innerText=''; const nl = document.getElementById('arrow-label'); if(nl) nl.style.display='none'; drawWheel(0); } }
+        function resetWheelParticipants() { if(confirm('Сбросить участников рулетки?')) { wheelParticipants = getActiveParticipants(); precomputeWheelLabels(); drawWheel(0); document.getElementById('elim-log').innerText=''; const nl = document.getElementById('arrow-label'); if(nl) nl.style.display='none'; } }
 
         // ---------- ОПТИМИЗАЦИЯ ОТРИСОВКИ: предрасчёт меток ----------
         function precomputeWheelLabels() {
@@ -981,7 +994,10 @@
                 spinTimeoutId = null;
             }
             spinCanceled = true;
-            // Сбрасываем флаг автокрута если нужно, чтобы не крутилось дальше
+            // Разблокируем кнопку, если она была заблокирована
+            const rollBtn = document.getElementById('roll-button');
+            if (rollBtn) rollBtn.disabled = false;
+            // Сбрасываем флаг автокрута, чтобы не крутилось дальше
             autoSpinEnabled = false;
             const autoCheck = document.getElementById('autoskip-checkbox');
             if (autoCheck) autoCheck.checked = false;
@@ -990,10 +1006,13 @@
         function openWheel() {
             hideNickDisplay();
             cancelSpin(); // отменяем предыдущий спин, если был
-            if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) {
-                wheelParticipants = getActiveParticipants();
-                precomputeWheelLabels();
+            // Загружаем актуальный список участников из главной таблицы
+            wheelParticipants = getActiveParticipants();
+            if (wheelParticipants.length === 0) {
+                // Если нет участников, показываем сообщение
+                document.getElementById('elim-log').innerText = 'Нет участников';
             }
+            precomputeWheelLabels();
             document.getElementById('wheel-modal').style.display = 'flex';
             const autos = document.getElementById('autoskip-checkbox');
             if (autos) autos.checked = !!autoSpinEnabled;
@@ -1002,6 +1021,9 @@
             if (nl) nl.style.display = 'none';
             setSpinMode(selectedSpinMode);
             drawWheel(0);
+            // Убедимся, что кнопка активна
+            const rollBtn = document.getElementById('roll-button');
+            if (rollBtn) rollBtn.disabled = false;
         }
 
         function reSpinToHome() {
@@ -1032,7 +1054,10 @@
         }
 
         function executeSpin() {
-            if (!wheelParticipants.length) return;
+            if (!wheelParticipants.length) {
+                document.getElementById('elim-log').innerText = 'Нет участников';
+                return;
+            }
             cancelSpin(); // отменяем текущий спин перед новым
             document.getElementById('roll-button').disabled = true;
             startSpin(selectedSpinMode);
@@ -1040,11 +1065,7 @@
 
         function startSpin(mode) {
             const durationSec = parseFloat(document.getElementById('dur-input').value);
-            if (isNaN(durationSec) || durationSec <= 0) {
-                document.getElementById('dur-input').value = '5';
-                durationSec = 5;
-            }
-            const duration = durationSec * 1000;
+            let duration = (isNaN(durationSec) || durationSec <= 0) ? 5000 : durationSec * 1000;
             const n = wheelParticipants.length;
             if (n === 0) {
                 document.getElementById('roll-button').disabled = false;
