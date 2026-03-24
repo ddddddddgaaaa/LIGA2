@@ -47,7 +47,7 @@
             background: var(--panel-bg);
             border-radius: 20px;
             display: flex;
-            flex-direction: column; /* FIX: ensure column layout for proper height distribution */
+            flex-direction: column;
             padding: 20px;
             border: 1px solid var(--panel-border);
             box-shadow: var(--glow-blue), inset 0 0 20px rgba(0,0,0,0.5);
@@ -220,14 +220,6 @@
             display: flex;
             max-width: 95vw;
             max-height: 90vh;
-        }
-        /* FIX: fullscreen wheel modal */
-        .wheel-modal-content {
-            width: 95vw;
-            height: 90vh;
-            max-width: none;
-            padding: 20px;
-            gap: 20px;
         }
         .btn-main {
             width: 100%;
@@ -410,19 +402,18 @@
         .middle-split {
             display: flex;
             gap: 15px;
-            height: 100%;
-            flex: 1; /* FIX: take full height */
-            min-height: 0; /* FIX: allow flex children to shrink */
+            flex: 1;
+            min-height: 0;
         }
         .red-participants {
             flex: 1;
+            min-height: 0;
             border: 3px solid var(--section-accent);
             border-radius: 18px;
             background: var(--dark-purple);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            min-height: 0; /* FIX: crucial for scrolling */
         }
         .red-participants h4 {
             margin: 0;
@@ -436,12 +427,12 @@
         }
         #full-participants-list {
             flex: 1;
+            min-height: 0;
             overflow-y: auto;
             padding: 12px;
             font-size: 14.5px;
             line-height: 1.65;
             color: #e0e7ff;
-            /* FIX: removed max-height, now uses flex */
         }
         #full-participants-list div {
             padding: 5px 10px;
@@ -491,6 +482,7 @@
         }
         .orange-chat {
             flex: 1;
+            min-height: 0;
             border: 1px solid var(--panel-border);
             border-radius: 18px;
             background: var(--dark-purple);
@@ -649,15 +641,74 @@
             font-size: 12px;
         }
         .wheel-modal-content {
-            background: transparent;
-            border: none;
-            box-shadow: none;
+            background: rgba(2, 5, 15, 0.98) !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100vw !important;
+            max-height: 100vh !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            display: flex !important;
+            align-items: stretch;
+        }
+        /* ── Nick above wheel pointer ── */
+        #wheel-pointer-nick {
+            position: absolute;
+            top: -72px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: clamp(0.85rem, 1.6vw, 1.35rem);
+            font-weight: 800;
+            text-align: center;
+            z-index: 11;
+            white-space: nowrap;
+            padding: 6px 20px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 999px;
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            min-width: 160px;
+            text-shadow: 0 0 10px var(--accent-neon-blue), 0 0 20px var(--accent-neon-blue);
+            letter-spacing: 0.04em;
+            pointer-events: none;
+        }
+        #wheel-pointer-nick.show {
+            opacity: 1;
+        }
+        /* ── Fullscreen wheel canvas area ── */
+        #wheel-canvas-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 20px;
+            min-height: 0;
+            overflow: hidden;
+        }
+        #wheel-canvas-area > div {
+            position: relative;
+        }
+        /* ── Wheel controls sidebar ── */
+        .wheel-controls-panel {
+            width: 320px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 24px 20px;
+            background: rgba(10, 16, 32, 0.92);
+            border-left: 1px solid var(--panel-border);
+            overflow-y: auto;
         }
         .wheel-controls {
             background: transparent;
             border: none;
             box-shadow: none;
-            width: 320px; /* FIX: fixed width for controls */
         }
         .wheel-controls h3 {
             background: linear-gradient(90deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.6));
@@ -735,25 +786,6 @@
             box-shadow: inset 0 0 18px rgba(0,0,0,0.28);
             animation: textGlow 2s ease-in-out infinite;
         }
-        /* FIX: arrow label style */
-        .wheel-arrow-label {
-            position: absolute;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.75);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            white-space: nowrap;
-            z-index: 20;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
-            border: 1px solid var(--accent-neon-blue);
-            box-shadow: 0 0 12px rgba(255,20,147,0.4);
-        }
         @media (max-width: 980px) {
             .import-layout {
                 grid-template-columns: 1fr;
@@ -761,9 +793,6 @@
             .import-sidebar {
                 border-right: 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            }
-            .wheel-controls {
-                width: 260px;
             }
         }
     </style>
@@ -833,8 +862,7 @@
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <!-- FIX: wheel modal now has class wheel-modal-content -->
-    <div id="wheel-modal" class="modal"><div class="modal-content wheel-modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div style="position: relative; flex: 1; display: flex; justify-content: center; align-items: center;"><div id="wheel-arrow-label" class="wheel-arrow-label"></div><div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #fff; z-index: 10;"></div><canvas id="wheelCanvas" width="700" height="700" style="max-width: 100%; height: auto;"></canvas></div><div class="wheel-controls" style="width: 320px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+    <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div style="position: relative;"><div style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #fff; z-index: 10;"></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
@@ -2023,26 +2051,8 @@
             document.getElementById('elim-log').innerText = '';
             currentRotation = 0;
             setSpinMode('elimination');
-            // FIX: адаптивный размер canvas
-            resizeWheelCanvas();
             drawWheel(0);
         }
-        // FIX: resize canvas for fullscreen effect
-        function resizeWheelCanvas() {
-            const container = document.querySelector('#wheel-modal .modal-content > div:first-child'); // родитель canvas
-            if (!container) return;
-            const maxSize = Math.min(window.innerWidth * 0.6, window.innerHeight * 0.7);
-            const canvas = document.getElementById('wheelCanvas');
-            const size = Math.min(maxSize, 800);
-            canvas.width = size;
-            canvas.height = size;
-            canvas.style.width = `${size}px`;
-            canvas.style.height = `${size}px`;
-            drawWheel(currentRotation);
-        }
-        window.addEventListener('resize', () => {
-            if (document.getElementById('wheel-modal').style.display === 'flex') resizeWheelCanvas();
-        });
         function reSpinToHome() {
             rerollCount++;
             if (currentWinner) {
@@ -2103,7 +2113,6 @@
 
         function executeSpin() { if (wheelParticipants.length === 0) return; document.getElementById('roll-button').disabled = true; startSpin(selectedSpinMode); }
 
-        // FIX: draw wheel with arrow label update
         function drawWheel(angle) {
             const canvas = document.getElementById('wheelCanvas');
             const ctx = canvas.getContext('2d');
@@ -2113,15 +2122,7 @@
             const cx = cw / 2, cy = ch / 2;
             const r = Math.max(80, Math.min(cw, ch) / 2 - 20);
             ctx.clearRect(0, 0, cw, ch);
-            if (p.length === 0) {
-                ctx.fillStyle = '#222';
-                ctx.fillRect(0,0,cw,ch);
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 20px Inter';
-                ctx.fillText('Нет участников', cx-100, cy);
-                document.getElementById('wheel-arrow-label').innerText = '';
-                return;
-            }
+            if (p.length === 0) return;
             const slice = (Math.PI * 2) / p.length;
             p.forEach((name, i) => {
                 ctx.beginPath();
@@ -2143,8 +2144,9 @@
                 ctx.save();
                 ctx.translate(cx, cy);
                 ctx.rotate(angle + i * slice + slice / 2);
-                const textRadius = r * 0.4;
-                const maxArcWidth = slice * textRadius * 0.85;
+                const textRadius = r * 0.4; // увеличиваем радиус текста для лучшей видимости
+                const maxArcWidth = slice * textRadius * 0.85; // немного уменьшаем ширину для лучшего размещения
+                // Адаптивный размер шрифта в зависимости от количества участников
                 let maxFont, minFont;
                 if (p.length <= 5) {
                     maxFont = 20;
@@ -2172,6 +2174,7 @@
                 ctx.font = `bold ${minFont}px Inter`;
                 if (ctx.measureText(displayName).width > maxArcWidth) {
                     let txt = displayName;
+                    // Обрезаем имя постепенно, пока оно не поместится
                     while (txt.length > 1) {
                         txt = txt.slice(0, -1);
                         const test = txt + '…';
@@ -2180,6 +2183,7 @@
                             break; 
                         }
                     }
+                    // Если даже одна буква не помещается, показываем минимум
                     if (displayName.length > 1 && ctx.measureText(displayName).width > maxArcWidth) {
                         displayName = displayName.substring(0, 1) + '…';
                     }
@@ -2201,23 +2205,6 @@
             ctx.arc(cx, cy, 12, 0, Math.PI * 2);
             ctx.fillStyle = '#fff';
             ctx.fill();
-
-            // FIX: update arrow label
-            if (p.length > 0) {
-                const arrowAngle = -Math.PI / 2; // вверх
-                // находим индекс сегмента под стрелкой
-                let relAngle = (arrowAngle - angle + 2 * Math.PI) % (2 * Math.PI);
-                let idx = Math.floor(relAngle / slice);
-                if (idx >= 0 && idx < p.length) {
-                    const currentUnderArrow = p[idx];
-                    const labelEl = document.getElementById('wheel-arrow-label');
-                    if (labelEl) labelEl.innerText = currentUnderArrow;
-                } else {
-                    document.getElementById('wheel-arrow-label').innerText = '';
-                }
-            } else {
-                document.getElementById('wheel-arrow-label').innerText = '';
-            }
         }
 
         function startSpin(mode) {
@@ -2240,7 +2227,7 @@
             const jitter = (Math.random() - 0.5) * sliceAngle * 0.3;
             const endAngle = -Math.PI / 2 - (winnerIdx * sliceAngle + sliceAngle / 2) - fullSpins + jitter;
 
-            const startAngle = currentRotation;
+            const startAngle = 0;
             let startTimestamp = null;
 
             function animate(timestamp) {
@@ -2249,12 +2236,13 @@
                 const ease = 1 - Math.pow(1 - progress, 4);
                 const currentAngle = startAngle + (endAngle - startAngle) * ease;
                 drawWheel(currentAngle);
+
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
                     drawWheel(endAngle);
-                    currentRotation = endAngle;
                     if (mode === 'normal') {
+                        // Если включён автокрут и окно рулетки всё ещё открыто — не открываем экран победителя, а продолжаем крутить
                         if (autoSpinEnabled && document.getElementById('wheel-modal').style.display === 'flex') {
                             document.getElementById('elim-log').innerText = 'WIN: ' + winner;
                             playTick();
@@ -2270,6 +2258,7 @@
                         document.getElementById('elim-log').innerText = '❌ ВЫБЫЛ: ' + winner;
                         playTick();
                         wheelParticipants.splice(winnerIdx, 1);
+
                         if (wheelParticipants.length === 0) {
                             document.getElementById('roll-button').disabled = false;
                         } else if (wheelParticipants.length === 1) {
@@ -2651,48 +2640,6 @@
 
             alert('Запись добавлена в статистику');
         }
-
-        // FIX: show user nickname only on initial screen (no modals open)
-        function updateUserNickVisibility() {
-            const anyModalOpen = Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'flex');
-            const disp = document.querySelector('.user-nick-display');
-            if (disp) {
-                disp.style.display = anyModalOpen ? 'none' : 'flex';
-            }
-        }
-
-        // override closeModals to update visibility
-        const originalCloseModals = closeModals;
-        window.closeModals = function() {
-            originalCloseModals();
-            updateUserNickVisibility();
-        };
-        // also override open functions that open modals
-        const originalOpenWheel = openWheel;
-        window.openWheel = function() {
-            originalOpenWheel();
-            updateUserNickVisibility();
-        };
-        const originalOpenStats = openStats;
-        window.openStats = function() {
-            originalOpenStats();
-            updateUserNickVisibility();
-        };
-        const originalOpenHistory = openHistory;
-        window.openHistory = function() {
-            originalOpenHistory();
-            updateUserNickVisibility();
-        };
-        const originalOpenImportParticipants = openImportParticipants;
-        window.openImportParticipants = function() {
-            originalOpenImportParticipants();
-            updateUserNickVisibility();
-        };
-        const originalShowWinnerRef = showWinnerRef;
-        window.showWinnerRef = function(name) {
-            originalShowWinnerRef(name);
-            updateUserNickVisibility();
-        };
 
         document.getElementById('admin-user-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass-input').focus(); });
         document.getElementById('admin-pass-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitAdminLogin(); });
