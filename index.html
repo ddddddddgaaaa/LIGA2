@@ -144,7 +144,7 @@
         .red-participants { flex: 1; border: 3px solid var(--section-accent); border-radius: 18px; background: var(--dark-purple); display: flex; flex-direction: column; overflow: hidden; }
         .middle-split { display: flex; flex-direction: row; gap: 15px; }
         .red-participants h4 { margin: 0; padding: 12px 15px; background: var(--section-accent-panel); color: var(--soft-light); font-weight: 700; font-size: 13px; letter-spacing: 1px; border-bottom: 1px solid var(--section-accent-border); }
-        #full-participants-list { flex: 1; overflow-y: scroll; padding: 12px; font-size: 14.5px; line-height: 1.65; color: #e0e7ff; }
+        #full-participants-list { flex: 1; overflow-y: auto; padding: 12px; font-size: 14.5px; line-height: 1.65; color: #e0e7ff; }
         #full-participants-list div { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         #full-participants-list::-webkit-scrollbar { width: 6px; }
         #full-participants-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
@@ -653,7 +653,31 @@
         function syncParticipantsState() { document.getElementById('user-count').innerText = participants.size; updateFullParticipantsList(); wheelParticipants = getActiveParticipants(); saveToStorage(); }
         function getActiveParticipants() { return Array.from(participants); }
         function setCloudStatus(text, color) { try { const el = document.getElementById('cloud-status'); if (!el) return; el.innerText = 'Cloud: ' + text; el.style.color = color; } catch(e){} }
-
+        function updateFullParticipantsList() {
+    const container = document.getElementById('full-participants-list');
+    if (!container) return;
+    const arr = Array.from(participants);
+    let html = '';
+    arr.forEach((u, i) => {
+        html += `<div class="participant-row">
+            <span class="participant-name">
+                <span class="participant-badge">УЧАСТВУЕТ</span>
+                <span>${i+1}. <b>${u}</b></span>
+            </span>
+            <label>
+                <input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g,"\\'")}', this.checked)">
+            </label>
+        </div>`;
+    });
+    container.innerHTML = html || '<div style="color:#666;text-align:center;padding:30px 0;">Нет участников</div>';
+    
+    // Управление скроллбаром
+    if (arr.length > 20) {
+        container.style.overflowY = 'scroll';   // принудительная полоса
+    } else {
+        container.style.overflowY = 'auto';     // автоматическая полоса
+    }
+}
         function applyTheme(themeName) {
             const theme = THEMES[themeName] || THEMES.pink;
             const root = document.documentElement;
