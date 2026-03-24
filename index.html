@@ -144,14 +144,12 @@
         .red-participants { flex: 1; border: 3px solid var(--section-accent); border-radius: 18px; background: var(--dark-purple); display: flex; flex-direction: column; overflow: hidden; }
         .middle-split { display: flex; flex-direction: row; gap: 15px; }
         .red-participants h4 { margin: 0; padding: 12px 15px; background: var(--section-accent-panel); color: var(--soft-light); font-weight: 700; font-size: 13px; letter-spacing: 1px; border-bottom: 1px solid var(--section-accent-border); }
-        #full-participants-list { flex: 1; overflow-y: auto; padding: 12px; font-size: 14.5px; line-height: 1.65; color: #e0e7ff; }
+        #full-participants-list { flex: 1; overflow-y: scroll; padding: 12px; font-size: 14.5px; line-height: 1.65; color: #e0e7ff; }
         #full-participants-list div { padding: 5px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        /* Ползунок при 20+ участниках */
-        #full-participants-list.has-scroll { overflow-y: scroll; }
-        #full-participants-list.has-scroll::-webkit-scrollbar { width: 6px; }
-        #full-participants-list.has-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
-        #full-participants-list.has-scroll::-webkit-scrollbar-thumb { background: var(--section-accent); border-radius: 10px; min-height: 30px; }
-        #full-participants-list.has-scroll::-webkit-scrollbar-thumb:hover { background: var(--accent-neon-blue); }
+        #full-participants-list::-webkit-scrollbar { width: 6px; }
+        #full-participants-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
+        #full-participants-list::-webkit-scrollbar-thumb { background: var(--section-accent); border-radius: 10px; min-height: 30px; }
+        #full-participants-list::-webkit-scrollbar-thumb:hover { background: var(--accent-neon-blue); }
         .participant-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .participant-row.is-inactive { opacity: 0.45; }
         .participant-name { display: flex; align-items: center; gap: 8px; min-width: 0; }
@@ -740,7 +738,6 @@
             let html = '';
             arr.forEach((u, i) => { html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge">УЧАСТВУЕТ</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g,"\\'")}', this.checked)"></label></div>`; });
             container.innerHTML = html || '<div style="color:#666;text-align:center;padding:30px 0;">Нет участников</div>';
-            container.classList.toggle('has-scroll', arr.length >= 20);
         }
         function initTwitchEmbed() { const frame = document.getElementById('twitch-chat-frame'); if (!frame) return; if (!currentChannelName) { frame.removeAttribute('src'); return; } const parentDomain = window.location.hostname || 'localhost'; frame.src = `https://www.twitch.tv/embed/${currentChannelName}/chat?parent=${encodeURIComponent(parentDomain)}&darkpopout`; }
         function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
