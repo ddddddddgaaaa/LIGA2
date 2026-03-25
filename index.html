@@ -732,17 +732,25 @@
             }
         }
         .animated-header {
-            font-size: 12px;
+            font-size: 14px;
             color: var(--accent-neon-blue);
-            font-weight: 700;
-            letter-spacing: 1px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             text-align: center;
-            padding: 8px 0;
-            animation: textGlow 2.5s ease-in-out infinite;
-            margin-bottom: 8px;
-            display: inline-block;
+            padding: 12px 20px;
+            margin-bottom: 12px;
+            display: block;
             width: 100%;
+            background: linear-gradient(135deg, rgba(255,20,147,0.15), rgba(99,102,241,0.15));
+            border: 1px solid var(--accent-neon-blue);
+            border-radius: 12px;
+            animation: textGlow 2s ease-in-out infinite, pulseScale 1.5s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255,20,147,0.3), inset 0 0 15px rgba(255,20,147,0.1);
+        }
+        @keyframes pulseScale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
         }
         .user-nick-display {
             position: fixed;
@@ -769,6 +777,22 @@
                 border-right: 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             }
+        }
+        .dep-roulette-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+            color: #fff !important;
+            border-color: #f59e0b !important;
+            font-size: 13px !important;
+            padding: 16px !important;
+            animation: depRoulettePulse 2s ease-in-out infinite;
+        }
+        .dep-roulette-btn:hover {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+            transform: scale(1.03);
+        }
+        @keyframes depRoulettePulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -800,7 +824,7 @@
             </div>
             <div style="flex: 1;"></div>
             <button class="btn-main" onclick="resetAll()">Сброс участников</button>
-            <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">22</span></button>
+            <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">+</span></button>
             <button class="btn-main btn-purple" onclick="openWheel()">РУЛЕТКА</button>
             <button class="btn-main btn-purple" onclick="instantRoll()">БЫСТРЫЙ РОЛЛ</button>
             <button class="btn-main" onclick="openStats()">АНАЛИТИКА ПРОЕКТОВ</button>
@@ -813,6 +837,7 @@
             <div class="watermark">(TG - vadymtm90)</div>
         </div>
         <div class="panel" style="padding: 15px;">
+            <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
             <div class="middle-split">
                 <div class="red-participants">
                     <h4>СПИСОК УЧАСТНИКОВ <span id="user-count" style="font-size: 18px; color: var(--accent-neon-blue); font-weight: 800;">0</span></h4>
@@ -908,6 +933,7 @@
             <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
             <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
             <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
+            <button class="btn-main dep-roulette-btn" onclick="openDepRoulette()">🎰 РУЛЕТКА ДЕПОВ</button>
             <button class="btn-main" onclick="closeModals()">ЗАКРЫТЬ</button>
             <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
         </div>
@@ -940,7 +966,7 @@
         let currentWinner = null, selectedSpinMode = 'normal';
         let rerollCount = 0;
         let currentRotation = 0;
-        let currentCodeword = "22";
+        let currentCodeword = "+";
         let selectedImportFormat = 'csv';
         let autoSpinEnabled = false;
         let wheelParticipants = [];
@@ -2649,7 +2675,200 @@
 
         document.getElementById('admin-user-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('admin-pass-input').focus(); });
         document.getElementById('admin-pass-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitAdminLogin(); });
+
+        // ===== DEPOSIT ROULETTE =====
+        let depRouletteOptions = [];
+
+        function openDepRoulette() {
+            depRouletteOptions = [
+                { amount: 100, probability: 50 },
+                { amount: 500, probability: 30 },
+                { amount: 1000, probability: 15 },
+                { amount: 5000, probability: 4 },
+                { amount: 10000, probability: 1 }
+            ];
+            renderDepRouletteModal();
+            document.getElementById('dep-roulette-modal').style.display = 'flex';
+        }
+
+        function renderDepRouletteModal() {
+            const container = document.getElementById('dep-roulette-options');
+            container.innerHTML = depRouletteOptions.map((opt, i) => `
+                <div class="dep-option">
+                    <label>Сумма #${i + 1}:</label>
+                    <input type="number" value="${opt.amount}" onchange="depRouletteOptions[${i}].amount = parseFloat(this.value) || 0" style="width: 100px;">
+                    <label>Вероятность (%):</label>
+                    <input type="number" value="${opt.probability}" onchange="depRouletteOptions[${i}].probability = parseFloat(this.value) || 0" style="width: 60px;">
+                    <button onclick="removeDepOption(${i})" style="background:none; border:1px solid #ef4444; color:#ef4444; padding:5px 10px; border-radius:6px; cursor:pointer;">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function addDepOption() {
+            depRouletteOptions.push({ amount: 0, probability: 10 });
+            renderDepRouletteModal();
+        }
+
+        function removeDepOption(index) {
+            depRouletteOptions.splice(index, 1);
+            renderDepRouletteModal();
+        }
+
+        function spinDepRoulette() {
+            if (depRouletteOptions.length === 0) return alert('Добавьте варианты депозитов!');
+            
+            const totalProb = depRouletteOptions.reduce((sum, opt) => sum + opt.probability, 0);
+            let random = Math.random() * totalProb;
+            let selectedOption = depRouletteOptions[0];
+            
+            for (const opt of depRouletteOptions) {
+                random -= opt.probability;
+                if (random <= 0) {
+                    selectedOption = opt;
+                    break;
+                }
+            }
+
+            const resultDiv = document.getElementById('dep-roulette-result');
+            const canvas = document.getElementById('dep-roulette-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Рисуем мини-колесо
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = Math.min(cx, cy) - 10;
+            const slice = (Math.PI * 2) / depRouletteOptions.length;
+            const colors = ['#ff1493', '#38bdf8', '#a855f7', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#84cc16'];
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            depRouletteOptions.forEach((opt, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, i * slice, (i + 1) * slice);
+                ctx.closePath();
+                ctx.fill();
+                
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(i * slice + slice / 2);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(opt.amount + '₽', r * 0.6, 4);
+                ctx.restore();
+            });
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Вращение
+            let rotation = 0;
+            const targetRotation = Math.PI * 2 * 5 + (2 * Math.PI - (depRouletteOptions.indexOf(selectedOption) * slice + slice / 2));
+            const duration = 4000;
+            const startTime = performance.now();
+
+            function animateWheel(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 4);
+                rotation = targetRotation * ease;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(rotation);
+                ctx.translate(-cx, -cy);
+
+                depRouletteOptions.forEach((opt, i) => {
+                    ctx.beginPath();
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.moveTo(cx, cy);
+                    ctx.arc(cx, cy, r, i * slice, (i + 1) * slice);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.save();
+                    ctx.translate(cx, cy);
+                    ctx.rotate(i * slice + slice / 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 12px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(opt.amount + '₽', r * 0.6, 4);
+                    ctx.restore();
+                });
+
+                ctx.restore();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+
+                // Стрелка
+                ctx.beginPath();
+                ctx.moveTo(cx + r + 10, cy);
+                ctx.lineTo(cx + r + 30, cy - 15);
+                ctx.lineTo(cx + r + 30, cy + 15);
+                ctx.closePath();
+                ctx.fillStyle = '#f59e0b';
+                ctx.fill();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateWheel);
+                } else {
+                    resultDiv.innerHTML = `
+                        <div style="font-size: 18px; color: #f59e0b; margin-bottom: 10px;">РЕЗУЛЬТАТ:</div>
+                        <div class="dep-result-amount">${selectedOption.amount.toLocaleString()} ₽</div>
+                        <div style="font-size: 14px; color: #888; margin-top: 10px;">Вероятность: ${selectedOption.probability}%</div>
+                        <button class="btn-main" style="margin-top: 20px;" onclick="applyDepResult(${selectedOption.amount})">ПРИМЕНИТЬ К ДЕПОЗИТУ</button>
+                    `;
+                }
+            }
+
+            resultDiv.innerHTML = '<div style="font-size: 24px; color: #f59e0b;">🎰 КРУТИМ...</div>';
+            requestAnimationFrame(animateWheel);
+        }
+
+        function applyDepResult(amount) {
+            const depInput = document.getElementById('win-deposit-input');
+            if (depInput) {
+                depInput.value = amount;
+            }
+            closeModals();
+            alert(`Депозит ${amount.toLocaleString()} ₽ применён!`);
+        }
     </script>
+
+    <!-- DEPOSIT ROULETTE MODAL -->
+    <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
+        <div class="modal-content" style="flex-direction: column; width: 600px; max-width: 90vw; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);">
+            <div class="close-x" onclick="closeModals()" style="color: #f59e0b;">&times;</div>
+            <h2 style="color: #f59e0b; text-align: center; margin-bottom: 20px; font-size: 24px;">🎰 РУЛЕТКА ДЕПОВ</h2>
+            
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1;">
+                    <canvas id="dep-roulette-canvas" width="250" height="250" style="border-radius: 50%; border: 3px solid #f59e0b; display: block; margin: 0 auto;"></canvas>
+                    <div id="dep-roulette-result" style="text-align: center; margin-top: 20px; min-height: 100px;"></div>
+                </div>
+                
+                <div style="flex: 1;">
+                    <h4 style="color: #f59e0b; margin-bottom: 15px;">Варианты депозитов:</h4>
+                    <div id="dep-roulette-options"></div>
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 15px;">
+                        <button class="btn-main" onclick="addDepOption()" style="background: rgba(245, 158, 11, 0.2) !important; border-color: #f59e0b !important; color: #f59e0b !important;">+ ДОБАВИТЬ</button>
+                        <button class="btn-main" onclick="spinDepRoulette()" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important; border-color: #f59e0b !important; color: #fff !important; font-size: 16px !important;">🎰 КРУТИТЬ!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ADMIN LOGIN MODAL -->
     <div id="admin-login-modal" style="display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; background:rgba(0,0,0,0.92); backdrop-filter:blur(12px);">
