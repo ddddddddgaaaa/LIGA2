@@ -642,25 +642,6 @@
             border: none;
             box-shadow: none;
         }
-        #wheel-modal .modal-content {
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: 100vw !important;
-            max-height: 100vh !important;
-            border-radius: 0 !important;
-            padding: 20px !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            background: rgba(2, 2, 5, 0.98) !important;
-        }
-        .wheel-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
         .wheel-arrow-container {
             position: relative;
             width: 100%;
@@ -2111,36 +2092,19 @@
             const p = wheelParticipants || [];
             if (p.length === 0) return '---';
             
-            // Стрелка находится вверху (позиция -90 градусов или -Math.PI/2)
-            // Нужно найти, какой сегмент находится в этой позиции
             const sliceAngle = (Math.PI * 2) / p.length;
             
-            // Нормализуем угол стрелки (вверх = -PI/2)
-            let arrowAngle = -Math.PI / 2;
+            // Стрелка вверху = -PI/2
+            // Сегмент i находится в позиции [angle + i*slice, angle + (i+1)*slice]
+            // Найти i такой что -PI/2 попадает в этот сегмент
+            // i = floor((-PI/2 - angle) / slice)
             
-            // Учитываем текущий угол поворота колеса
-            // angle может быть отрицательным при вращении, нормализуем его
-            let normalizedAngle = angle % (Math.PI * 2);
-            if (normalizedAngle < 0) normalizedAngle += Math.PI * 2;
+            let index = Math.floor((-Math.PI / 2 - angle) / sliceAngle);
             
-            // Вычисляем позицию стрелки относительно колеса
-            // Стрелка вверху, колесо вращается, нужно найти кто вверху
-            let effectiveArrowAngle = arrowAngle - normalizedAngle;
+            // Нормализуем индекс в диапазон [0, p.length)
+            index = ((index % p.length) + p.length) % p.length;
             
-            // Нормализуем effectiveArrowAngle в диапазон [0, 2PI)
-            while (effectiveArrowAngle < 0) effectiveArrowAngle += Math.PI * 2;
-            while (effectiveArrowAngle >= Math.PI * 2) effectiveArrowAngle -= Math.PI * 2;
-            
-            // Определяем индекс сегмента
-            // Сегменты начинаются с angle и идут по часовой стрелке
-            // Стрелка вверху = -PI/2, нужно найти какой сегмент там
-            let segmentIndex = Math.floor(effectiveArrowAngle / sliceAngle);
-            
-            // Проверяем границы
-            if (segmentIndex >= p.length) segmentIndex = p.length - 1;
-            if (segmentIndex < 0) segmentIndex = 0;
-            
-            return p[segmentIndex] || '---';
+            return p[index] || '---';
         }
 
         function updateWheelNickDisplay(angle) {
