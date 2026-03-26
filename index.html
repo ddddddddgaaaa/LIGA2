@@ -1014,6 +1014,7 @@
         let selectedImportFormat = 'csv';
         let autoSpinEnabled = false;
         let wheelParticipants = [];
+        let pendingParticipants = []; // участники, которые написали кодовое пока рулетка открыта
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
@@ -1592,6 +1593,16 @@
         }
 
         async function addParticipantToFirebase(name) {
+            // Если рулетка открыта, добавляем в ожидающие, а не в основной список
+            const wheelModal = document.getElementById('wheel-modal');
+            if (wheelModal && wheelModal.style.display === 'flex') {
+                if (!pendingParticipants.includes(name)) {
+                    pendingParticipants.push(name);
+                    console.log('Participant added to pending list:', name, pendingParticipants);
+                }
+                return;
+            }
+            
             if (!cloudReady || !cloudDb) {
                 participants.add(name);
                 syncParticipantsState();
@@ -1606,6 +1617,32 @@
                 // если документа нет, создадим
                 await cloudDb.collection('participants').doc(docId).set({ list: [name] }, { merge: true });
             }
+        }
+        
+        // Функция для обработки ожидающих участников при закрытии рулетки
+        async function processPendingParticipants() {
+            if (pendingParticipants.length === 0) return;
+            
+            console.log('Processing pending participants:', pendingParticipants);
+            
+            for (const name of pendingParticipants) {
+                if (!cloudReady || !cloudDb) {
+                    participants.add(name);
+                } else {
+                    const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
+                    try {
+                        await cloudDb.collection('participants').doc(docId).update({
+                            list: firebase.firestore.FieldValue.arrayUnion(name)
+                        });
+                    } catch (e) {
+                        await cloudDb.collection('participants').doc(docId).set({ list: [name] }, { merge: true });
+                    }
+                }
+            }
+            
+            // Очищаем список ожидающих
+            pendingParticipants = [];
+            syncParticipantsState();
         }
 
         async function removeParticipantFromFirebase(name) {
@@ -2366,8 +2403,10 @@
                     m.style.display = 'none';
                 }
             }); 
-            // Убираем класс active у рулетки депов
-            document.getElementById('dep-roulette-modal').classList.remove('active');
+            // Закрываем рулетку депов
+            const depModal = document.getElementById('dep-roulette-modal');
+            depModal.classList.remove('active');
+            depModal.style.display = 'none';
             document.getElementById('winner-screen').style.display = 'none'; 
             winTimerActive = false; 
             clearInterval(window.winInt);
@@ -2739,7 +2778,9 @@
                 { amount: 10000, probability: 1 }
             ];
             renderDepRouletteModal();
-            document.getElementById('dep-roulette-modal').classList.add('active');
+            const modal = document.getElementById('dep-roulette-modal');
+            modal.classList.add('active');
+            modal.style.display = 'flex';
         }
 
         function renderDepRouletteModal() {
