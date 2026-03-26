@@ -800,10 +800,14 @@
             border: 2px solid #f59e0b !important;
             box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
             flex-direction: column;
-            width: 95vw;
-            max-width: 1200px;
-            max-height: 95vh;
+            width: 85vw;
+            max-width: 1100px;
+            max-height: 85vh;
             overflow-y: auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         .dep-wheel-container {
             position: relative;
@@ -2472,6 +2476,12 @@
             requestAnimationFrame(animate);
         }
         function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
+        function closeDepRouletteOnly() {
+            // Закрываем только рулетку депов, не трогая другие модальные окна
+            document.getElementById('dep-roulette-modal').style.display = 'none';
+            depRouletteSpinning = false;
+        }
+
         function closeModals() { 
             // Обрабатываем ожидающих участников перед закрытием рулетки
             const wheelModal = document.getElementById('wheel-modal');
@@ -3061,7 +3071,7 @@
             if (depInput) {
                 depInput.value = amount;
             }
-            closeModals();
+            closeDepRouletteOnly();
             alert(`✅ Депозит ${amount.toLocaleString()} ₽ применён!`);
         }
 
@@ -3070,7 +3080,7 @@
     <!-- DEPOSIT ROULETTE MODAL -->
     <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
         <div class="modal-content" style="flex-direction: column; width: 900px; max-width: 95vw; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);">
-            <div class="close-x" onclick="closeModals()" style="color: #f59e0b;">&times;</div>
+            <div class="close-x" onclick="closeDepRouletteOnly()" style="color: #f59e0b;">&times;</div>
             <h2 style="color: #f59e0b; text-align: center; margin-bottom: 20px; font-size: 24px;">🎰 РУЛЕТКА ДЕПОВ</h2>
             
             <div style="display: flex; gap: 30px; align-items: flex-start;">
