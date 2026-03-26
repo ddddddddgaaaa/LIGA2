@@ -795,13 +795,21 @@
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
+        #dep-roulette-modal {
+            display: none !important;
+        }
+        #dep-roulette-modal.show {
+            display: flex !important;
+        }
         #dep-roulette-modal .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             border: 2px solid #f59e0b !important;
             box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
             flex-direction: column;
-            width: 900px;
-            max-width: 95vw;
+            width: 95vw;
+            max-width: 1200px;
+            max-height: 95vh;
+            overflow-y: auto;
         }
         .dep-wheel-container {
             position: relative;
@@ -2471,6 +2479,7 @@
         function closeModals() { 
             document.querySelectorAll('.modal').forEach(m => {
                 m.style.display = 'none';
+                m.classList.remove('show');
             }); 
             document.getElementById('winner-screen').style.display = 'none'; 
             winTimerActive = false; 
@@ -2854,7 +2863,7 @@
                 ];
             }
             renderDepRouletteModal();
-            document.getElementById('dep-roulette-modal').style.display = 'flex';
+            document.getElementById('dep-roulette-modal').classList.add('show');
         }
 
         function renderDepRouletteModal() {
