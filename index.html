@@ -778,6 +778,7 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             }
         }
+        /* DEPOSIT ROULETTE STYLES */
         .dep-roulette-btn {
             background: linear-gradient(135deg, #f59e0b, #d97706) !important;
             color: #fff !important;
@@ -794,37 +795,99 @@
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
-        #dep-roulette-modal {
-            display: none;
-        }
-        #dep-roulette-modal.active {
-            display: flex !important;
-        }
         #dep-roulette-modal .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             border: 2px solid #f59e0b !important;
             box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
             flex-direction: column;
+            width: 900px;
+            max-width: 95vw;
         }
-        .dep-option {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
+        .dep-wheel-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 0 auto;
+        }
+        #dep-wheel-canvas {
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+        }
+        .dep-wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #f59e0b;
+            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.8));
+            z-index: 10;
+        }
+        .dep-wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #fff;
+            font-size: 12px;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+            z-index: 5;
+        }
+        .dep-options-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .dep-option-row {
             display: flex;
             align-items: center;
             gap: 10px;
+            padding: 10px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            margin-bottom: 8px;
         }
-        .dep-option label {
+        .dep-option-row label {
             color: #f59e0b;
             font-size: 12px;
             font-weight: 600;
+            white-space: nowrap;
         }
-        .dep-option input {
+        .dep-option-row input {
             background: rgba(0, 0, 0, 0.3) !important;
             border: 1px solid rgba(245, 158, 11, 0.5) !important;
             color: #fff !important;
+            width: 80px;
+            padding: 6px 8px !important;
+        }
+        .dep-option-row .remove-dep-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .dep-option-row .remove-dep-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+        }
+        .dep-result-display {
+            text-align: center;
+            padding: 20px;
+            min-height: 100px;
         }
         .dep-result-amount {
             font-size: 48px;
@@ -837,6 +900,15 @@
             0% { transform: scale(0); opacity: 0; }
             50% { transform: scale(1.2); }
             100% { transform: scale(1); opacity: 1; }
+        }
+        .dep-spinning {
+            font-size: 24px;
+            color: #f59e0b;
+            animation: depSpinText 0.5s ease-in-out infinite;
+        }
+        @keyframes depSpinText {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -2398,15 +2470,8 @@
         function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
         function closeModals() { 
             document.querySelectorAll('.modal').forEach(m => {
-                // Не закрываем окно рулетки депов если оно открыто
-                if (m.id !== 'dep-roulette-modal') {
-                    m.style.display = 'none';
-                }
+                m.style.display = 'none';
             }); 
-            // Закрываем рулетку депов
-            const depModal = document.getElementById('dep-roulette-modal');
-            depModal.classList.remove('active');
-            depModal.style.display = 'none';
             document.getElementById('winner-screen').style.display = 'none'; 
             winTimerActive = false; 
             clearInterval(window.winInt);
@@ -2768,32 +2833,55 @@
 
         // ===== DEPOSIT ROULETTE =====
         let depRouletteOptions = [];
+        let depRouletteSpinning = false;
+        let depRouletteRotation = 0;
+
+        const depColors = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FF4500'
+        ];
 
         function openDepRoulette() {
-            depRouletteOptions = [
-                { amount: 100, probability: 50 },
-                { amount: 500, probability: 30 },
-                { amount: 1000, probability: 15 },
-                { amount: 5000, probability: 4 },
-                { amount: 10000, probability: 1 }
-            ];
+            // Инициализируем с дефолтными опциями если пусто
+            if (depRouletteOptions.length === 0) {
+                depRouletteOptions = [
+                    { amount: 100, probability: 50 },
+                    { amount: 500, probability: 30 },
+                    { amount: 1000, probability: 15 },
+                    { amount: 5000, probability: 4 },
+                    { amount: 10000, probability: 1 }
+                ];
+            }
             renderDepRouletteModal();
-            const modal = document.getElementById('dep-roulette-modal');
-            modal.classList.add('active');
-            modal.style.display = 'flex';
+            document.getElementById('dep-roulette-modal').style.display = 'flex';
         }
 
         function renderDepRouletteModal() {
-            const container = document.getElementById('dep-roulette-options');
-            container.innerHTML = depRouletteOptions.map((opt, i) => `
-                <div class="dep-option">
+            // Отрисовываем опции
+            const optionsContainer = document.getElementById('dep-options-container');
+            optionsContainer.innerHTML = depRouletteOptions.map((opt, i) => `
+                <div class="dep-option-row">
                     <label>Сумма #${i + 1}:</label>
-                    <input type="number" value="${opt.amount}" onchange="depRouletteOptions[${i}].amount = parseFloat(this.value) || 0" style="width: 100px;">
-                    <label>Вероятность (%):</label>
-                    <input type="number" value="${opt.probability}" onchange="depRouletteOptions[${i}].probability = parseFloat(this.value) || 0" style="width: 60px;">
-                    <button onclick="removeDepOption(${i})" style="background:none; border:1px solid #ef4444; color:#ef4444; padding:5px 10px; border-radius:6px; cursor:pointer;">✕</button>
+                    <input type="number" value="${opt.amount}" onchange="updateDepOption(${i}, 'amount', this.value)" placeholder="₽">
+                    <label>Вероятность:</label>
+                    <input type="number" value="${opt.probability}" onchange="updateDepOption(${i}, 'probability', this.value)" placeholder="%" style="width: 60px;">
+                    <label>%</label>
+                    <button class="remove-dep-btn" onclick="removeDepOption(${i})">✕</button>
                 </div>
             `).join('');
+            
+            // Отрисовываем колесо
+            drawDepWheel();
+        }
+
+        function updateDepOption(index, field, value) {
+            if (field === 'amount') {
+                depRouletteOptions[index].amount = parseFloat(value) || 0;
+            } else if (field === 'probability') {
+                depRouletteOptions[index].probability = parseFloat(value) || 0;
+            }
+            drawDepWheel();
         }
 
         function addDepOption() {
@@ -2802,129 +2890,160 @@
         }
 
         function removeDepOption(index) {
+            if (depRouletteOptions.length <= 1) {
+                alert('Должен быть хотя бы один вариант!');
+                return;
+            }
             depRouletteOptions.splice(index, 1);
             renderDepRouletteModal();
         }
 
-        function spinDepRoulette() {
-            if (depRouletteOptions.length === 0) return alert('Добавьте варианты депозитов!');
+        function drawDepWheel() {
+            const canvas = document.getElementById('dep-wheel-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const options = depRouletteOptions.filter(o => o.amount > 0);
             
-            const totalProb = depRouletteOptions.reduce((sum, opt) => sum + opt.probability, 0);
-            let random = Math.random() * totalProb;
-            let selectedOption = depRouletteOptions[0];
-            
-            for (const opt of depRouletteOptions) {
-                random -= opt.probability;
-                if (random <= 0) {
-                    selectedOption = opt;
-                    break;
-                }
+            if (options.length === 0) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#f59e0b';
+                ctx.font = 'bold 16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('Добавьте варианты', canvas.width / 2, canvas.height / 2);
+                return;
             }
 
-            const resultDiv = document.getElementById('dep-roulette-result');
-            const canvas = document.getElementById('dep-roulette-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Рисуем мини-колесо
+            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
             const r = Math.min(cx, cy) - 10;
-            const slice = (Math.PI * 2) / depRouletteOptions.length;
-            const colors = ['#ff1493', '#38bdf8', '#a855f7', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#84cc16'];
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            depRouletteOptions.forEach((opt, i) => {
+            let currentAngle = depRouletteRotation;
+            
+            options.forEach((opt, i) => {
+                const sliceAngle = (opt.probability / totalProb) * 2 * Math.PI;
+                
+                // Рисуем сегмент
                 ctx.beginPath();
-                ctx.fillStyle = colors[i % colors.length];
                 ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, i * slice, (i + 1) * slice);
+                ctx.arc(cx, cy, r, currentAngle, currentAngle + sliceAngle);
                 ctx.closePath();
+                ctx.fillStyle = depColors[i % depColors.length];
                 ctx.fill();
                 
+                // Рамка
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Текст
                 ctx.save();
                 ctx.translate(cx, cy);
-                ctx.rotate(i * slice + slice / 2);
+                ctx.rotate(currentAngle + sliceAngle / 2);
+                ctx.textAlign = 'right';
                 ctx.fillStyle = '#fff';
-                ctx.font = 'bold 12px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText(opt.amount + '₽', r * 0.6, 4);
+                ctx.font = `bold ${Math.max(12, r / 8)}px Inter`;
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.fillText(opt.amount + '₽', r - 15, 5);
                 ctx.restore();
+                
+                currentAngle += sliceAngle;
             });
 
+            // Центральный круг
+            ctx.beginPath();
+            ctx.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Внешняя рамка
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 4;
             ctx.stroke();
+        }
 
-            // Вращение
-            let rotation = 0;
-            const targetRotation = Math.PI * 2 * 5 + (2 * Math.PI - (depRouletteOptions.indexOf(selectedOption) * slice + slice / 2));
-            const duration = 4000;
-            const startTime = performance.now();
+        function spinDepRoulette() {
+            if (depRouletteSpinning) return;
+            
+            const options = depRouletteOptions.filter(o => o.amount > 0);
+            if (options.length === 0) {
+                alert('Добавьте хотя бы один вариант с суммой!');
+                return;
+            }
 
-            function animateWheel(timestamp) {
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 4);
-                rotation = targetRotation * ease;
+            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
+            if (totalProb <= 0) {
+                alert('Сумма вероятностей должна быть больше 0!');
+                return;
+            }
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(rotation);
-                ctx.translate(-cx, -cy);
+            depRouletteSpinning = true;
+            const resultDiv = document.getElementById('dep-result-display');
+            resultDiv.innerHTML = '<div class="dep-spinning">🎰 КРУТИМ...</div>';
 
-                depRouletteOptions.forEach((opt, i) => {
-                    ctx.beginPath();
-                    ctx.fillStyle = colors[i % colors.length];
-                    ctx.moveTo(cx, cy);
-                    ctx.arc(cx, cy, r, i * slice, (i + 1) * slice);
-                    ctx.closePath();
-                    ctx.fill();
-
-                    ctx.save();
-                    ctx.translate(cx, cy);
-                    ctx.rotate(i * slice + slice / 2);
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 12px Inter';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(opt.amount + '₽', r * 0.6, 4);
-                    ctx.restore();
-                });
-
-                ctx.restore();
-
-                ctx.beginPath();
-                ctx.arc(cx, cy, r, 0, Math.PI * 2);
-                ctx.strokeStyle = '#f59e0b';
-                ctx.lineWidth = 4;
-                ctx.stroke();
-
-                // Стрелка
-                ctx.beginPath();
-                ctx.moveTo(cx + r + 10, cy);
-                ctx.lineTo(cx + r + 30, cy - 15);
-                ctx.lineTo(cx + r + 30, cy + 15);
-                ctx.closePath();
-                ctx.fillStyle = '#f59e0b';
-                ctx.fill();
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateWheel);
-                } else {
-                    resultDiv.innerHTML = `
-                        <div style="font-size: 18px; color: #f59e0b; margin-bottom: 10px;">РЕЗУЛЬТАТ:</div>
-                        <div class="dep-result-amount">${selectedOption.amount.toLocaleString()} ₽</div>
-                        <div style="font-size: 14px; color: #888; margin-top: 10px;">Вероятность: ${selectedOption.probability}%</div>
-                        <button class="btn-main" style="margin-top: 20px;" onclick="applyDepResult(${selectedOption.amount})">ПРИМЕНИТЬ К ДЕПОЗИТУ</button>
-                    `;
+            // Выбираем результат на основе вероятностей
+            let random = Math.random() * totalProb;
+            let selectedOption = options[0];
+            let selectedIndex = 0;
+            
+            for (let i = 0; i < options.length; i++) {
+                random -= options[i].probability;
+                if (random <= 0) {
+                    selectedOption = options[i];
+                    selectedIndex = i;
+                    break;
                 }
             }
 
-            resultDiv.innerHTML = '<div style="font-size: 24px; color: #f59e0b;">🎰 КРУТИМ...</div>';
-            requestAnimationFrame(animateWheel);
+            // Вычисляем угол для остановки на выбранном сегменте
+            let angleToSegment = 0;
+            for (let i = 0; i < selectedIndex; i++) {
+                angleToSegment += (options[i].probability / totalProb) * 2 * Math.PI;
+            }
+            const segmentMiddle = (options[selectedIndex].probability / totalProb) * Math.PI;
+            const targetAngle = Math.PI * 2 * 8 + (2 * Math.PI - angleToSegment - segmentMiddle); // 8 полных оборотов
+
+            const canvas = document.getElementById('dep-wheel-canvas');
+            const duration = 5000;
+            const startTime = performance.now();
+            const startRotation = depRouletteRotation;
+
+            function animateSpin(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease-out для плавной остановки
+                const ease = 1 - Math.pow(1 - progress, 4);
+                depRouletteRotation = startRotation + targetAngle * ease;
+                
+                drawDepWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    // Вращение завершено
+                    depRouletteSpinning = false;
+                    resultDiv.innerHTML = `
+                        <div style="font-size: 18px; color: #f59e0b; margin-bottom: 10px;">🎉 РЕЗУЛЬТАТ:</div>
+                        <div class="dep-result-amount">${selectedOption.amount.toLocaleString()} ₽</div>
+                        <div style="font-size: 14px; color: #888; margin-top: 10px;">Вероятность: ${selectedOption.probability}%</div>
+                        <button class="btn-main" style="margin-top: 20px; background: linear-gradient(135deg, #22c55e, #16a34a) !important; border-color: #22c55e !important;" onclick="applyDepResult(${selectedOption.amount})">✅ ПРИМЕНИТЬ К ДЕПОЗИТУ</button>
+                    `;
+                    
+                    // Звук победы
+                    playTick();
+                }
+            }
+
+            requestAnimationFrame(animateSpin);
         }
 
         function applyDepResult(amount) {
@@ -2933,29 +3052,44 @@
                 depInput.value = amount;
             }
             closeModals();
-            alert(`Депозит ${amount.toLocaleString()} ₽ применён!`);
+            alert(`✅ Депозит ${amount.toLocaleString()} ₽ применён!`);
         }
+
     </script>
 
     <!-- DEPOSIT ROULETTE MODAL -->
     <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
-        <div class="modal-content" style="flex-direction: column; width: 600px; max-width: 90vw; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);">
+        <div class="modal-content" style="flex-direction: column; width: 900px; max-width: 95vw; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);">
             <div class="close-x" onclick="closeModals()" style="color: #f59e0b;">&times;</div>
             <h2 style="color: #f59e0b; text-align: center; margin-bottom: 20px; font-size: 24px;">🎰 РУЛЕТКА ДЕПОВ</h2>
             
-            <div style="display: flex; gap: 20px;">
-                <div style="flex: 1;">
-                    <canvas id="dep-roulette-canvas" width="250" height="250" style="border-radius: 50%; border: 3px solid #f59e0b; display: block; margin: 0 auto;"></canvas>
-                    <div id="dep-roulette-result" style="text-align: center; margin-top: 20px; min-height: 100px;"></div>
+            <div style="display: flex; gap: 30px; align-items: flex-start;">
+                <!-- Левая часть - колесо -->
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                    <div class="dep-wheel-container">
+                        <div class="dep-wheel-pointer"></div>
+                        <canvas id="dep-wheel-canvas" width="350" height="350"></canvas>
+                        <div class="dep-wheel-center">SPIN</div>
+                    </div>
+                    <div id="dep-result-display" class="dep-result-display" style="width: 100%; margin-top: 20px;">
+                        <div style="color: #888; font-size: 14px;">Нажмите КРУТИТЬ чтобы начать</div>
+                    </div>
+                    <button class="btn-main dep-roulette-btn" style="width: 100%; margin-top: 15px;" onclick="spinDepRoulette()">🎰 КРУТИТЬ!</button>
                 </div>
                 
+                <!-- Правая часть - настройки -->
                 <div style="flex: 1;">
-                    <h4 style="color: #f59e0b; margin-bottom: 15px;">Варианты депозитов:</h4>
-                    <div id="dep-roulette-options"></div>
+                    <h4 style="color: #f59e0b; margin-bottom: 15px;">💰 Варианты депозитов:</h4>
+                    <div id="dep-options-container" class="dep-options-container"></div>
+                    <button class="btn-main" onclick="addDepOption()" style="background: rgba(245, 158, 11, 0.2) !important; border-color: #f59e0b !important; color: #f59e0b !important; margin-top: 10px;">➕ ДОБАВИТЬ ВАРИАНТ</button>
                     
-                    <div style="display: flex; gap: 8px; margin-top: 15px;">
-                        <button class="btn-main" onclick="addDepOption()" style="background: rgba(245, 158, 11, 0.2) !important; border-color: #f59e0b !important; color: #f59e0b !important;">+ ДОБАВИТЬ</button>
-                        <button class="btn-main" onclick="spinDepRoulette()" style="background: linear-gradient(135deg, #f59e0b, #d97706) !important; border-color: #f59e0b !important; color: #fff !important; font-size: 16px !important;">🎰 КРУТИТЬ!</button>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 13px;">💡 Подсказка:</h4>
+                        <p style="color: #888; font-size: 12px; margin: 0; line-height: 1.5;">
+                            Укажите сумму депозита и вероятность выпадения в процентах. 
+                            Чем выше вероятность, тем больше шансов что выпадет именно этот вариант.
+                            Сумма вероятностей всех вариантов определяет размер сегментов на колесе.
+                        </p>
                     </div>
                 </div>
             </div>
