@@ -795,12 +795,6 @@
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
-        #dep-roulette-modal {
-            display: none !important;
-        }
-        #dep-roulette-modal.show {
-            display: flex !important;
-        }
         #dep-roulette-modal .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             border: 2px solid #f59e0b !important;
@@ -2002,7 +1996,8 @@
                 .filter(Boolean);
         }
         function openImportParticipants() {
-            document.getElementById('import-participants-modal').style.display = 'flex';
+            const importModal = document.getElementById('import-participants-modal');
+            importModal.style.display = 'flex';
             setImportFormat('csv');
             updateImportApplyState();
         }
@@ -2206,7 +2201,8 @@
             if (!Array.isArray(wheelParticipants) || wheelParticipants.length === 0) {
                 wheelParticipants = getActiveParticipants();
             }
-            document.getElementById('wheel-modal').style.display = 'flex';
+            const wheelModal = document.getElementById('wheel-modal');
+            wheelModal.style.display = 'flex';
             // синхронизируем чекбокс автокрута
             const autos = document.getElementById('autoskip-checkbox');
             if (autos) autos.checked = !!autoSpinEnabled;
@@ -2477,9 +2473,14 @@
         }
         function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
         function closeModals() { 
+            // Обрабатываем ожидающих участников перед закрытием рулетки
+            const wheelModal = document.getElementById('wheel-modal');
+            if (wheelModal && wheelModal.style.display === 'flex') {
+                processPendingParticipants();
+            }
+            
             document.querySelectorAll('.modal').forEach(m => {
                 m.style.display = 'none';
-                m.classList.remove('show');
             }); 
             document.getElementById('winner-screen').style.display = 'none'; 
             winTimerActive = false; 
@@ -2863,7 +2864,7 @@
                 ];
             }
             renderDepRouletteModal();
-            document.getElementById('dep-roulette-modal').classList.add('show');
+            document.getElementById('dep-roulette-modal').style.display = 'flex';
         }
 
         function renderDepRouletteModal() {
