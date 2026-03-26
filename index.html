@@ -794,6 +794,43 @@
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
+        #dep-roulette-modal .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+            border: 2px solid #f59e0b !important;
+            box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
+        }
+        .dep-option {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .dep-option label {
+            color: #f59e0b;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .dep-option input {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(245, 158, 11, 0.5) !important;
+            color: #fff !important;
+        }
+        .dep-result-amount {
+            font-size: 48px;
+            font-weight: 900;
+            color: #f59e0b;
+            text-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+            animation: depResultPop 0.5s ease-out;
+        }
+        @keyframes depResultPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
 </head>
