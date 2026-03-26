@@ -794,10 +794,17 @@
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
+        #dep-roulette-modal {
+            display: none;
+        }
+        #dep-roulette-modal.active {
+            display: flex !important;
+        }
         #dep-roulette-modal .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             border: 2px solid #f59e0b !important;
             box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
+            flex-direction: column;
         }
         .dep-option {
             background: rgba(245, 158, 11, 0.1);
@@ -2359,6 +2366,8 @@
                     m.style.display = 'none';
                 }
             }); 
+            // Убираем класс active у рулетки депов
+            document.getElementById('dep-roulette-modal').classList.remove('active');
             document.getElementById('winner-screen').style.display = 'none'; 
             winTimerActive = false; 
             clearInterval(window.winInt);
@@ -2730,7 +2739,7 @@
                 { amount: 10000, probability: 1 }
             ];
             renderDepRouletteModal();
-            document.getElementById('dep-roulette-modal').style.display = 'flex';
+            document.getElementById('dep-roulette-modal').classList.add('active');
         }
 
         function renderDepRouletteModal() {
