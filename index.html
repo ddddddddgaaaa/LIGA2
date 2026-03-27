@@ -813,8 +813,8 @@
         }
         .dep-wheel-container {
             position: relative;
-            width: 350px;
-            height: 350px;
+            width: 500px;
+            height: 500px;
             margin: 0 auto;
         }
         #dep-wheel-canvas {
@@ -1808,8 +1808,8 @@
                 title.textContent = currentChannelName ? `TWITCH CHAT ${currentChannelName.toUpperCase()}` : 'TWITCH CHAT';
             }
             document.title = currentChannelName
-                ? `Бот для прокачек от 0savelka0 - ${currentChannelName}`
-                : 'Бот для прокачек от 0savelka0 - BLUE NEON';
+                ? `Бот для прокачек от vadyms22 - ${currentChannelName}`
+                : 'Бот для прокачек от vadyms22 - BLUE NEON';
             updateUserNickDisplay();
         }
         function updateUserNickDisplay() {
@@ -3008,8 +3008,8 @@
             }
 
             const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
-            if (totalProb <= 0) {
-                alert('Сумма вероятностей должна быть больше 0!');
+            if (Math.abs(totalProb - 100) > 0.01) {
+                alert(`⚠️ Сумма вероятностей должна быть 100%! Сейчас: ${totalProb.toFixed(1)}%`);
                 return;
             }
 
@@ -3096,7 +3096,7 @@
                 <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
                     <div class="dep-wheel-container">
                         <div class="dep-wheel-pointer"></div>
-                        <canvas id="dep-wheel-canvas" width="350" height="350"></canvas>
+                        <canvas id="dep-wheel-canvas" width="500" height="500"></canvas>
                         <div class="dep-wheel-center">SPIN</div>
                     </div>
                     <div id="dep-result-display" class="dep-result-display" style="width: 100%; margin-top: 20px;">
