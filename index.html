@@ -2866,10 +2866,7 @@
         ];
 
         function openDepRoulette() {
-            // Закрываем экран победителя перед открытием рулетки депов
-            document.getElementById('winner-screen').style.display = 'none';
-            
-            // Открываем модальное окно рулетки депов на этой же странице
+            // Открываем модальное окно рулетки депов на этой же странице (НЕ закрывая победителя)
             document.getElementById('dep-roulette-modal').style.display = 'flex';
             
             // Отрисовываем рулетку с опциями по умолчанию если их нет
