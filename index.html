@@ -2948,8 +2948,12 @@
                 });
             }
             
-            // Скрываем форму и обновляем модалку
-            cancelAddDepOption();
+            // Очищаем поля для следующего ввода
+            document.getElementById('dep-add-amount').value = '';
+            document.getElementById('dep-add-probability').value = '';
+            document.getElementById('dep-add-amount').focus();
+            
+            // Обновляем рулетку (форма остается открытой)
             renderDepRouletteModal();
         }
         
