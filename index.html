@@ -2869,19 +2869,21 @@
             // Закрываем экран победителя перед открытием рулетки депов
             document.getElementById('winner-screen').style.display = 'none';
             
-            // Открываем roulette.html в новом окне
-            const rouletteWindow = window.open('roulette.html', '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            // Открываем модальное окно рулетки депов на этой же странице
+            document.getElementById('dep-roulette-modal').style.display = 'flex';
             
-            // Отслеживаем закрытие окна рулетки
-            if (rouletteWindow) {
-                const checkClosed = setInterval(() => {
-                    if (rouletteWindow.closed) {
-                        clearInterval(checkClosed);
-                        // Возвращаемся на экран победителя
-                        document.getElementById('winner-screen').style.display = 'flex';
-                    }
-                }, 500);
+            // Отрисовываем рулетку с опциями по умолчанию если их нет
+            if (depRouletteOptions.length === 0) {
+                depRouletteOptions = [
+                    { amount: 500, probability: 30 },
+                    { amount: 1000, probability: 25 },
+                    { amount: 2000, probability: 20 },
+                    { amount: 3000, probability: 15 },
+                    { amount: 5000, probability: 8 },
+                    { amount: 10000, probability: 2 }
+                ];
             }
+            renderDepRouletteModal();
         }
 
         function renderDepRouletteModal() {
