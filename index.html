@@ -2915,20 +2915,53 @@
         }
 
         function addDepOption() {
-            // Добавляем новый вариант с суммой 0 и вероятностью 10%
-            depRouletteOptions.push({ amount: 0, probability: 10 });
+            // Показываем форму ввода вместо прямого добавления
+            const form = document.getElementById('dep-add-form');
+            if (form) {
+                form.style.display = 'block';
+                // Очищаем поля
+                document.getElementById('dep-add-amount').value = '';
+                document.getElementById('dep-add-probability').value = '';
+                // Фокус на первое поле
+                document.getElementById('dep-add-amount').focus();
+            }
+        }
+        
+        function confirmAddDepOption() {
+            const amount = parseFloat(document.getElementById('dep-add-amount').value) || 0;
+            const probability = parseFloat(document.getElementById('dep-add-probability').value) || 0;
             
-            // Пересчитываем сумму вероятностей и нормализуем если нужно
+            if (amount <= 0) {
+                alert('Введите сумму больше 0!');
+                return;
+            }
+            if (probability <= 0 || probability > 100) {
+                alert('Введите шанс от 1 до 100%!');
+                return;
+            }
+            
+            // Добавляем вариант
+            depRouletteOptions.push({ amount: amount, probability: probability });
+            
+            // Нормализуем вероятности если сумма превышает 100%
             const totalProb = depRouletteOptions.reduce((sum, o) => sum + o.probability, 0);
             if (totalProb > 100) {
-                // Уменьшаем вероятности пропорционально чтобы сумма была 100
                 const factor = 100 / totalProb;
                 depRouletteOptions.forEach(opt => {
                     opt.probability = Math.round(opt.probability * factor * 10) / 10;
                 });
             }
             
+            // Скрываем форму и обновляем модалку
+            cancelAddDepOption();
             renderDepRouletteModal();
+        }
+        
+        function cancelAddDepOption() {
+            const form = document.getElementById('dep-add-form');
+            if (form) {
+                form.style.display = 'none';
+            }
         }
 
         function removeDepOption(index) {
