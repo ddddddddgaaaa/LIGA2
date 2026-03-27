@@ -810,6 +810,8 @@
             top: 0;
             left: 0;
             transform: none;
+            padding: 40px 60px;
+            box-sizing: border-box;
         }
         .dep-wheel-container {
             position: relative;
@@ -2913,7 +2915,19 @@
         }
 
         function addDepOption() {
+            // Добавляем новый вариант с суммой 0 и вероятностью 10%
             depRouletteOptions.push({ amount: 0, probability: 10 });
+            
+            // Пересчитываем сумму вероятностей и нормализуем если нужно
+            const totalProb = depRouletteOptions.reduce((sum, o) => sum + o.probability, 0);
+            if (totalProb > 100) {
+                // Уменьшаем вероятности пропорционально чтобы сумма была 100
+                const factor = 100 / totalProb;
+                depRouletteOptions.forEach(opt => {
+                    opt.probability = Math.round(opt.probability * factor * 10) / 10;
+                });
+            }
+            
             renderDepRouletteModal();
         }
 
@@ -3087,36 +3101,36 @@
 
     <!-- DEPOSIT ROULETTE MODAL -->
     <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
-        <div class="modal-content" style="flex-direction: column; width: 900px; max-width: 95vw; background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4);">
-            <div class="close-x" onclick="closeDepRouletteOnly()" style="color: #f59e0b;">&times;</div>
-            <h2 style="color: #f59e0b; text-align: center; margin-bottom: 20px; font-size: 24px;">🎰 РУЛЕТКА ДЕПОВ</h2>
+        <div class="modal-content" style="flex-direction: column; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e, #16213e) !important; border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4); border-radius: 0 !important; max-width: 100vw !important; max-height: 100vh !important;">
+            <div class="close-x" onclick="closeDepRouletteOnly()" style="color: #f59e0b; position: absolute; right: 30px; top: 20px; z-index: 10;">&times;</div>
+            <h2 style="color: #f59e0b; text-align: center; margin: 20px 0 30px; font-size: 28px; letter-spacing: 2px;">🎰 РУЛЕТКА ДЕПОВ</h2>
             
-            <div style="display: flex; gap: 30px; align-items: flex-start;">
+            <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex: 1; padding: 0 40px; box-sizing: border-box;">
                 <!-- Левая часть - колесо -->
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 550px;">
                     <div class="dep-wheel-container">
                         <div class="dep-wheel-pointer"></div>
                         <canvas id="dep-wheel-canvas" width="500" height="500"></canvas>
                         <div class="dep-wheel-center">SPIN</div>
                     </div>
-                    <div id="dep-result-display" class="dep-result-display" style="width: 100%; margin-top: 20px;">
-                        <div style="color: #888; font-size: 14px;">Нажмите КРУТИТЬ чтобы начать</div>
+                    <div id="dep-result-display" class="dep-result-display" style="width: 100%; margin-top: 30px; min-height: 120px; display: flex; align-items: center; justify-content: center;">
+                        <div style="color: #888; font-size: 16px;">Нажмите КРУТИТЬ чтобы начать</div>
                     </div>
-                    <button class="btn-main dep-roulette-btn" style="width: 100%; margin-top: 15px;" onclick="spinDepRoulette()">🎰 КРУТИТЬ!</button>
+                    <button class="btn-main dep-roulette-btn" style="width: 100%; max-width: 400px; margin-top: 20px; padding: 18px; font-size: 16px;" onclick="spinDepRoulette()">🎰 КРУТИТЬ!</button>
                 </div>
                 
                 <!-- Правая часть - настройки -->
-                <div style="flex: 1;">
-                    <h4 style="color: #f59e0b; margin-bottom: 15px;">💰 Варианты депозитов:</h4>
-                    <div id="dep-options-container" class="dep-options-container"></div>
-                    <button class="btn-main" onclick="addDepOption()" style="background: rgba(245, 158, 11, 0.2) !important; border-color: #f59e0b !important; color: #f59e0b !important; margin-top: 10px;">➕ ДОБАВИТЬ ВАРИАНТ</button>
+                <div style="flex: 1; max-width: 500px; display: flex; flex-direction: column;">
+                    <h4 style="color: #f59e0b; margin: 0 0 20px 0; font-size: 18px; letter-spacing: 1px;">💰 Варианты депозитов:</h4>
+                    <div id="dep-options-container" class="dep-options-container" style="flex: 1; overflow-y: auto; max-height: 400px;"></div>
+                    <button class="btn-main" onclick="addDepOption()" style="background: rgba(245, 158, 11, 0.2) !important; border-color: #f59e0b !important; color: #f59e0b !important; margin-top: 15px; padding: 14px;">➕ ДОБАВИТЬ ВАРИАНТ</button>
                     
-                    <div style="margin-top: 20px; padding: 15px; background: rgba(245, 158, 11, 0.1); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3);">
-                        <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 13px;">💡 Подсказка:</h4>
-                        <p style="color: #888; font-size: 12px; margin: 0; line-height: 1.5;">
+                    <div style="margin-top: 25px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <h4 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 14px;">💡 Подсказка:</h4>
+                        <p style="color: #999; font-size: 13px; margin: 0; line-height: 1.6;">
                             Укажите сумму депозита и вероятность выпадения в процентах. 
                             Чем выше вероятность, тем больше шансов что выпадет именно этот вариант.
-                            Сумма вероятностей всех вариантов определяет размер сегментов на колесе.
+                            Сумма вероятностей всех вариантов должна равняться 100%.
                         </p>
                     </div>
                 </div>
