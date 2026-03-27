@@ -2977,6 +2977,7 @@
             renderDepRouletteModal();
             renderDepStatSiteSelect();
             drawDepSlotMachine(0);
+            updateSavedDepList(); // Инициализируем список сохранённых наборов
             document.getElementById('dep-slot-result').textContent = '---';
         }
 
@@ -3010,16 +3011,7 @@
         }
 
         function addDepOption() {
-            // Показываем форму ввода вместо прямого добавления
-            const form = document.getElementById('dep-add-form');
-            if (form) {
-                form.style.display = 'block';
-                // Очищаем поля
-                document.getElementById('dep-add-amount').value = '';
-                document.getElementById('dep-add-probability').value = '';
-                // Фокус на первое поле
-                document.getElementById('dep-add-amount').focus();
-            }
+            showDepAddForm();
         }
         
         function confirmAddDepOption() {
@@ -3035,8 +3027,17 @@
                 return;
             }
             
-            // Добавляем вариант В НАЧАЛО списка (чтобы был сверху)
-            depRouletteOptions.unshift({ amount: amount, probability: probability });
+            // Проверяем общую сумму вероятностей
+            const currentTotal = depRouletteOptions.reduce((sum, o) => sum + o.probability, 0);
+            if (currentTotal + probability > 100) {
+                const remaining = (100 - currentTotal).toFixed(1);
+                if (!confirm(`Сумма вероятностей превысит 100% (будет ${(currentTotal + probability).toFixed(1)}%).\nОсталось ${remaining}%.\n\nПродолжить? (вероятности будут нормализованы)`)) {
+                    return;
+                }
+            }
+            
+            // Добавляем вариант в конец списка
+            depRouletteOptions.push({ amount: amount, probability: probability });
             
             // Нормализуем вероятности если сумма превышает 100%
             const totalProb = depRouletteOptions.reduce((sum, o) => sum + o.probability, 0);
@@ -3061,24 +3062,24 @@
                 }, 300);
             }
             
-            // Очищаем поля но оставляем форму открытой для следующего ввода
+            // Очищаем поля
             document.getElementById('dep-add-amount').value = '';
             document.getElementById('dep-add-probability').value = '';
             document.getElementById('dep-add-amount').focus();
             
-            // Обновляем рулетку
+            // Обновляем всё
             renderDepRouletteModal();
             drawDepSlotMachine(0);
+            updateSavedDepList();
             
             // Подсвечиваем последний добавленный элемент
             setTimeout(() => {
                 const container = document.getElementById('dep-options-container');
                 if (container) {
                     const rows = container.querySelectorAll('.dep-option-row');
-                    const lastRow = rows[rows.length - 1];
-                    if (lastRow) {
+                    if (rows.length > 0) {
+                        const lastRow = rows[rows.length - 1];
                         lastRow.classList.add('is-new');
-                        // Убираем класс через 1.5 секунды
                         setTimeout(() => {
                             lastRow.classList.remove('is-new');
                         }, 1500);
@@ -3102,6 +3103,75 @@
                 document.getElementById('dep-add-probability').value = '';
                 document.getElementById('dep-add-amount').focus();
             }
+        }
+
+        // ===== Saved Dep Roulette List Management =====
+        let savedDepLists = JSON.parse(localStorage.getItem('bot_saved_dep_lists') || '{}');
+
+        function updateSavedDepList() {
+            const container = document.getElementById('dep-saved-list-container');
+            if (!container) return;
+            
+            const listKeys = Object.keys(savedDepLists);
+            if (listKeys.length === 0) {
+                container.innerHTML = '<div style="color:#555; text-align:center; padding:20px; font-size:13px;">Нет сохранённых наборов. Добавьте варианты и нажмите "СОХРАНИТЬ НАБОР"</div>';
+                return;
+            }
+            
+            container.innerHTML = listKeys.map(name => {
+                const items = savedDepLists[name];
+                const totalProb = items.reduce((s, o) => s + o.probability, 0);
+                const preview = items.map(i => `${i.amount}₽(${i.probability}%)`).join(', ');
+                return `<div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:8px; margin-bottom:6px;">
+                    <div style="flex:1; min-width:0;">
+                        <div style="color:#f59e0b; font-weight:700; font-size:13px;">${escapeHtml(name)}</div>
+                        <div style="color:#888; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(preview)} (Σ${totalProb.toFixed(1)}%)</div>
+                    </div>
+                    <button onclick="loadSavedDepList('${encodeURIComponent(name)}')" style="padding:5px 12px; background:rgba(34,197,94,0.2); border:1px solid #22c55e; border-radius:6px; color:#22c55e; font-size:11px; cursor:pointer; font-weight:700;">ЗАГРУЗИТЬ</button>
+                    <button onclick="deleteSavedDepList('${encodeURIComponent(name)}')" style="padding:5px 8px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; border-radius:6px; color:#ef4444; font-size:11px; cursor:pointer;">🗑️</button>
+                </div>`;
+            }).join('');
+        }
+
+        function saveCurrentDepList() {
+            if (depRouletteOptions.length === 0) {
+                alert('Нет вариантов для сохранения! Добавьте хотя бы один вариант.');
+                return;
+            }
+            const name = prompt('Введите название для этого набора:', 'Набор ' + (Object.keys(savedDepLists).length + 1));
+            if (!name || !name.trim()) return;
+            
+            const totalProb = depRouletteOptions.reduce((s, o) => s + o.probability, 0);
+            if (Math.abs(totalProb - 100) > 0.5) {
+                if (!confirm(`Сумма вероятностей текущего набора = ${totalProb.toFixed(1)}% (не 100%).\nВсё равно сохранить?`)) return;
+            }
+            
+            // Сохраняем копию массива
+            savedDepLists[name.trim()] = JSON.parse(JSON.stringify(depRouletteOptions));
+            localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
+            updateSavedDepList();
+            alert('✅ Набор "' + name.trim() + '" сохранён!');
+        }
+
+        function loadSavedDepList(encodedName) {
+            const name = decodeURIComponent(encodedName);
+            const items = savedDepLists[name];
+            if (!items) return alert('Набор не найден');
+            
+            depRouletteOptions = JSON.parse(JSON.stringify(items));
+            saveDepRouletteOptions();
+            renderDepRouletteModal();
+            drawDepSlotMachine(0);
+            updateSavedDepList();
+            alert('✅ Набор "' + name + '" загружен! (' + items.length + ' вариантов)');
+        }
+
+        function deleteSavedDepList(encodedName) {
+            const name = decodeURIComponent(encodedName);
+            if (!confirm('Удалить набор "' + name + '"?')) return;
+            delete savedDepLists[name];
+            localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
+            updateSavedDepList();
         }
 
         function removeDepOption(index) {
@@ -3512,16 +3582,23 @@
                         </div>
                     </div>
                     
-                    <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">📋 СОХРАНЕННЫЕ ВАРИАНТЫ:</h4>
+                    <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">📋 ТЕКУЩИЕ ВАРИАНТЫ (в рулетке):</h4>
                     <div id="dep-options-container" class="dep-options-container" style="flex: 1; overflow-y: auto; max-height: 300px;"></div>
-                    <button class="btn-main dep-roulette-btn" style="margin-top: 12px; padding: 14px; font-size: 14px;" onclick="showDepAddForm()">➕ ДОБАВИТЬ ВАРИАНТ</button>
+                    <div style="display:flex; gap:8px; margin-top:12px;">
+                        <button class="btn-main dep-roulette-btn" style="flex:1; padding: 14px; font-size: 14px; margin-bottom:0;" onclick="showDepAddForm()">➕ ДОБАВИТЬ</button>
+                        <button class="btn-main dep-roulette-btn" style="flex:1; padding: 14px; font-size: 14px; margin-bottom:0; background: linear-gradient(135deg, #22c55e, #16a34a) !important; border-color: #22c55e !important;" onclick="saveCurrentDepList()">💾 СОХРАНИТЬ НАБОР</button>
+                    </div>
+
+                    <div style="margin-top: 20px; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">💾 СОХРАНЁННЫЕ НАБОРЫ:</h4>
+                        <div id="dep-saved-list-container" style="max-height: 200px; overflow-y: auto;"></div>
+                    </div>
                     
-                    <div style="margin-top: 20px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
-                        <h4 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 14px;">💡 Подсказка:</h4>
-                        <p style="color: #999; font-size: 13px; margin: 0; line-height: 1.6;">
-                            Укажите сумму депозита и вероятность выпадения в процентах. 
-                            Чем выше вероятность, тем больше шансов что выпадет именно этот вариант.
-                            Сумма вероятностей всех вариантов должна равняться 100%.
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.08); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.2);">
+                        <h4 style="color: #f59e0b; margin: 0 0 8px 0; font-size: 13px;">💡 Подсказка:</h4>
+                        <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
+                            Каждый вариант = определённый % шанса. Сумма всех % = 100%.<br>
+                            1% = 1 ячейка в слот-машине. Сохраните набор для повторного использования.
                         </p>
                     </div>
                 </div>
