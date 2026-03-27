@@ -637,85 +637,51 @@
             color: #94a3b8;
             font-size: 12px;
         }
-        /* HORIZONTAL SLOT MACHINE */
-        .slot-machine-wrapper {
+        /* WHEEL CANVAS STYLES */
+        .wheel-container {
             position: relative;
-            width: 100%;
-            max-width: 900px;
-            height: 120px;
-            margin: 0 auto;
-            overflow: hidden;
-            background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
-            border: 3px solid var(--accent-neon-blue);
-            border-radius: 16px;
-            box-shadow: 0 0 30px rgba(255, 20, 147, 0.3), inset 0 0 20px rgba(0,0,0,0.5);
-        }
-        .slot-arrow-left, .slot-arrow-right {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10;
-            font-size: 28px;
-            color: var(--accent-neon-blue);
-            text-shadow: 0 0 15px var(--accent-neon-blue);
-            pointer-events: none;
-            font-weight: bold;
-        }
-        .slot-arrow-left {
-            left: 12px;
-        }
-        .slot-arrow-right {
-            right: 12px;
-        }
-        .slot-track {
             display: flex;
-            align-items: center;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            will-change: transform;
-        }
-        .slot-item {
-            flex-shrink: 0;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 120px;
-            height: 100%;
-            font-size: 14px;
-            font-weight: 800;
-            text-align: center;
-            color: #fff;
-            border-right: 2px solid rgba(255, 255, 255, 0.08);
-            box-sizing: border-box;
-            text-shadow: 0 0 8px rgba(0,0,0,0.9);
-            padding: 0 6px;
-            word-break: break-all;
-            line-height: 1.2;
         }
-        .slot-item.highlight {
-            background: rgba(255, 20, 147, 0.25) !important;
-            color: #fff !important;
-            text-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
-            animation: slotHighlightPulse 0.6s ease-out;
+        .wheel-arrow-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: -15px;
+            z-index: 20;
         }
-        @keyframes slotHighlightPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+        .wheel-arrow-pointer {
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-top: 50px solid #fff;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
         }
-        .slot-center-indicator {
+        .wheel-nick-display {
             position: absolute;
-            top: 0;
+            top: -60px;
             left: 50%;
             transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background: var(--accent-neon-blue);
-            box-shadow: 0 0 20px var(--accent-neon-blue), 0 0 40px var(--accent-neon-blue);
-            z-index: 5;
-            pointer-events: none;
+            background: linear-gradient(135deg, var(--accent-neon-blue), rgba(255, 20, 147, 0.8));
+            color: #fff;
+            padding: 10px 25px;
+            border-radius: 12px;
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            box-shadow: 0 0 30px rgba(255, 20, 147, 0.6), 0 0 60px rgba(255, 20, 147, 0.3);
+            z-index: 30;
+            animation: nickPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes nickPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 30px rgba(255, 20, 147, 0.6); }
+            50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 50px rgba(255, 20, 147, 0.8), 0 0 80px rgba(255, 20, 147, 0.4); }
         }
         .wheel-modal-content {
             background: transparent;
@@ -1078,7 +1044,7 @@
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div class="wheel-container"><div class="wheel-arrow-container"><div class="wheel-arrow-pointer"></div><div id="wheel-nick-display" class="wheel-nick-display">---</div></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+            <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div class="wheel-container"><div class="wheel-arrow-container"><div class="wheel-arrow-pointer"></div><div id="wheel-nick-display" class="wheel-nick-display">---</div></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
@@ -2364,158 +2330,172 @@
 
         function executeSpin() { if (wheelParticipants.length === 0) return; document.getElementById('roll-button').disabled = true; startSpin(selectedSpinMode); }
 
-        const slotColors = [
-            'linear-gradient(135deg, #1e3a5f, #0f1f3a)',
-            'linear-gradient(135deg, #2d1b4e, #1a0f30)',
-            'linear-gradient(135deg, #1b3a2e, #0f2a1a)',
-            'linear-gradient(135deg, #3a2a1b, #2a1a0f)',
-            'linear-gradient(135deg, #3a1b2a, #2a0f1a)',
-            'linear-gradient(135deg, #1b2a3a, #0f1a2a)',
-            'linear-gradient(135deg, #2a3a1b, #1a2a0f)',
-            'linear-gradient(135deg, #3a1b3a, #2a0f2a)',
-            'linear-gradient(135deg, #1b3a3a, #0f2a2a)',
-            'linear-gradient(135deg, #3a3a1b, #2a2a0f)'
-        ];
-
-        function getParticipantUnderSlot(offset) {
+        function getParticipantUnderArrow(angle) {
             const p = wheelParticipants || [];
             if (p.length === 0) return '---';
-            const slotWidth = 120;
-            // Center of the visible area maps to index based on offset
-            const index = Math.floor((-offset + slotWidth / 2) / slotWidth);
-            const normalizedIndex = ((index % p.length) + p.length) % p.length;
-            return p[normalizedIndex] || '---';
+            
+            const sliceAngle = (Math.PI * 2) / p.length;
+            
+            // Стрелка вверху = -PI/2
+            // Сегмент i находится в позиции [angle + i*slice, angle + (i+1)*slice]
+            // Найти i такой что -PI/2 попадает в этот сегмент
+            // i = floor((-PI/2 - angle) / slice)
+            
+            let index = Math.floor((-Math.PI / 2 - angle) / sliceAngle);
+            
+            // Нормализуем индекс в диапазон [0, p.length)
+            index = ((index % p.length) + p.length) % p.length;
+            
+            return p[index] || '---';
         }
 
-        function updateWheelNickDisplay(offset) {
+        function updateWheelNickDisplay(angle) {
             const nickDisplay = document.getElementById('wheel-nick-display');
             if (!nickDisplay) return;
-            const participantUnderSlot = getParticipantUnderSlot(offset);
-            nickDisplay.textContent = participantUnderSlot;
+            
+            const participantUnderArrow = getParticipantUnderArrow(angle);
+            nickDisplay.textContent = participantUnderArrow;
         }
 
-        function drawWheel(offset) {
-            const track = document.getElementById('slot-track');
-            if (!track) return;
+        function drawWheel(angle) {
+            const canvas = document.getElementById('wheelCanvas');
+            const ctx = canvas.getContext('2d');
             const p = wheelParticipants || [];
-
-            // Clear and rebuild slots
-            track.innerHTML = '';
-
-            if (p.length === 0) {
-                track.innerHTML = '<div class="slot-item" style="width:100%; color:#666;">Нет участников</div>';
-                return;
-            }
-
-            // Create 3 copies for seamless looping
-            const totalSlots = p.length * 3;
-            for (let copy = 0; copy < 3; copy++) {
-                for (let i = 0; i < p.length; i++) {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot-item';
-                    slot.style.background = slotColors[i % slotColors.length];
-                    slot.textContent = p[i];
-                    track.appendChild(slot);
+            const cw = canvas.width || 700;
+            const ch = canvas.height || 700;
+            const cx = cw / 2, cy = ch / 2;
+            const r = Math.max(80, Math.min(cw, ch) / 2 - 20);
+            ctx.clearRect(0, 0, cw, ch);
+            
+            // Обновляем отображение ника
+            updateWheelNickDisplay(angle);
+            
+            if (p.length === 0) return;
+            const slice = (Math.PI * 2) / p.length;
+            p.forEach((name, i) => {
+                ctx.beginPath();
+                ctx.fillStyle = wheelColors[i % wheelColors.length];
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle + i * slice, angle + (i + 1) * slice);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, angle + i * slice, angle + i * slice);
+                ctx.lineTo(
+                    cx + r * Math.cos(angle + i * slice),
+                    cy + r * Math.sin(angle + i * slice)
+                );
+                ctx.stroke();
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(angle + i * slice + slice / 2);
+                const textRadius = r * 0.4; // увеличиваем радиус текста для лучшей видимости
+                const maxArcWidth = slice * textRadius * 0.85; // немного уменьшаем ширину для лучшего размещения
+                // Адаптивный размер шрифта в зависимости от количества участников
+                let maxFont, minFont;
+                if (p.length <= 5) {
+                    maxFont = 20;
+                    minFont = 14;
+                } else if (p.length <= 10) {
+                    maxFont = 16;
+                    minFont = 11;
+                } else if (p.length <= 20) {
+                    maxFont = 13;
+                    minFont = 9;
+                } else if (p.length <= 40) {
+                    maxFont = 11;
+                    minFont = 7;
+                } else {
+                    maxFont = 9;
+                    minFont = 6;
                 }
-            }
-
-            // Apply offset via transform
-            track.style.transform = `translateX(${offset}px)`;
-
-            // Highlight center item
-            updateWheelNickDisplay(offset);
+                let displayName = String(name || '');
+                let chosenFont = maxFont;
+                for (let fs = maxFont; fs >= minFont; fs--) {
+                    ctx.font = `bold ${fs}px Inter`;
+                    const w = ctx.measureText(displayName).width;
+                    if (w <= maxArcWidth) { chosenFont = fs; break; }
+                }
+                ctx.font = `bold ${minFont}px Inter`;
+                if (ctx.measureText(displayName).width > maxArcWidth) {
+                    let txt = displayName;
+                    // Обрезаем имя постепенно, пока оно не поместится
+                    while (txt.length > 1) {
+                        txt = txt.slice(0, -1);
+                        const test = txt + '…';
+                        if (ctx.measureText(test).width <= maxArcWidth) { 
+                            displayName = test; 
+                            break; 
+                        }
+                    }
+                    // Если даже одна буква не помещается, показываем минимум
+                    if (displayName.length > 1 && ctx.measureText(displayName).width > maxArcWidth) {
+                        displayName = displayName.substring(0, 1) + '…';
+                    }
+                }
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `bold ${chosenFont}px Inter`;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = 'rgba(0,0,0,0.9)';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(displayName, textRadius, 0);
+                ctx.restore();
+            });
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
         }
 
         function startSpin(mode) {
             const duration = parseInt(document.getElementById('dur-input').value) * 1000;
-            const p = wheelParticipants;
-            const n = p.length;
+            const n = wheelParticipants.length;
             if (n === 0) return;
-
-            const slotWidth = 120;
-            const totalWidth = n * slotWidth;
+            const sliceAngle = (Math.PI * 2) / n;
 
             let winner = null;
             if (mode === 'elimination') {
-                winner = pickRiggedElimination(p);
+                winner = pickRiggedElimination(wheelParticipants);
             } else {
-                winner = pickRiggedWinner(p);
+                winner = pickRiggedWinner(wheelParticipants);
             }
-            let winnerIdx = p.findIndex(w => w === winner);
+            let winnerIdx = wheelParticipants.findIndex(w => w === winner);
             if (winnerIdx === -1) winnerIdx = Math.floor(Math.random() * n);
-            winner = p[winnerIdx];
+            winner = wheelParticipants[winnerIdx];
 
-            // Start at current offset (or 0)
-            const wrapper = document.querySelector('.slot-machine-wrapper');
-            const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
-            const centerOffset = wrapperWidth / 2 - slotWidth / 2;
+            const fullSpins = Math.PI * 2 * (6 + Math.floor(Math.random() * 4));
+            const jitter = (Math.random() - 0.5) * sliceAngle * 0.3;
+            const endAngle = -Math.PI / 2 - (winnerIdx * sliceAngle + sliceAngle / 2) - fullSpins + jitter;
 
-            // We want the winner slot to land at the center
-            // The track is laid out as 3 copies, so winner is at positions: winnerIdx, winnerIdx + n, winnerIdx + 2*n
-            // We target the middle copy for the winner
-            const targetWinnerPos = winnerIdx * slotWidth + totalWidth; // middle copy
-            // Final offset: centerOffset - targetWinnerPos (so winner is centered)
-            const endOffset = centerOffset - targetWinnerPos;
-            // Add random extra loops (2-4 full loops of totalWidth)
-            const extraLoops = totalWidth * (2 + Math.floor(Math.random() * 3));
-            const finalOffset = endOffset - extraLoops;
-            // Start from left (positive offset so we scroll left)
-            const startOffset = centerOffset + totalWidth; // start from right side, 2nd copy beginning
-
-            const track = document.getElementById('slot-track');
+            const startAngle = 0;
             let startTimestamp = null;
-            let lastTickOffset = 0;
 
             function animate(timestamp) {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // Ease-out cubic
-                const ease = 1 - Math.pow(1 - progress, 3);
-                const currentOffset = startOffset + (finalOffset - startOffset) * ease;
-
-                track.style.transform = `translateX(${currentOffset}px)`;
-
-                // Tick sound every slot
-                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.8) {
-                    playTick();
-                    lastTickOffset = currentOffset;
-                }
-
-                // Update nick display
-                const nickDisplay = document.getElementById('wheel-nick-display');
-                if (nickDisplay) {
-                    const pArr = wheelParticipants || [];
-                    if (pArr.length > 0) {
-                        const slotWidthVal = 120;
-                        const idx = Math.floor((-currentOffset + wrapperWidth / 2) / slotWidthVal);
-                        const normIdx = ((idx % pArr.length) + pArr.length) % pArr.length;
-                        nickDisplay.textContent = pArr[normIdx] || '---';
-                    }
-                }
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const currentAngle = startAngle + (endAngle - startAngle) * ease;
+                drawWheel(currentAngle);
 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
                 } else {
-                    // Final position
-                    track.style.transform = `translateX(${finalOffset}px)`;
-                    // Highlight winner
-                    const slots = track.querySelectorAll('.slot-item');
-                    const winnerSlotIndex = n + winnerIdx; // middle copy
-                    if (slots[winnerSlotIndex]) {
-                        slots[winnerSlotIndex].classList.add('highlight');
-                    }
-
-                    if (nickDisplay) {
-                        nickDisplay.textContent = winner;
-                    }
-
+                    drawWheel(endAngle);
                     if (mode === 'normal') {
+                        // Если включён автокрут и окно рулетки всё ещё открыто — не открываем экран победителя, а продолжаем крутить
                         if (autoSpinEnabled && document.getElementById('wheel-modal').style.display === 'flex') {
                             document.getElementById('elim-log').innerText = 'WIN: ' + winner;
+                            playTick();
                             document.getElementById('roll-button').disabled = false;
                             setTimeout(() => {
-                                // Remove highlight before next spin
-                                if (slots[winnerSlotIndex]) slots[winnerSlotIndex].classList.remove('highlight');
                                 startSpin(selectedSpinMode);
                             }, 900);
                         } else {
@@ -2524,6 +2504,7 @@
                         }
                     } else {
                         document.getElementById('elim-log').innerText = '❌ ВЫБЫЛ: ' + winner;
+                        playTick();
                         wheelParticipants.splice(winnerIdx, 1);
 
                         if (wheelParticipants.length === 0) {
