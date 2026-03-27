@@ -982,8 +982,70 @@
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+        
+        .keshnyaaa-title {
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            z-index: 10002;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 48px;
+            font-weight: 900;
+            color: #ff1493;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: keshBlink 0.5s ease-in-out infinite;
+            text-shadow: 
+                0 0 10px rgba(255, 20, 147, 0.8),
+                0 0 20px rgba(255, 20, 147, 0.6),
+                0 0 30px rgba(255, 20, 147, 0.4),
+                0 0 40px rgba(255, 20, 147, 0.2);
+            pointer-events: none;
+        }
+        
+        @keyframes keshBlink {
+            0%, 100% { 
+                opacity: 1; 
+                text-shadow: 
+                    0 0 10px rgba(255, 20, 147, 0.8),
+                    0 0 20px rgba(255, 20, 147, 0.6),
+                    0 0 30px rgba(255, 20, 147, 0.4);
+            }
+            50% { 
+                opacity: 0.3; 
+                text-shadow: 
+                    0 0 5px rgba(255, 20, 147, 0.4),
+                    0 0 10px rgba(255, 20, 147, 0.2);
+            }
+        }
+        
+        .panel-with-bg {
+            background-image: url('https://img.sanishtech.com/u/5810775c99a82ddd872e00221f23e7c8.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            position: relative;
+        }
+        
+        .panel-with-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 20px;
+            z-index: 0;
+        }
+        
+        .panel-with-bg > * {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 </head>
 <body>
+    <div class="keshnyaaa-title">KESHNYAAA</div>
     <div class="theme-switcher">
         <label for="theme-select">Цвет</label>
         <select id="theme-select" onchange="applyTheme(this.value)">
@@ -1028,7 +1090,7 @@
             </div>
             <div class="watermark">(TG - vadymtm90)</div>
         </div>
-        <div class="panel" style="padding: 15px;">
+        <div class="panel panel-with-bg" style="padding: 15px;">
             <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
             <div class="middle-split">
                 <div class="red-participants">
@@ -1045,7 +1107,7 @@
             </div>
             <div class="watermark">(TG - vadymtm90)</div>
         </div>
-        <div class="panel">
+        <div class="panel panel-with-bg">
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
             <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
             <div class="watermark">(TG - vadymtm90)</div>
