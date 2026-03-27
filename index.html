@@ -1078,28 +1078,51 @@
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <div id="wheel-modal" class="modal"><div class="modal-content" style="flex-direction:column;"><div class="close-x" onclick="closeModals()">&times;</div>
-        <h3 style="margin:0 0 15px; text-align:center; color:var(--accent-neon-blue); font-size:20px; letter-spacing:2px;">🎰 СЛОТ МАШИНА</h3>
+    <div id="wheel-modal" class="modal"><div class="modal-content" style="flex-direction:column; width:95vw; max-width:1100px;"><div class="close-x" onclick="closeModals()">&times;</div>
+        <h3 style="margin:0 0 20px; text-align:center; color:var(--accent-neon-blue); font-size:22px; letter-spacing:2px;">🎰 СЛОТ МАШИНА</h3>
+        
+        <!-- СЛОТ МАШИНА -->
         <div class="slot-machine-wrapper">
             <div class="slot-arrow-left">◄</div>
             <div class="slot-arrow-right">►</div>
             <div class="slot-track" id="slot-track"></div>
         </div>
-        <div id="wheel-nick-display" class="wheel-nick-display" style="margin:15px auto 0; position:relative; top:0; left:0; transform:none; display:inline-block;">---</div>
-        <div class="wheel-controls" style="width:100%; display:flex; flex-direction:column; gap:10px; margin-top:15px;">
-            <div id="elim-log" style="text-align:center; color:var(--accent-neon-blue); font-weight:bold; min-height:20px; font-size:14px; padding:8px; background:rgba(255,20,147,0.1); border:1px solid var(--accent-neon-blue); border-radius:8px;"></div>
-            <div style="display:flex; gap:8px;">
-                <button class="btn-main" style="flex:1;" onclick="openImportParticipants()">📋 ВСТАВИТЬ СПИСОК</button>
-                <button class="btn-main" style="flex:1; background:rgba(239,68,68,0.12); border-color:#ef4444; color:#ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОС</button>
+        
+        <!-- ИМЯ ПОБЕДИТЕЛЯ -->
+        <div id="wheel-nick-display" class="wheel-nick-display" style="margin:20px auto 0; position:relative; top:0; left:0; transform:none; display:inline-block;">---</div>
+        
+        <!-- КНОПКА КРУТИТЬ -->
+        <button id="roll-button" class="btn-main btn-purple" style="margin:20px auto 0; padding:20px; font-size:20px; max-width:400px; display:block;" onclick="executeSpin()">КРУТИТЬ! 🚀</button>
+        
+        <!-- ЛОГ ВЫПАДЕНИЯ -->
+        <div id="elim-log" style="text-align:center; color:var(--accent-neon-blue); font-weight:bold; min-height:20px; font-size:14px; padding:10px; background:rgba(255,20,147,0.1); border:1px solid var(--accent-neon-blue); border-radius:8px; margin-top:15px;"></div>
+        
+        <!-- НАСТРОЙКИ И ИНФОРМАЦИЯ -->
+        <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+            <!-- Левая колонка -->
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-main" style="flex:1;" onclick="openImportParticipants()">📋 ВСТАВИТЬ СПИСОК</button>
+                    <button class="btn-main" style="flex:1; background:rgba(239,68,68,0.12); border-color:#ef4444; color:#ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОС</button>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button id="mode-elim" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button>
+                    <button id="mode-normal" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button>
+                </div>
             </div>
-            <div style="display:flex; gap:8px;">
-                <button id="mode-elim" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button>
-                <button id="mode-normal" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button>
+            <!-- Правая колонка -->
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
+                    <label style="font-size:13px; color:#888;">⏱️ Время вращения (сек):</label><br>
+                    <input type="number" id="dur-input" min="1" max="60" value="5" style="width:80px; padding:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:6px; text-align:center; margin-top:6px;">
+                </div>
+                <label style="display:flex; align-items:center; gap:8px; padding:10px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.06); cursor:pointer;">
+                    <input id="autoskip-checkbox" type="checkbox"> 
+                    <span style="font-size:13px; color:#ccc;">🔄 Автокрут (пока окно открыто)</span>
+                </label>
             </div>
-            <div style="text-align:center;"><label style="font-size:13px; color:#888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div>
-            <button id="roll-button" class="btn-main btn-purple" style="padding:18px; font-size:18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button>
-            <label style="display:flex; align-items:center; gap:8px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label>
         </div>
+        
         <div class="watermark">(TG - vadymtm90)</div>
     </div></div>
     <div id="import-participants-modal" class="modal">
