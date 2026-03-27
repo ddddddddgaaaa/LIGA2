@@ -3117,6 +3117,13 @@
             'linear-gradient(135deg, #05966933, #04785733)'
         ];
 
+        function getDepColor(amount) {
+            if (amount <= 100) return '#06b6d4'; // голубой
+            if (amount <= 200) return '#7c3aed'; // темно-фиолетовый
+            if (amount <= 500) return '#ef4444'; // красный
+            return '#eab308'; // желтый (501+)
+        }
+
         function drawDepSlotMachine(offset) {
             const track = document.getElementById('dep-slot-track');
             if (!track) return;
@@ -3129,13 +3136,23 @@
                 return;
             }
 
+            // Создаем список слотов: каждый вариант создает столько слотов, сколько процентов
+            let slots = [];
+            options.forEach(opt => {
+                const count = Math.round(opt.probability); // количество слотов = процент
+                for (let i = 0; i < count; i++) {
+                    slots.push({ amount: opt.amount, color: getDepColor(opt.amount) });
+                }
+            });
+
             // Create 3 copies for seamless looping
             for (let copy = 0; copy < 3; copy++) {
-                for (let i = 0; i < options.length; i++) {
+                for (let i = 0; i < slots.length; i++) {
                     const slot = document.createElement('div');
                     slot.className = 'slot-item';
-                    slot.style.background = depSlotColors[i % depSlotColors.length];
-                    slot.textContent = options[i].amount + '₽';
+                    slot.style.background = slots[i].color + '33';
+                    slot.style.borderRight = `2px solid ${slots[i].color}`;
+                    slot.textContent = slots[i].amount + '₽';
                     track.appendChild(slot);
                 }
             }
@@ -3150,31 +3167,27 @@
                 return;
             }
 
-            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
-            if (Math.abs(totalProb - 100) > 0.01) {
-                alert(`⚠️ Сумма вероятностей должна быть 100%! Сейчас: ${totalProb.toFixed(1)}%`);
-                return;
-            }
+            // Создаем список слотов
+            let slots = [];
+            options.forEach(opt => {
+                const count = Math.round(opt.probability);
+                for (let i = 0; i < count; i++) {
+                    slots.push(opt.amount);
+                }
+            });
+
+            if (slots.length === 0) return;
 
             if (depRouletteSpinning) return;
             depRouletteSpinning = true;
 
-            // Pick winner based on probability
-            let random = Math.random() * totalProb;
-            let selectedOption = options[0];
-            let selectedIndex = 0;
-            for (let i = 0; i < options.length; i++) {
-                random -= options[i].probability;
-                if (random <= 0) {
-                    selectedOption = options[i];
-                    selectedIndex = i;
-                    break;
-                }
-            }
+            // Pick random slot
+            const selectedIndex = Math.floor(Math.random() * slots.length);
+            const selectedAmount = slots[selectedIndex];
 
             const track = document.getElementById('dep-slot-track');
             const slotWidth = 120;
-            const n = options.length;
+            const n = slots.length;
             const totalWidth = n * slotWidth;
             const wrapper = track.parentElement;
             const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
@@ -3210,14 +3223,14 @@
                     track.style.transform = `translateX(${finalOffset}px)`;
                     
                     // Highlight winner
-                    const slots = track.querySelectorAll('.slot-item');
-                    const winnerIdx = n + selectedIndex;
-                    if (slots[winnerIdx]) {
-                        slots[winnerIdx].classList.add('highlight');
+                    const trackSlots = track.querySelectorAll('.slot-item');
+                    const winnerSlotIdx = n + selectedIndex;
+                    if (trackSlots[winnerSlotIdx]) {
+                        trackSlots[winnerSlotIdx].classList.add('highlight');
                     }
 
                     const resultDiv = document.getElementById('dep-slot-result');
-                    resultDiv.textContent = selectedOption.amount + ' ₽';
+                    resultDiv.textContent = selectedAmount + ' ₽';
 
                     depRouletteSpinning = false;
                     playTick();
