@@ -1096,7 +1096,7 @@
         let selectedImportFormat = 'csv';
         let autoSpinEnabled = false;
         let wheelParticipants = [];
-        let pendingParticipants = []; // участники, которые написали кодовое пока рулетка открыта
+        let pendingParticipants = JSON.parse(localStorage.getItem('bot_pending_participants') || '[]'); // участники, которые написали кодовое пока рулетка открыта
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
@@ -1675,19 +1675,24 @@
         }
 
         async function addParticipantToFirebase(name) {
-            // Если рулетка открыта, добавляем в ожидающие, а не в основной список
+            // Если рулетка открыта, добавляем в ожидающие и сразу в основной список
             const wheelModal = document.getElementById('wheel-modal');
             if (wheelModal && wheelModal.style.display === 'flex') {
                 if (!pendingParticipants.includes(name)) {
                     pendingParticipants.push(name);
+                    // Сохраняем pendingParticipants в localStorage
+                    try { localStorage.setItem('bot_pending_participants', JSON.stringify(pendingParticipants)); } catch(e) {}
                     console.log('Participant added to pending list:', name, pendingParticipants);
                 }
-                return;
+                // Всегда добавляем в основной список сразу (чтобы сохранить после перезагрузки)
             }
             
+            // Добавляем в основной список участников
             if (!cloudReady || !cloudDb) {
                 participants.add(name);
                 syncParticipantsState();
+                // Сохраняем в localStorage для локального режима
+                try { localStorage.setItem('bot_participants_local', JSON.stringify(Array.from(participants))); } catch(e) {}
                 return;
             }
             const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
@@ -1707,23 +1712,10 @@
             
             console.log('Processing pending participants:', pendingParticipants);
             
-            for (const name of pendingParticipants) {
-                if (!cloudReady || !cloudDb) {
-                    participants.add(name);
-                } else {
-                    const docId = `participants_${sanitizeChannelName(currentChannelName)}`;
-                    try {
-                        await cloudDb.collection('participants').doc(docId).update({
-                            list: firebase.firestore.FieldValue.arrayUnion(name)
-                        });
-                    } catch (e) {
-                        await cloudDb.collection('participants').doc(docId).set({ list: [name] }, { merge: true });
-                    }
-                }
-            }
-            
-            // Очищаем список ожидающих
+            // Участники уже добавлены в participants при addParticipantToFirebase
+            // Просто очищаем список ожидающих
             pendingParticipants = [];
+            try { localStorage.removeItem('bot_pending_participants'); } catch(e) {}
             syncParticipantsState();
         }
 
@@ -1745,7 +1737,10 @@
 
         function subscribeParticipantsFromCloud() {
             if (!cloudReady || !cloudDb) {
-                // если облако не готово, ничего не подписываем
+                // если облако не готово, загружаем из localStorage
+                const savedParticipants = JSON.parse(localStorage.getItem('bot_participants_local') || '[]');
+                participants = new Set(savedParticipants);
+                syncParticipantsState();
                 return;
             }
             if (participantsUnsubscribe) {
