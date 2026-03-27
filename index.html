@@ -1078,53 +1078,7 @@
     </div>
     <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <div id="wheel-modal" class="modal"><div class="modal-content" style="flex-direction:column; width:95vw; max-width:1100px;"><div class="close-x" onclick="closeModals()">&times;</div>
-        <h3 style="margin:0 0 20px; text-align:center; color:var(--accent-neon-blue); font-size:22px; letter-spacing:2px;">🎰 СЛОТ МАШИНА</h3>
-        
-        <!-- СЛОТ МАШИНА -->
-        <div class="slot-machine-wrapper">
-            <div class="slot-arrow-left">◄</div>
-            <div class="slot-arrow-right">►</div>
-            <div class="slot-track" id="slot-track"></div>
-        </div>
-        
-        <!-- ИМЯ ПОБЕДИТЕЛЯ -->
-        <div id="wheel-nick-display" class="wheel-nick-display" style="margin:20px auto 0; position:relative; top:0; left:0; transform:none; display:inline-block;">---</div>
-        
-        <!-- КНОПКА КРУТИТЬ -->
-        <button id="roll-button" class="btn-main btn-purple" style="margin:20px auto 0; padding:20px; font-size:20px; max-width:400px; display:block;" onclick="executeSpin()">КРУТИТЬ! 🚀</button>
-        
-        <!-- ЛОГ ВЫПАДЕНИЯ -->
-        <div id="elim-log" style="text-align:center; color:var(--accent-neon-blue); font-weight:bold; min-height:20px; font-size:14px; padding:10px; background:rgba(255,20,147,0.1); border:1px solid var(--accent-neon-blue); border-radius:8px; margin-top:15px;"></div>
-        
-        <!-- НАСТРОЙКИ И ИНФОРМАЦИЯ -->
-        <div style="margin-top:20px; display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-            <!-- Левая колонка -->
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-main" style="flex:1;" onclick="openImportParticipants()">📋 ВСТАВИТЬ СПИСОК</button>
-                    <button class="btn-main" style="flex:1; background:rgba(239,68,68,0.12); border-color:#ef4444; color:#ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОС</button>
-                </div>
-                <div style="display:flex; gap:8px;">
-                    <button id="mode-elim" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button>
-                    <button id="mode-normal" class="btn-main btn-purple btn-spin-mode" style="flex:1;" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button>
-                </div>
-            </div>
-            <!-- Правая колонка -->
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="text-align:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.06);">
-                    <label style="font-size:13px; color:#888;">⏱️ Время вращения (сек):</label><br>
-                    <input type="number" id="dur-input" min="1" max="60" value="5" style="width:80px; padding:6px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:6px; text-align:center; margin-top:6px;">
-                </div>
-                <label style="display:flex; align-items:center; gap:8px; padding:10px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid rgba(255,255,255,0.06); cursor:pointer;">
-                    <input id="autoskip-checkbox" type="checkbox"> 
-                    <span style="font-size:13px; color:#ccc;">🔄 Автокрут (пока окно открыто)</span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="watermark">(TG - vadymtm90)</div>
-    </div></div>
+    <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div class="wheel-container"><div class="wheel-arrow-container"><div class="wheel-arrow-pointer"></div><div id="wheel-nick-display" class="wheel-nick-display">---</div></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек): <input type="number" id="dur-input" min="1" max="60" value="5" style="width:60px; padding:4px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; border-radius:4px; text-align:center;"></label></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
     <div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
@@ -3007,6 +2961,8 @@
             }
             renderDepRouletteModal();
             renderDepStatSiteSelect();
+            drawDepSlotMachine(0);
+            document.getElementById('dep-slot-result').textContent = '---';
         }
 
         function renderDepRouletteModal() {
@@ -3131,6 +3087,129 @@
             // Сохраняем изменения в localStorage
             saveDepRouletteOptions();
             renderDepRouletteModal();
+        }
+
+        const depSlotColors = [
+            'linear-gradient(135deg, #f59e0b33, #d9770633)',
+            'linear-gradient(135deg, #dc262633, #991b1b33)',
+            'linear-gradient(135deg, #2563eb33, #1d4ed833)',
+            'linear-gradient(135deg, #16a34a33, #15803d33)',
+            'linear-gradient(135deg, #9333ea33, #7e22ce33)',
+            'linear-gradient(135deg, #db277733, #be185d33)',
+            'linear-gradient(135deg, #0891b233, #0e749033)',
+            'linear-gradient(135deg, #ca8a0433, #a1620733)',
+            'linear-gradient(135deg, #4f46e533, #4338ca33)',
+            'linear-gradient(135deg, #05966933, #04785733)'
+        ];
+
+        function drawDepSlotMachine(offset) {
+            const track = document.getElementById('dep-slot-track');
+            if (!track) return;
+            const options = depRouletteOptions.filter(o => o.amount > 0);
+
+            track.innerHTML = '';
+
+            if (options.length === 0) {
+                track.innerHTML = '<div class="slot-item" style="width:100%; color:#f59e0b;">Добавьте варианты</div>';
+                return;
+            }
+
+            // Create 3 copies for seamless looping
+            for (let copy = 0; copy < 3; copy++) {
+                for (let i = 0; i < options.length; i++) {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot-item';
+                    slot.style.background = depSlotColors[i % depSlotColors.length];
+                    slot.textContent = options[i].amount + '₽';
+                    track.appendChild(slot);
+                }
+            }
+
+            track.style.transform = `translateX(${offset}px)`;
+        }
+
+        function spinDepSlotMachine() {
+            const options = depRouletteOptions.filter(o => o.amount > 0);
+            if (options.length === 0) {
+                alert('Добавьте хотя бы один вариант!');
+                return;
+            }
+
+            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
+            if (Math.abs(totalProb - 100) > 0.01) {
+                alert(`⚠️ Сумма вероятностей должна быть 100%! Сейчас: ${totalProb.toFixed(1)}%`);
+                return;
+            }
+
+            if (depRouletteSpinning) return;
+            depRouletteSpinning = true;
+
+            // Pick winner based on probability
+            let random = Math.random() * totalProb;
+            let selectedOption = options[0];
+            let selectedIndex = 0;
+            for (let i = 0; i < options.length; i++) {
+                random -= options[i].probability;
+                if (random <= 0) {
+                    selectedOption = options[i];
+                    selectedIndex = i;
+                    break;
+                }
+            }
+
+            const track = document.getElementById('dep-slot-track');
+            const slotWidth = 120;
+            const n = options.length;
+            const totalWidth = n * slotWidth;
+            const wrapper = track.parentElement;
+            const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
+            const centerOffset = wrapperWidth / 2 - slotWidth / 2;
+
+            // Target: middle copy of winner
+            const targetPos = selectedIndex * slotWidth + totalWidth;
+            const endOffset = centerOffset - targetPos;
+            const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
+            const finalOffset = endOffset - extraLoops;
+            const startOffset = centerOffset + totalWidth;
+
+            const duration = 5000;
+            const startTime = performance.now();
+            let lastTickOffset = 0;
+
+            function animateDepSlot(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const currentOffset = startOffset + (finalOffset - startOffset) * ease;
+
+                track.style.transform = `translateX(${currentOffset}px)`;
+
+                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.8) {
+                    playTick();
+                    lastTickOffset = currentOffset;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateDepSlot);
+                } else {
+                    track.style.transform = `translateX(${finalOffset}px)`;
+                    
+                    // Highlight winner
+                    const slots = track.querySelectorAll('.slot-item');
+                    const winnerIdx = n + selectedIndex;
+                    if (slots[winnerIdx]) {
+                        slots[winnerIdx].classList.add('highlight');
+                    }
+
+                    const resultDiv = document.getElementById('dep-slot-result');
+                    resultDiv.textContent = selectedOption.amount + ' ₽';
+
+                    depRouletteSpinning = false;
+                    playTick();
+                }
+            }
+
+            requestAnimationFrame(animateDepSlot);
         }
 
         function drawDepWheel() {
@@ -3357,23 +3436,23 @@
     <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
         <div class="modal-content" style="flex-direction: column; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e, #16213e) !important; border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4); border-radius: 0 !important; max-width: 100vw !important; max-height: 100vh !important;">
             <div class="close-x" onclick="closeDepRouletteOnly()" style="color: #f59e0b; position: absolute; right: 30px; top: 20px; z-index: 10;">&times;</div>
-            <h2 style="color: #f59e0b; text-align: center; margin: 20px 0 30px; font-size: 28px; letter-spacing: 2px;">🎰 РУЛЕТКА ДЕПОВ</h2>
+            <h2 style="color: #f59e0b; text-align: center; margin: 20px 0 30px; font-size: 28px; letter-spacing: 2px;">🎰 СЛОТ МАШИНА ДЕПОВ</h2>
             
-            <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex: 1; padding: 0 40px; box-sizing: border-box;">
-                <!-- Левая часть - колесо -->
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 550px;">
-                    <div class="dep-wheel-container">
-                        <div class="dep-wheel-pointer"></div>
-                        <canvas id="dep-wheel-canvas" width="500" height="500"></canvas>
-                        <div class="dep-wheel-center">SPIN</div>
-                    </div>
-                    <div id="dep-result-display" class="dep-result-display" style="width: 100%; margin-top: 30px; min-height: 120px; display: flex; align-items: center; justify-content: center;">
-                        <div style="color: #888; font-size: 16px;">Нажмите КРУТИТЬ чтобы начать</div>
-                    </div>
-                    <button class="btn-main dep-roulette-btn" style="width: 100%; max-width: 400px; margin-top: 20px; padding: 18px; font-size: 16px;" onclick="spinDepRoulette()">🎰 КРУТИТЬ!</button>
-                </div>
-                
-                <!-- Правая часть - настройки -->
+            <!-- СЛОТ МАШИНА -->
+            <div class="slot-machine-wrapper" style="border-color: #f59e0b; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);">
+                <div class="slot-arrow-left" style="color: #f59e0b; text-shadow: 0 0 15px #f59e0b;">◄</div>
+                <div class="slot-arrow-right" style="color: #f59e0b; text-shadow: 0 0 15px #f59e0b;">►</div>
+                <div class="slot-track" id="dep-slot-track"></div>
+            </div>
+            
+            <!-- РЕЗУЛЬТАТ -->
+            <div id="dep-slot-result" style="text-align:center; margin:20px 0; font-size:24px; font-weight:900; color:#f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.8);">---</div>
+            
+            <!-- КНОПКА КРУТИТЬ -->
+            <button class="btn-main dep-roulette-btn" style="width: 100%; max-width: 400px; margin: 0 auto; padding: 18px; font-size: 16px; display: block;" onclick="spinDepSlotMachine()">🎰 КРУТИТЬ!</button>
+            
+            <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex: 1; padding: 20px 40px; box-sizing: border-box;">
+                <!-- Левая часть - настройки -->
                 <div style="flex: 1; max-width: 500px; display: flex; flex-direction: column;">
                     <h4 style="color: #f59e0b; margin: 0 0 15px 0; font-size: 18px; letter-spacing: 1px;">💰 ДОБАВИТЬ ВАРИАНТ:</h4>
                     
