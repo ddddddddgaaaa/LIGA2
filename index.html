@@ -3067,8 +3067,9 @@
             const depForm3 = document.getElementById('dep-add-form');
             if (depForm3) depForm3.style.display = 'none';
             
-            // Обновляем рулетку (форма остается открытой)
+            // Обновляем рулетку
             renderDepRouletteModal();
+            drawDepSlotMachine(0);
             
             // Подсвечиваем последний добавленный элемент
             setTimeout(() => {
