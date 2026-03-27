@@ -2477,9 +2477,12 @@
         }
         function instantRoll() { const arr = getActiveParticipants(); if (arr.length < 1) return alert('Нет участников!'); let win = pickRiggedWinner(arr); showWinnerRef(win); }
         function closeDepRouletteOnly() {
-            // Закрываем только рулетку депов, не трогая другие модальные окна
+            // Закрываем только рулетку депов
             document.getElementById('dep-roulette-modal').style.display = 'none';
             depRouletteSpinning = false;
+            
+            // Возвращаемся на экран победителя
+            document.getElementById('winner-screen').style.display = 'flex';
         }
 
         function closeModals() { 
@@ -2863,6 +2866,9 @@
         ];
 
         function openDepRoulette() {
+            // Закрываем экран победителя перед открытием рулетки депов
+            document.getElementById('winner-screen').style.display = 'none';
+            
             // Инициализируем с дефолтными опциями если пусто
             if (depRouletteOptions.length === 0) {
                 depRouletteOptions = [
