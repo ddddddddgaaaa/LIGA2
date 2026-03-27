@@ -3061,11 +3061,10 @@
                 }, 300);
             }
             
-            // Очищаем поля и закрываем форму
+            // Очищаем поля но оставляем форму открытой для следующего ввода
             document.getElementById('dep-add-amount').value = '';
             document.getElementById('dep-add-probability').value = '';
-            const depForm3 = document.getElementById('dep-add-form');
-            if (depForm3) depForm3.style.display = 'none';
+            document.getElementById('dep-add-amount').focus();
             
             // Обновляем рулетку
             renderDepRouletteModal();
