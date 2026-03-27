@@ -3051,20 +3051,21 @@
             saveDepRouletteOptions();
             
             // Визуальное подтверждение - мигаем формой зеленым
-            const form = document.getElementById('dep-add-form');
-            if (form) {
-                form.style.borderColor = '#22c55e';
-                form.style.background = 'rgba(34, 197, 94, 0.2)';
+            const depForm2 = document.getElementById('dep-add-form');
+            if (depForm2) {
+                depForm2.style.borderColor = '#22c55e';
+                depForm2.style.background = 'rgba(34, 197, 94, 0.2)';
                 setTimeout(() => {
-                    form.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-                    form.style.background = 'rgba(245, 158, 11, 0.15)';
+                    depForm2.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+                    depForm2.style.background = 'rgba(245, 158, 11, 0.15)';
                 }, 300);
             }
             
-            // Очищаем поля для следующего ввода
+            // Очищаем поля и закрываем форму
             document.getElementById('dep-add-amount').value = '';
             document.getElementById('dep-add-probability').value = '';
-            document.getElementById('dep-add-amount').focus();
+            const depForm3 = document.getElementById('dep-add-form');
+            if (depForm3) depForm3.style.display = 'none';
             
             // Обновляем рулетку (форма остается открытой)
             renderDepRouletteModal();
@@ -3087,9 +3088,19 @@
         }
         
         function cancelAddDepOption() {
-            const form = document.getElementById('dep-add-form');
-            if (form) {
-                form.style.display = 'none';
+            const depForm = document.getElementById('dep-add-form');
+            if (depForm) {
+                depForm.style.display = 'none';
+            }
+        }
+
+        function showDepAddForm() {
+            const depForm = document.getElementById('dep-add-form');
+            if (depForm) {
+                depForm.style.display = 'block';
+                document.getElementById('dep-add-amount').value = '';
+                document.getElementById('dep-add-probability').value = '';
+                document.getElementById('dep-add-amount').focus();
             }
         }
 
@@ -3484,7 +3495,7 @@
                 <div style="flex: 1; max-width: 500px; display: flex; flex-direction: column;">
                     <h4 style="color: #f59e0b; margin: 0 0 15px 0; font-size: 18px; letter-spacing: 1px;">💰 ДОБАВИТЬ ВАРИАНТ:</h4>
                     
-                    <div id="dep-add-form" style="padding: 15px; background: rgba(245, 158, 11, 0.15); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.4); margin-bottom: 20px;">
+                    <div id="dep-add-form" style="display:none; padding: 15px; background: rgba(245, 158, 11, 0.15); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.4); margin-bottom: 20px;">
                         <div style="display: flex; gap: 10px; align-items: flex-end;">
                             <div style="flex: 1;">
                                 <label style="display: block; color: #f59e0b; font-size: 11px; margin-bottom: 4px;">Сумма (₽)</label>
@@ -3500,6 +3511,7 @@
                     
                     <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">📋 СОХРАНЕННЫЕ ВАРИАНТЫ:</h4>
                     <div id="dep-options-container" class="dep-options-container" style="flex: 1; overflow-y: auto; max-height: 300px;"></div>
+                    <button class="btn-main dep-roulette-btn" style="margin-top: 12px; padding: 14px; font-size: 14px;" onclick="showDepAddForm()">➕ ДОБАВИТЬ ВАРИАНТ</button>
                     
                     <div style="margin-top: 20px; padding: 20px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
                         <h4 style="color: #f59e0b; margin: 0 0 12px 0; font-size: 14px;">💡 Подсказка:</h4>
