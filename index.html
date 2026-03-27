@@ -3178,21 +3178,24 @@
                 return;
             }
 
-            // Создаем список слотов
+            if (depRouletteSpinning) return;
+            depRouletteSpinning = true;
+
+            // Создаем список слотов: 1% = 1 слот
             let slots = [];
             options.forEach(opt => {
-                const count = Math.round(opt.probability);
+                const count = Math.round(opt.probability); // количество слотов = процент
                 for (let i = 0; i < count; i++) {
                     slots.push(opt.amount);
                 }
             });
 
-            if (slots.length === 0) return;
+            if (slots.length === 0) {
+                depRouletteSpinning = false;
+                return;
+            }
 
-            if (depRouletteSpinning) return;
-            depRouletteSpinning = true;
-
-            // Pick random slot
+            // Выбираем случайный слот (1% шанс = 1 слот из 100)
             const selectedIndex = Math.floor(Math.random() * slots.length);
             const selectedAmount = slots[selectedIndex];
 
@@ -3204,7 +3207,7 @@
             const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
             const centerOffset = wrapperWidth / 2 - slotWidth / 2;
 
-            // Target: middle copy of winner
+            // Target: middle copy of winner (вторая копия списка)
             const targetPos = selectedIndex * slotWidth + totalWidth;
             const endOffset = centerOffset - targetPos;
             const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
