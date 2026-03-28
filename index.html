@@ -341,20 +341,6 @@
             font-weight: bold;
             box-shadow: 0 0 0 transparent;
         }
-        .watermark {
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            color: rgba(148, 163, 184, 0.65);
-            pointer-events: none;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            z-index: 9999;
-            font-weight: bold;
-            text-shadow: 0 0 0 transparent;
-        }
         .close-x {
             position: absolute;
             right: 20px;
@@ -410,7 +396,7 @@
         }
         .red-participants {
             flex: 1;
-            border: 3px solid var(--section-accent);
+            border: none;
             border-radius: 18px;
             background: var(--dark-purple);
             display: flex;
@@ -1051,7 +1037,6 @@
                 </div>
                 <button class="btn-main" style="margin-top:8px; width:100%;" onclick="toggleTimer()">СТАРТ / ПАУЗА</button>
             </div>
-            <div class="watermark">(TG - vadymtm90)</div>
         </div>
         <div class="panel panel-with-bg" style="padding: 15px;">
             <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
@@ -1068,17 +1053,15 @@
                     </div>
                 </div>
             </div>
-            <div class="watermark">(TG - vadymtm90)</div>
         </div>
         <div class="panel panel-with-bg">
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
             <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
-            <div class="watermark">(TG - vadymtm90)</div>
             <div onclick="openAdminLogin()" style="position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:160px; height:22px; cursor:default; z-index:10000; background:transparent; border:none; outline:none;"></div>
         </div>
     </div>
-    <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
-    <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+    <div id="history-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 950px; height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Полная история выпадений</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th style="padding: 12px;">Дата</th><th style="padding: 12px;">Никнейм</th><th style="padding: 12px;">Telegram</th><th style="padding: 12px;">Проект</th><th style="padding: 12px;">Выводы (₽)</th><th style="padding: 12px;">Депы (₽)</th><th style="padding: 12px;">Рероллы</th><th style="padding: 12px;">Действие</th></tr></thead><tbody id="history-body"></tbody></table></div></div></div>
+    <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div></div></div>
             <div id="wheel-modal" class="modal"><div class="modal-content"><div class="close-x" onclick="closeModals()">&times;</div><div class="wheel-container"><div class="wheel-arrow-container"><div class="wheel-arrow-pointer"></div><div id="wheel-nick-display" class="wheel-nick-display">---</div></div><canvas id="wheelCanvas" width="700" height="700"></canvas></div><div class="wheel-controls" style="width: 340px; display: flex; flex-direction: column; gap: 12px; margin-left: 20px;"><h3 style="margin: 0; text-align: center; color: var(--accent-neon-blue);">Настройки</h3><div id="elim-log" style="text-align: center; color: var(--accent-neon-blue); font-weight: bold; min-height: 20px; font-size: 14px;"></div><button class="btn-main" onclick="openImportParticipants()">ВСТАВИТЬ СПИСОК УЧАСТНИКОВ</button><button class="btn-main" style="background: rgba(239, 68, 68, 0.12); border-color: #ef4444; color: #ef4444;" onclick="resetWheelParticipants()">🗑️ СБРОСИТЬ УЧАСТНИКОВ</button><div style="display:flex; gap:8px;"><button id="mode-elim" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('elimination')">НА ВЫБЫВАНИЕ</button><button id="mode-normal" class="btn-main btn-purple btn-spin-mode" onclick="setSpinMode('normal')">ОБЫЧНЫЙ ВЫБОР</button></div><div style="text-align: center; margin: 10px 0;"><label style="font-size: 13px; color: #888;">Время (сек):</label>
 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px;">
     <button class="btn-main" style="padding:6px 10px; margin-bottom:0; font-size:14px; min-width:36px;" onclick="adjustDur(-1)">-</button>
@@ -1091,7 +1074,7 @@
     <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(10)">10</button>
     <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(15)">15</button>
     <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(30)">30</button>
-</div></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div><div class="watermark">(TG - vadymtm90)</div></div></div>
+</div></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div></div></div>
     <div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
@@ -1167,7 +1150,6 @@
             <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
         </div>
     </div>
-    <div class="watermark">(TG - vadymtm90)</div>
     </div>
     </div>
 
@@ -2981,6 +2963,21 @@
             localStorage.setItem('bot_dep_roulette_options', JSON.stringify(depRouletteOptions));
         }
 
+        function getDepSlotCells(options) {
+            const slots = [];
+
+            options.forEach(opt => {
+                const amount = parseFloat(opt.amount) || 0;
+                const probability = Math.max(0, Math.round(parseFloat(opt.probability) || 0));
+
+                for (let i = 0; i < probability; i++) {
+                    slots.push({ amount, color: getDepColor(amount) });
+                }
+            });
+
+            return slots;
+        }
+
         const depColors = [
             '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
             '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
@@ -3022,7 +3019,7 @@
                             <span style="color:#f59e0b; font-weight:700; min-width:80px;">${opt.amount.toLocaleString()} ₽</span>
                             <span style="color:#888; font-size:12px;">—</span>
                             <span style="color:#fff; font-weight:600;">${opt.probability}%</span>
-                            <span style="color:#555; font-size:11px;">(${Math.round(opt.probability)} ячейки)</span>
+                            <span style="color:#555; font-size:11px;">(${Math.max(0, Math.round(opt.probability))} ячейки)</span>
                         </div>
                         <button class="remove-dep-btn" onclick="removeDepOption(${i})" style="flex-shrink:0;">✕</button>
                     </div>
@@ -3548,6 +3545,148 @@
             alert('✅ Запись добавлена в статистику');
         }
 
+        function confirmAddDepOption() {
+            const amountInput = document.getElementById('dep-add-amount');
+            const probabilityInput = document.getElementById('dep-add-probability');
+            const amount = parseFloat((amountInput && amountInput.value) || 0);
+            const probability = Math.max(0, Math.round(parseFloat((probabilityInput && probabilityInput.value) || 0)));
+
+            if (amount <= 0) {
+                alert('Введите корректную сумму.');
+                if (amountInput) amountInput.focus();
+                return;
+            }
+
+            if (probability <= 0) {
+                alert('Введите корректный шанс в процентах.');
+                if (probabilityInput) probabilityInput.focus();
+                return;
+            }
+
+            depRouletteOptions.push({ amount, probability });
+            saveDepRouletteOptions();
+            renderDepRouletteModal();
+            drawDepSlotMachine(0);
+
+            if (amountInput) amountInput.value = '';
+            if (probabilityInput) probabilityInput.value = '';
+
+            const depForm = document.getElementById('dep-add-form');
+            if (depForm) {
+                depForm.style.display = 'block';
+                depForm.style.borderColor = '#22c55e';
+                depForm.style.background = 'rgba(34, 197, 94, 0.2)';
+                setTimeout(() => {
+                    depForm.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+                    depForm.style.background = 'rgba(245, 158, 11, 0.15)';
+                }, 300);
+            }
+
+            if (amountInput) amountInput.focus();
+        }
+
+        function drawDepSlotMachine(offset) {
+            const track = document.getElementById('dep-slot-track');
+            if (!track) return;
+
+            const options = depRouletteOptions.filter(o => (parseFloat(o.amount) || 0) > 0);
+            const slots = getDepSlotCells(options);
+            track.innerHTML = '';
+
+            if (slots.length === 0) {
+                track.innerHTML = '<div class="slot-item" style="width:100%; color:#f59e0b;">Добавьте варианты</div>';
+                return;
+            }
+
+            for (let copy = 0; copy < 3; copy++) {
+                for (let i = 0; i < slots.length; i++) {
+                    const slot = document.createElement('div');
+                    slot.className = 'slot-item';
+                    slot.style.background = slots[i].color + '33';
+                    slot.style.borderRight = `2px solid ${slots[i].color}`;
+                    slot.textContent = slots[i].amount + '₽';
+                    track.appendChild(slot);
+                }
+            }
+
+            track.style.transform = `translateX(${offset}px)`;
+        }
+
+        function spinDepSlotMachine() {
+            const options = depRouletteOptions.filter(o => (parseFloat(o.amount) || 0) > 0);
+            if (options.length === 0) {
+                alert('Добавьте хотя бы один вариант!');
+                return;
+            }
+
+            if (depRouletteSpinning) return;
+            depRouletteSpinning = true;
+
+            const slots = getDepSlotCells(options).map(slot => slot.amount);
+            if (slots.length === 0) {
+                depRouletteSpinning = false;
+                return;
+            }
+
+            const selectedIndex = Math.floor(Math.random() * slots.length);
+            const selectedAmount = slots[selectedIndex];
+
+            const track = document.getElementById('dep-slot-track');
+            const slotWidth = 120;
+            const n = slots.length;
+            const totalWidth = n * slotWidth;
+            const wrapper = track.parentElement;
+            const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
+            const centerOffset = wrapperWidth / 2 - slotWidth / 2;
+
+            const targetPos = selectedIndex * slotWidth + totalWidth;
+            const endOffset = centerOffset - targetPos;
+            const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
+            const finalOffset = endOffset - extraLoops;
+            const startOffset = centerOffset + totalWidth;
+
+            const duration = 5000;
+            const startTime = performance.now();
+            let lastTickOffset = 0;
+
+            function animateDepSlot(timestamp) {
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const currentOffset = startOffset + (finalOffset - startOffset) * ease;
+
+                track.style.transform = `translateX(${currentOffset}px)`;
+
+                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.8) {
+                    playTick();
+                    lastTickOffset = currentOffset;
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateDepSlot);
+                    return;
+                }
+
+                track.style.transform = `translateX(${finalOffset}px)`;
+
+                const trackSlots = track.querySelectorAll('.slot-item');
+                const winnerSlotIdx = n + selectedIndex;
+                if (trackSlots[winnerSlotIdx]) {
+                    trackSlots[winnerSlotIdx].classList.add('highlight');
+                }
+
+                const resultDiv = document.getElementById('dep-slot-result');
+                if (resultDiv) {
+                    resultDiv.textContent = selectedAmount + ' ₽';
+                }
+
+                depRouletteSpinning = false;
+                playTick();
+            }
+
+            requestAnimationFrame(animateDepSlot);
+        }
+
     </script>
 
     <!-- DEPOSIT ROULETTE MODAL -->
@@ -3578,11 +3717,11 @@
                         <div style="display: flex; gap: 10px; align-items: flex-end;">
                             <div style="flex: 1;">
                                 <label style="display: block; color: #f59e0b; font-size: 11px; margin-bottom: 4px;">Сумма (₽)</label>
-                                <input id="dep-add-amount" type="number" placeholder="1000" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
+                                <input id="dep-add-amount" type="number" min="1" step="1" placeholder="1000" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
                             </div>
                             <div style="flex: 1;">
                                 <label style="display: block; color: #f59e0b; font-size: 11px; margin-bottom: 4px;">Шанс (%)</label>
-                                <input id="dep-add-probability" type="number" placeholder="20" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
+                                <input id="dep-add-probability" type="number" min="1" step="1" placeholder="20" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
                             </div>
                             <button onclick="confirmAddDepOption()" style="padding: 10px 20px; background: linear-gradient(135deg, #22c55e, #16a34a); border: 1px solid #22c55e; border-radius: 6px; color: #fff; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap;">СОХРАНИТЬ</button>
                         </div>
