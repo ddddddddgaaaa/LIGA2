@@ -966,6 +966,128 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+        .slot-machine-wrapper {
+            position: relative;
+            width: min(100%, 1360px);
+            height: 260px;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 26px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                linear-gradient(180deg, rgba(8, 12, 16, 0.98), rgba(4, 7, 10, 0.98)),
+                radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.08), transparent 45%);
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 24px 60px rgba(0, 0, 0, 0.35);
+        }
+        .slot-machine-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            pointer-events: none;
+        }
+        .slot-machine-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            bottom: 18px;
+            left: 50%;
+            width: 4px;
+            transform: translateX(-50%);
+            border-radius: 999px;
+            background: linear-gradient(180deg, #22d3ee, #06b6d4);
+            box-shadow: 0 0 18px rgba(34, 211, 238, 0.85);
+            pointer-events: none;
+            z-index: 3;
+        }
+        .slot-arrow-left,
+        .slot-arrow-right {
+            display: none;
+        }
+        .slot-track {
+            position: absolute;
+            left: 0;
+            top: 18px;
+            display: flex;
+            align-items: stretch;
+            gap: 12px;
+            padding: 0 12px;
+            will-change: transform;
+        }
+        .slot-item {
+            width: 210px;
+            height: 224px;
+            flex: 0 0 210px;
+            border-radius: 18px;
+            border: 3px solid rgba(200, 215, 220, 0.7);
+            background: linear-gradient(180deg, #03070b 0%, #020406 100%);
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.05),
+                0 12px 26px rgba(0,0,0,0.35);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .slot-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            box-shadow: inset 0 0 0 4px rgba(183, 208, 214, 0.2);
+            pointer-events: none;
+        }
+        .slot-item.highlight {
+            border-color: #f8fafc;
+            box-shadow:
+                inset 0 0 0 1px rgba(255,255,255,0.08),
+                0 0 0 3px rgba(255,255,255,0.18),
+                0 22px 40px rgba(6, 182, 212, 0.25);
+        }
+        .slot-item.highlight::before {
+            box-shadow: inset 0 0 0 4px rgba(255,255,255,0.28);
+        }
+        .slot-amount-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 18px 10px;
+            text-align: center;
+        }
+        .slot-amount {
+            color: #22d3ee;
+            font-family: 'Orbitron', 'Inter', sans-serif;
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.35);
+        }
+        .slot-footer {
+            min-height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            background: #7f8c8d;
+            color: #f8fafc;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .slot-item.is-empty {
+            width: min(100%, 520px);
+            flex-basis: min(100%, 520px);
+            align-items: center;
+            justify-content: center;
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 20px;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -3644,7 +3766,7 @@
             track.innerHTML = '';
 
             if (slots.length === 0) {
-                track.innerHTML = '<div class="slot-item" style="width:100%; color:#f59e0b;">Добавьте варианты</div>';
+                track.innerHTML = '<div class="slot-item is-empty">Добавьте варианты</div>';
                 return;
             }
 
@@ -3652,9 +3774,12 @@
                 for (let i = 0; i < slots.length; i++) {
                     const slot = document.createElement('div');
                     slot.className = 'slot-item';
-                    slot.style.background = slots[i].color + '33';
-                    slot.style.borderRight = `2px solid ${slots[i].color}`;
-                    slot.textContent = slots[i].amount + '₽';
+                    slot.innerHTML = `
+                        <div class="slot-amount-wrap">
+                            <div class="slot-amount">${Number(slots[i].amount).toLocaleString('ru-RU')} ₽</div>
+                        </div>
+                        <div class="slot-footer">деп</div>
+                    `;
                     track.appendChild(slot);
                 }
             }
@@ -3682,7 +3807,7 @@
             const selectedAmount = slots[selectedIndex];
 
             const track = document.getElementById('dep-slot-track');
-            const slotWidth = 120;
+            const slotWidth = 222;
             const n = slots.length;
             const totalWidth = n * slotWidth;
             const wrapper = track.parentElement;
