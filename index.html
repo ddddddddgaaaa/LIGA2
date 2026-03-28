@@ -985,54 +985,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
         
-        .keshnyaaa-title {
-            position: fixed;
-            top: 60px;
-            left: 20px;
-            z-index: 10002;
-            font-family: 'Bebas Neue', cursive;
-            font-size: 48px;
-            font-weight: 900;
-            color: #ff1493;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: keshBlink 0.5s ease-in-out infinite;
-            text-shadow: 
-                0 0 10px rgba(255, 20, 147, 0.8),
-                0 0 20px rgba(255, 20, 147, 0.6),
-                0 0 30px rgba(255, 20, 147, 0.4),
-                0 0 40px rgba(255, 20, 147, 0.2);
-            pointer-events: none;
-        }
-        
-        @keyframes keshBlink {
-            0%, 100% { 
-                opacity: 1; 
-                text-shadow: 
-                    0 0 10px rgba(255, 20, 147, 0.8),
-                    0 0 20px rgba(255, 20, 147, 0.6);
-            }
-            50% { 
-                opacity: 0.6; 
-                text-shadow: 
-                    0 0 5px rgba(255, 20, 147, 0.4),
-                    0 0 10px rgba(255, 20, 147, 0.2);
-            }
-        }
-        
         .panel-keshnyaaa {
             font-family: 'Bebas Neue', cursive;
-            font-size: 18px;
+            font-size: 12px;
             font-weight: 900;
             color: #ff1493;
             text-transform: uppercase;
-            letter-spacing: 3px;
+            letter-spacing: 1px;
             animation: keshBlink 3s ease-in-out infinite;
             text-shadow: 
                 0 0 10px rgba(255, 20, 147, 0.8),
                 0 0 20px rgba(255, 20, 147, 0.6);
             text-align: center;
-            margin-bottom: 10px;
+            margin: auto;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
         }
         
         .panel-with-bg {
@@ -1107,7 +1077,7 @@
             <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
             <div class="middle-split">
                 <div class="red-participants">
-                    <div class="panel-keshnyaaa">KESHNYAAA</div>
+                    <div class="panel-keshnyaaa">KESHNYAAA APE SHIT</div>
                     <h4>СПИСОК УЧАСТНИКОВ <span id="user-count" style="font-size: 18px; color: var(--accent-neon-blue); font-weight: 800;">0</span></h4>
                     <div id="full-participants-list"></div>
                     <button class="btn-main" style="margin: 10px 12px; width: calc(100% - 24px);" onclick="copyParticipants()">СКОПИРОВАТЬ УЧАСТНИКОВ</button>
@@ -1122,8 +1092,8 @@
             <div class="watermark">(TG - vadymtm90)</div>
         </div>
         <div class="panel panel-with-bg">
-            <div class="panel-keshnyaaa">KESHNYAAA</div>
             <h3 style="margin:0 0 15px 0; color: var(--accent-neon-blue); text-shadow: none;">ТОП (ВЫВОДЫ)</h3>
+            <div class="panel-keshnyaaa" style="margin-bottom:10px;">KESHNYAAA APE SHIT</div>
             <div id="leaderboard" style="overflow-y:auto; flex-grow: 1;"></div>
             <div class="watermark">(TG - vadymtm90)</div>
             <div onclick="openAdminLogin()" style="position:absolute; bottom:2px; left:50%; transform:translateX(-50%); width:160px; height:22px; cursor:default; z-index:10000; background:transparent; border:none; outline:none;"></div>
