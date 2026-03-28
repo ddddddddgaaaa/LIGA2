@@ -815,334 +815,120 @@
                 border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             }
         }
-        /* DEPOSIT ROULETTE STYLES */
-        .dep-roulette-btn {
+        /* SIMPLE PERCENTAGE ROULETTE STYLES */
+        .simple-roulette-btn {
             background: linear-gradient(135deg, #f59e0b, #d97706) !important;
             color: #fff !important;
             border-color: #f59e0b !important;
             font-size: 13px !important;
             padding: 16px !important;
-            animation: depRoulettePulse 2s ease-in-out infinite;
+            animation: simpleRoulettePulse 2s ease-in-out infinite;
         }
-        .dep-roulette-btn:hover {
+        .simple-roulette-btn:hover {
             background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
             transform: scale(1.03);
         }
-        @keyframes depRoulettePulse {
+        @keyframes simpleRoulettePulse {
             0%, 100% { box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
             50% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 0 50px rgba(245, 158, 11, 0.3); }
         }
-        #dep-roulette-modal .modal-content {
+        #simple-roulette-modal .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
             border: 2px solid #f59e0b !important;
             box-shadow: 0 0 60px rgba(245, 158, 11, 0.4) !important;
             flex-direction: column;
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: 100vw !important;
-            max-height: 100vh !important;
-            border-radius: 0 !important;
+            width: min(600px, 95vw) !important;
+            max-height: 90vh !important;
+            border-radius: 20px !important;
             overflow-y: auto;
-            position: fixed;
-            top: 0;
-            left: 0;
-            transform: none;
-            padding: 40px 60px;
+            padding: 30px 40px;
             box-sizing: border-box;
+            align-items: center;
         }
-        .dep-wheel-container {
+        .simple-roulette-title {
+            color: #f59e0b;
+            text-align: center;
+            margin: 0 0 20px;
+            font-size: 24px;
+            letter-spacing: 2px;
+            font-weight: 900;
+        }
+        .simple-roulette-inputs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .simple-roulette-input-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .simple-roulette-input-group label {
+            color: #f59e0b;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .simple-roulette-input-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 14px !important;
+            border-radius: 10px !important;
+            background: rgba(0,0,0,0.4) !important;
+            border: 1px solid rgba(245,158,11,0.5) !important;
+            color: #fff !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+            text-align: center;
+        }
+        .simple-roulette-canvas-container {
             position: relative;
-            width: 500px;
-            height: 500px;
-            margin: 0 auto;
+            width: 350px;
+            height: 350px;
+            margin: 0 auto 20px;
         }
-        #dep-wheel-canvas {
+        #simple-roulette-canvas {
             border-radius: 50%;
             box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
         }
-        .dep-wheel-pointer {
+        .simple-roulette-pointer {
             position: absolute;
-            top: -15px;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-top: 40px solid #f59e0b;
-            filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.8));
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            border-top: 35px solid #fff;
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.8));
             z-index: 10;
         }
-        .dep-wheel-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border-radius: 50%;
+        .simple-roulette-result {
+            text-align: center;
+            min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 15px;
+        }
+        .simple-roulette-result-text {
+            font-size: 22px;
             font-weight: 900;
-            color: #fff;
-            font-size: 12px;
-            box-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
-            z-index: 5;
-        }
-        .dep-options-container {
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-        }
-        .dep-option-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            transition: all 0.3s ease;
-        }
-        .dep-option-row.is-new {
-            background: rgba(34, 197, 94, 0.2);
-            border-color: #22c55e;
-            animation: newOptionPulse 1s ease-out;
-        }
-        @keyframes newOptionPulse {
-            0% { transform: scale(1.05); box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
-            100% { transform: scale(1); box-shadow: none; }
-        }
-        .dep-option-row label {
             color: #f59e0b;
-            font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
         }
-        .dep-option-row input {
-            background: rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid rgba(245, 158, 11, 0.5) !important;
-            color: #fff !important;
-            width: 80px;
-            padding: 6px 8px !important;
+        .simple-roulette-result-text.win {
+            color: #22c55e;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.8);
         }
-        .dep-option-row .remove-dep-btn {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid #ef4444;
+        .simple-roulette-result-text.lose {
             color: #ef4444;
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .dep-option-row .remove-dep-btn:hover {
-            background: rgba(239, 68, 68, 0.4);
-        }
-        .dep-result-display {
-            text-align: center;
-            padding: 20px;
-            min-height: 100px;
-        }
-        .dep-result-amount {
-            font-size: 48px;
-            font-weight: 900;
-            color: #f59e0b;
-            text-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
-            animation: depResultPop 0.5s ease-out;
-        }
-        @keyframes depResultPop {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .dep-spinning {
-            font-size: 24px;
-            color: #f59e0b;
-            animation: depSpinText 0.5s ease-in-out infinite;
-        }
-        @keyframes depSpinText {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .slot-machine-wrapper {
-            position: relative;
-            width: min(100%, 1360px);
-            height: 256px;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            background: linear-gradient(180deg, rgba(17, 21, 26, 0.98), rgba(12, 15, 19, 0.98));
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02), 0 10px 24px rgba(0, 0, 0, 0.24);
-        }
-        .slot-machine-wrapper::before {
-            content: '';
-            position: absolute;
-            left: 18px;
-            right: 18px;
-            top: 18px;
-            height: 3px;
-            border-radius: 999px;
-            background: rgba(212, 221, 225, 0.75);
-            pointer-events: none;
-        }
-        .slot-machine-wrapper::after {
-            content: '';
-            position: absolute;
-            top: 16px;
-            bottom: 10px;
-            left: 50%;
-            width: 3px;
-            transform: translateX(-50%);
-            border-radius: 999px;
-            background: #10e7f4;
-            box-shadow: 0 0 12px rgba(16, 231, 244, 0.5);
-            pointer-events: none;
-            z-index: 3;
-        }
-        .slot-arrow-left,
-        .slot-arrow-right {
-            display: none;
-        }
-        .slot-track {
-            position: absolute;
-            left: 0;
-            top: 28px;
-            display: flex;
-            align-items: stretch;
-            gap: 12px;
-            padding: 0 20px;
-            will-change: transform;
-        }
-        .slot-track.is-spinning .slot-item {
-            filter: saturate(1.08);
-        }
-        .slot-item {
-            width: 194px;
-            height: 206px;
-            flex: 0 0 194px;
-            border-radius: 14px;
-            border: 2px solid rgba(210, 220, 224, 0.8);
-            background: #030608;
-            box-shadow: inset 0 0 0 2px rgba(187, 199, 203, 0.55);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .slot-item::before {
-            display: none;
-        }
-        .slot-item.highlight {
-            border-color: #f8fafc;
-            box-shadow:
-                inset 0 0 0 2px rgba(255,255,255,0.58),
-                0 0 0 2px rgba(255,255,255,0.3);
-        }
-        .slot-item.highlight::before {
-            display: none;
-        }
-        .slot-amount-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 18px 14px 10px;
-            text-align: center;
-        }
-        .slot-amount {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 120px;
-            min-height: 62px;
-            padding: 10px 18px;
-            border-radius: 999px;
-            background: #18d6de;
-            color: #041014;
-            font-family: 'Orbitron', 'Inter', sans-serif;
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-            line-height: 1;
-        }
-        .slot-footer {
-            min-height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 14px;
-            background: #7d8788;
-            color: #f8fafc;
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-            text-transform: none;
-        }
-        .slot-item.is-empty {
-            width: min(100%, 520px);
-            flex-basis: min(100%, 520px);
-            align-items: center;
-            justify-content: center;
-            color: #f59e0b;
-            font-weight: 700;
-            font-size: 20px;
-        }
-        .dep-slot-title {
-            color: #f59e0b;
-            text-align: center;
-            margin: 20px 0 10px;
-            font-size: 28px;
-            letter-spacing: 2px;
-        }
-        .dep-title-line {
-            position: relative;
-            width: min(100%, 860px);
-            height: 14px;
-            margin: 0 auto 26px;
-        }
-        .dep-title-line::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: 50%;
-            height: 3px;
-            transform: translateY(-50%);
-            border-radius: 999px;
-            background: rgba(220, 228, 230, 0.78);
-            box-shadow: 0 0 10px rgba(255,255,255,0.08);
-        }
-        .dep-title-line::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 94px;
-            height: 4px;
-            transform: translateY(-50%);
-            border-radius: 999px;
-            background: linear-gradient(90deg, rgba(16, 231, 244, 0), #10e7f4 28%, #10e7f4 72%, rgba(16, 231, 244, 0));
-            box-shadow: 0 0 16px rgba(16, 231, 244, 0.7);
-            animation: depTitleSweep 2.6s ease-in-out infinite;
-        }
-        @keyframes depTitleSweep {
-            0% {
-                left: 0;
-                opacity: 0.75;
-            }
-            50% {
-                left: calc(50% - 47px);
-                opacity: 1;
-            }
-            100% {
-                left: calc(100% - 94px);
-                opacity: 0.75;
-            }
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -1323,7 +1109,7 @@
             <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
             <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
             <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
-            <button class="btn-main dep-roulette-btn" onclick="openDepRoulette()">🎰 РУЛЕТКА ДЕПОВ</button>
+            <button class="btn-main simple-roulette-btn" onclick="openSimpleRoulette()">🎰 РУЛЕТКА</button>
             <button class="btn-main" onclick="closeModals()">ЗАКРЫТЬ</button>
             <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
         </div>
@@ -3148,863 +2934,174 @@
             }
         }
 
-        // ===== DEPOSIT ROULETTE =====
-        let depRouletteOptions = JSON.parse(localStorage.getItem('bot_dep_roulette_options') || '[]');
-        let depRouletteSpinning = false;
-        let depRouletteRotation = 0;
-        const DEP_SLOT_CARD_WIDTH = 194;
-        const DEP_SLOT_GAP = 12;
-        const DEP_SLOT_SPAN = DEP_SLOT_CARD_WIDTH + DEP_SLOT_GAP;
+        // ===== SIMPLE PERCENTAGE ROULETTE =====
+        let simpleRouletteSpinning = false;
 
-        function saveDepRouletteOptions() {
-            localStorage.setItem('bot_dep_roulette_options', JSON.stringify(depRouletteOptions));
+        function openSimpleRoulette() {
+            document.getElementById('simple-roulette-modal').style.display = 'flex';
+            drawSimpleRoulette();
         }
 
-        function getDepSlotCells(options) {
-            const slots = [];
-
-            options.forEach(opt => {
-                const amount = parseFloat(opt.amount) || 0;
-                const probability = Math.max(0, Math.round(parseFloat(opt.probability) || 0));
-
-                for (let i = 0; i < probability; i++) {
-                    slots.push({ amount, color: getDepColor(amount) });
-                }
-            });
-
-            return slots;
+        function closeSimpleRoulette() {
+            document.getElementById('simple-roulette-modal').style.display = 'none';
+            simpleRouletteSpinning = false;
+            // Возвращаемся на экран победителя
+            document.getElementById('winner-screen').style.display = 'flex';
         }
 
-        function getDepTotalCells(options) {
-            return (options || []).reduce((sum, opt) => {
-                return sum + Math.max(0, Math.round(parseFloat(opt.probability) || 0));
-            }, 0);
-        }
-
-        const depColors = [
-            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-            '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-            '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FF4500'
-        ];
-
-        function openDepRoulette() {
-            // Открываем модальное окно рулетки депов на этой же странице (НЕ закрывая победителя)
-            document.getElementById('dep-roulette-modal').style.display = 'flex';
-            
-            // Отрисовываем рулетку с опциями по умолчанию если их нет
-            if (depRouletteOptions.length === 0) {
-                depRouletteOptions = [
-                    { amount: 500, probability: 30 },
-                    { amount: 1000, probability: 25 },
-                    { amount: 2000, probability: 20 },
-                    { amount: 3000, probability: 15 },
-                    { amount: 5000, probability: 8 },
-                    { amount: 10000, probability: 2 }
-                ];
-                saveDepRouletteOptions();
-            }
-            renderDepRouletteModal();
-            renderDepStatSiteSelect();
-            drawDepSlotMachine(0);
-            updateSavedDepList(); // Инициализируем список сохранённых наборов
-            document.getElementById('dep-slot-result').textContent = '---';
-        }
-
-        function renderDepRouletteModal() {
-            // Отрисовываем опции как ТЕКСТ (не редактируемые поля)
-            const optionsContainer = document.getElementById('dep-options-container');
-            if (depRouletteOptions.length === 0) {
-                optionsContainer.innerHTML = '<div style="color:#555; text-align:center; padding:20px; font-size:13px;">Нет вариантов. Добавьте первый вариант выше.</div>';
-            } else {
-                const totalCells = getDepTotalCells(depRouletteOptions);
-                optionsContainer.innerHTML = depRouletteOptions.map((opt, i) => `
-                    <div class="dep-option-row" style="justify-content: space-between;">
-                        <div style="flex:1; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                            <span style="color:#f59e0b; font-weight:700; min-width:80px;">${opt.amount.toLocaleString()} ₽</span>
-                            <span style="color:#888; font-size:12px;">—</span>
-                            <span style="color:#fff; font-weight:600;">${opt.probability}%</span>
-                            <span style="color:#555; font-size:11px;">(${Math.max(0, Math.round(opt.probability))} ячейки)</span>
-                        </div>
-                        <button class="remove-dep-btn" onclick="removeDepOption(${i})" style="flex-shrink:0;">✕</button>
-                    </div>
-                `).join('') + `
-                    <div style="margin-top:8px; padding:10px 12px; border-radius:8px; background:${totalCells === 100 ? 'rgba(34,197,94,0.16)' : 'rgba(245,158,11,0.1)'}; border:1px solid ${totalCells === 100 ? 'rgba(34,197,94,0.45)' : 'rgba(245,158,11,0.28)'}; color:${totalCells === 100 ? '#86efac' : '#fbbf24'}; font-size:12px; font-weight:700;">
-                        Ячеек занято: ${totalCells} / 100
-                    </div>
-                `;
-            }
-            
-            // Отрисовываем колесо
-            drawDepWheel();
-        }
-
-        function updateDepOption(index, field, value) {
-            if (field === 'amount') {
-                depRouletteOptions[index].amount = parseFloat(value) || 0;
-            } else if (field === 'probability') {
-                depRouletteOptions[index].probability = parseFloat(value) || 0;
-            }
-            // Сохраняем изменения в localStorage
-            saveDepRouletteOptions();
-            drawDepWheel();
-        }
-
-        function addDepOption() {
-            showDepAddForm();
-        }
-        
-        function confirmAddDepOption() {
-            // Кнопка СОХРАНИТЬ теперь сохраняет ВСЕ текущие варианты как набор
-            if (depRouletteOptions.length === 0) {
-                alert('Нет вариантов для сохранения! Сначала добавьте хотя бы один вариант.');
-                return;
-            }
-            
-            const name = prompt('Введите название для сохраняемого набора:', 'Набор ' + (Object.keys(savedDepLists).length + 1));
-            if (!name || !name.trim()) return;
-            
-            // Проверяем сумму вероятностей
-            const totalProb = depRouletteOptions.reduce((s, o) => s + o.probability, 0);
-            if (Math.abs(totalProb - 100) > 0.5) {
-                if (!confirm(`Сумма вероятностей = ${totalProb.toFixed(1)}% (не 100%).\nВсё равно сохранить?`)) return;
-            }
-            
-            // Сохраняем текущие варианты как набор
-            savedDepLists[name.trim()] = JSON.parse(JSON.stringify(depRouletteOptions));
-            localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
-            
-            // Очищаем текущие варианты для новых записей
-            depRouletteOptions = [];
-            saveDepRouletteOptions();
-            
-            // Визуальное подтверждение
-            const depForm2 = document.getElementById('dep-add-form');
-            if (depForm2) {
-                depForm2.style.borderColor = '#22c55e';
-                depForm2.style.background = 'rgba(34, 197, 94, 0.2)';
-                setTimeout(() => {
-                    depForm2.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-                    depForm2.style.background = 'rgba(245, 158, 11, 0.15)';
-                }, 300);
-            }
-            
-            // Показываем форму добавления нового варианта
-            showDepAddForm();
-            
-            // Обновляем всё
-            renderDepRouletteModal();
-            drawDepSlotMachine(0);
-            updateSavedDepList();
-            
-            alert('✅ Набор "' + name.trim() + '" сохранён! (' + savedDepLists[name.trim()].length + ' вариантов)\n\nТеперь можно добавлять новые варианты.');
-        }
-        
-        function cancelAddDepOption() {
-            const depForm = document.getElementById('dep-add-form');
-            if (depForm) {
-                depForm.style.display = 'none';
-            }
-        }
-
-        function showDepAddForm() {
-            const depForm = document.getElementById('dep-add-form');
-            if (depForm) {
-                depForm.style.display = 'block';
-                document.getElementById('dep-add-amount').value = '';
-                document.getElementById('dep-add-probability').value = '';
-                document.getElementById('dep-add-amount').focus();
-            }
-        }
-
-        // ===== Saved Dep Roulette List Management =====
-        let savedDepLists = JSON.parse(localStorage.getItem('bot_saved_dep_lists') || '{}');
-
-        function updateSavedDepList() {
-            const container = document.getElementById('dep-saved-list-container');
-            if (!container) return;
-            
-            const listKeys = Object.keys(savedDepLists);
-            if (listKeys.length === 0) {
-                container.innerHTML = '<div style="color:#555; text-align:center; padding:20px; font-size:13px;">Нет сохранённых наборов. Добавьте варианты и нажмите "СОХРАНИТЬ НАБОР"</div>';
-                return;
-            }
-            
-            container.innerHTML = listKeys.map(name => {
-                const items = savedDepLists[name];
-                const totalProb = items.reduce((s, o) => s + o.probability, 0);
-                const preview = items.map(i => `${i.amount}₽(${i.probability}%)`).join(', ');
-                return `<div style="display:flex; align-items:center; gap:8px; padding:8px 12px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.2); border-radius:8px; margin-bottom:6px;">
-                    <div style="flex:1; min-width:0;">
-                        <div style="color:#f59e0b; font-weight:700; font-size:13px;">${escapeHtml(name)}</div>
-                        <div style="color:#888; font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(preview)} (Σ${totalProb.toFixed(1)}%)</div>
-                    </div>
-                    <button onclick="loadSavedDepList('${encodeURIComponent(name)}')" style="padding:5px 12px; background:rgba(34,197,94,0.2); border:1px solid #22c55e; border-radius:6px; color:#22c55e; font-size:11px; cursor:pointer; font-weight:700;">ЗАГРУЗИТЬ</button>
-                    <button onclick="deleteSavedDepList('${encodeURIComponent(name)}')" style="padding:5px 8px; background:rgba(239,68,68,0.2); border:1px solid #ef4444; border-radius:6px; color:#ef4444; font-size:11px; cursor:pointer;">🗑️</button>
-                </div>`;
-            }).join('');
-        }
-
-        function saveCurrentDepList() {
-            if (depRouletteOptions.length === 0) {
-                alert('Нет вариантов для сохранения! Добавьте хотя бы один вариант.');
-                return;
-            }
-
-            const totalCells = getDepTotalCells(depRouletteOptions);
-            if (totalCells !== 100) {
-                alert(`Сейчас занято ${totalCells} из 100 ячеек. Для сохранения набора нужно ровно 100.`);
-                return;
-            }
-            const name = prompt('Введите название для этого набора:', 'Набор ' + (Object.keys(savedDepLists).length + 1));
-            if (!name || !name.trim()) return;
-            
-            const totalProb = depRouletteOptions.reduce((s, o) => s + o.probability, 0);
-            if (Math.abs(totalProb - 100) > 0.5) {
-                if (!confirm(`Сумма вероятностей текущего набора = ${totalProb.toFixed(1)}% (не 100%).\nВсё равно сохранить?`)) return;
-            }
-            
-            // Сохраняем копию массива
-            savedDepLists[name.trim()] = JSON.parse(JSON.stringify(depRouletteOptions));
-            localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
-
-            // После сохранения переносим текущий набор в "сохранённые"
-            // и очищаем рабочий список для нового ввода
-            depRouletteOptions = [];
-            saveDepRouletteOptions();
-
-            updateSavedDepList();
-            renderDepRouletteModal();
-            drawDepSlotMachine(0);
-            showDepAddForm();
-
-            alert('✅ Набор "' + name.trim() + '" сохранён! Теперь можно вводить новый набор.');
-        }
-
-        function loadSavedDepList(encodedName) {
-            const name = decodeURIComponent(encodedName);
-            const items = savedDepLists[name];
-            if (!items) return alert('Набор не найден');
-            
-            depRouletteOptions = JSON.parse(JSON.stringify(items));
-            saveDepRouletteOptions();
-            renderDepRouletteModal();
-            drawDepSlotMachine(0);
-            updateSavedDepList();
-            alert('✅ Набор "' + name + '" загружен! (' + items.length + ' вариантов)');
-        }
-
-        function deleteSavedDepList(encodedName) {
-            const name = decodeURIComponent(encodedName);
-            if (!confirm('Удалить набор "' + name + '"?')) return;
-            delete savedDepLists[name];
-            localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
-            updateSavedDepList();
-        }
-
-        function removeDepOption(index) {
-            if (depRouletteOptions.length <= 1) {
-                alert('Должен быть хотя бы один вариант!');
-                return;
-            }
-            depRouletteOptions.splice(index, 1);
-            // Сохраняем изменения в localStorage
-            saveDepRouletteOptions();
-            renderDepRouletteModal();
-        }
-
-        const depSlotColors = [
-            'linear-gradient(135deg, #f59e0b33, #d9770633)',
-            'linear-gradient(135deg, #dc262633, #991b1b33)',
-            'linear-gradient(135deg, #2563eb33, #1d4ed833)',
-            'linear-gradient(135deg, #16a34a33, #15803d33)',
-            'linear-gradient(135deg, #9333ea33, #7e22ce33)',
-            'linear-gradient(135deg, #db277733, #be185d33)',
-            'linear-gradient(135deg, #0891b233, #0e749033)',
-            'linear-gradient(135deg, #ca8a0433, #a1620733)',
-            'linear-gradient(135deg, #4f46e533, #4338ca33)',
-            'linear-gradient(135deg, #05966933, #04785733)'
-        ];
-
-        function getDepColor(amount) {
-            if (amount <= 100) return '#06b6d4'; // голубой
-            if (amount <= 200) return '#7c3aed'; // темно-фиолетовый
-            if (amount <= 500) return '#ef4444'; // красный
-            return '#eab308'; // желтый (501+)
-        }
-
-        function drawDepSlotMachine(offset) {
-            const track = document.getElementById('dep-slot-track');
-            if (!track) return;
-            const options = depRouletteOptions.filter(o => o.amount > 0);
-
-            track.innerHTML = '';
-
-            if (options.length === 0) {
-                track.innerHTML = '<div class="slot-item" style="width:100%; color:#f59e0b;">Добавьте варианты</div>';
-                return;
-            }
-
-            // Создаем список слотов: каждый вариант создает столько слотов, сколько процентов
-            let slots = [];
-            options.forEach(opt => {
-                const count = Math.round(opt.probability); // количество слотов = процент
-                for (let i = 0; i < count; i++) {
-                    slots.push({ amount: opt.amount, color: getDepColor(opt.amount) });
-                }
-            });
-
-            // Create 3 copies for seamless looping
-            for (let copy = 0; copy < 3; copy++) {
-                for (let i = 0; i < slots.length; i++) {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot-item';
-                    slot.style.background = slots[i].color + '33';
-                    slot.style.borderRight = `2px solid ${slots[i].color}`;
-                    slot.textContent = slots[i].amount + '₽';
-                    track.appendChild(slot);
-                }
-            }
-
-            track.style.transform = `translateX(${offset}px)`;
-        }
-
-        function spinDepSlotMachine() {
-            const options = depRouletteOptions.filter(o => o.amount > 0);
-            if (options.length === 0) {
-                alert('Добавьте хотя бы один вариант!');
-                return;
-            }
-
-            if (depRouletteSpinning) return;
-            depRouletteSpinning = true;
-
-            // Создаем список слотов: 1% = 1 слот
-            let slots = [];
-            options.forEach(opt => {
-                const count = Math.round(opt.probability); // количество слотов = процент
-                for (let i = 0; i < count; i++) {
-                    slots.push(opt.amount);
-                }
-            });
-
-            if (slots.length === 0) {
-                depRouletteSpinning = false;
-                return;
-            }
-
-            // Выбираем случайный слот (1% шанс = 1 слот из 100)
-            const selectedIndex = Math.floor(Math.random() * slots.length);
-            const selectedAmount = slots[selectedIndex];
-
-            const track = document.getElementById('dep-slot-track');
-            const slotWidth = 120;
-            const n = slots.length;
-            const totalWidth = n * slotWidth;
-            const wrapper = track.parentElement;
-            const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
-            const centerOffset = wrapperWidth / 2 - slotWidth / 2;
-
-            // Target: middle copy of winner (вторая копия списка)
-            const targetPos = selectedIndex * slotWidth + totalWidth;
-            const endOffset = centerOffset - targetPos;
-            const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
-            const finalOffset = endOffset - extraLoops;
-            const startOffset = centerOffset + totalWidth;
-
-            const duration = 5000;
-            const startTime = performance.now();
-            let lastTickOffset = 0;
-
-            function animateDepSlot(timestamp) {
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 3);
-                const currentOffset = startOffset + (finalOffset - startOffset) * ease;
-
-                track.style.transform = `translateX(${currentOffset}px)`;
-
-                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.8) {
-                    playTick();
-                    lastTickOffset = currentOffset;
-                }
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateDepSlot);
-                } else {
-                    track.style.transform = `translateX(${finalOffset}px)`;
-                    
-                    // Highlight winner
-                    const trackSlots = track.querySelectorAll('.slot-item');
-                    const winnerSlotIdx = n + selectedIndex;
-                    if (trackSlots[winnerSlotIdx]) {
-                        trackSlots[winnerSlotIdx].classList.add('highlight');
-                    }
-
-                    const resultDiv = document.getElementById('dep-slot-result');
-                    resultDiv.textContent = selectedAmount + ' ₽';
-
-                    depRouletteSpinning = false;
-                    playTick();
-                }
-            }
-
-            requestAnimationFrame(animateDepSlot);
-        }
-
-        function drawDepWheel() {
-            const canvas = document.getElementById('dep-wheel-canvas');
+        function drawSimpleRoulette(percent) {
+            const canvas = document.getElementById('simple-roulette-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            const options = depRouletteOptions.filter(o => o.amount > 0);
-            
-            if (options.length === 0) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#f59e0b';
-                ctx.font = 'bold 16px Inter';
-                ctx.textAlign = 'center';
-                ctx.fillText('Добавьте варианты', canvas.width / 2, canvas.height / 2);
-                return;
-            }
-
-            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
             const cx = canvas.width / 2;
             const cy = canvas.height / 2;
             const r = Math.min(cx, cy) - 10;
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            let currentAngle = depRouletteRotation;
+            // Фон - весь круг (серый/проигрыш)
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#374151';
+            ctx.fill();
             
-            options.forEach((opt, i) => {
-                const sliceAngle = (opt.probability / totalProb) * 2 * Math.PI;
-                
-                // Рисуем сегмент
+            if (percent > 0 && percent <= 100) {
+                // Рисуем сегмент процента (зелёный/выигрыш)
+                const angle = (percent / 100) * Math.PI * 2;
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, currentAngle, currentAngle + sliceAngle);
+                ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + angle);
                 ctx.closePath();
-                ctx.fillStyle = depColors[i % depColors.length];
+                ctx.fillStyle = '#22c55e';
                 ctx.fill();
-                
-                // Рамка
-                ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Текст
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.rotate(currentAngle + sliceAngle / 2);
-                ctx.textAlign = 'right';
-                ctx.fillStyle = '#fff';
-                ctx.font = `bold ${Math.max(12, r / 8)}px Inter`;
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 4;
-                ctx.fillText(opt.amount + '₽', r - 15, 5);
-                ctx.restore();
-                
-                currentAngle += sliceAngle;
-            });
-
+            }
+            
             // Центральный круг
             ctx.beginPath();
-            ctx.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
+            ctx.arc(cx, cy, r * 0.2, 0, Math.PI * 2);
             ctx.fillStyle = '#f59e0b';
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 3;
             ctx.stroke();
-
+            
             // Внешняя рамка
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 4;
             ctx.stroke();
+            
+            // Текст процента в центре
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.fillText(percent > 0 ? percent + '%' : '0%', cx, cy);
         }
 
-        function spinDepRoulette() {
-            if (depRouletteSpinning) return;
+        function spinSimpleRoulette() {
+            if (simpleRouletteSpinning) return;
             
-            const options = depRouletteOptions.filter(o => o.amount > 0);
-            if (options.length === 0) {
-                alert('Добавьте хотя бы один вариант с суммой!');
+            const sumInput = document.getElementById('simple-roulette-sum');
+            const percentInput = document.getElementById('simple-roulette-percent');
+            const sum = parseFloat(sumInput.value) || 0;
+            const percent = Math.min(100, Math.max(1, parseFloat(percentInput.value) || 0));
+            
+            if (sum <= 0) {
+                alert('Введите сумму!');
+                sumInput.focus();
                 return;
             }
-
-            const totalProb = options.reduce((sum, o) => sum + o.probability, 0);
-            if (Math.abs(totalProb - 100) > 0.01) {
-                alert(`⚠️ Сумма вероятностей должна быть 100%! Сейчас: ${totalProb.toFixed(1)}%`);
+            if (percent <= 0 || percent > 100) {
+                alert('Введите процент от 1 до 100!');
+                percentInput.focus();
                 return;
             }
-
-            depRouletteSpinning = true;
-            const resultDiv = document.getElementById('dep-result-display');
-            resultDiv.innerHTML = '<div class="dep-spinning">🎰 КРУТИМ...</div>';
-
-            // Выбираем результат на основе вероятностей
-            let random = Math.random() * totalProb;
-            let selectedOption = options[0];
-            let selectedIndex = 0;
             
-            for (let i = 0; i < options.length; i++) {
-                random -= options[i].probability;
-                if (random <= 0) {
-                    selectedOption = options[i];
-                    selectedIndex = i;
-                    break;
-                }
-            }
-
-            // Вычисляем угол для остановки на выбранном сегменте
-            let angleToSegment = 0;
-            for (let i = 0; i < selectedIndex; i++) {
-                angleToSegment += (options[i].probability / totalProb) * 2 * Math.PI;
-            }
-            const segmentMiddle = (options[selectedIndex].probability / totalProb) * Math.PI;
-            const targetAngle = Math.PI * 2 * 8 + (2 * Math.PI - angleToSegment - segmentMiddle); // 8 полных оборотов
-
-            const canvas = document.getElementById('dep-wheel-canvas');
-            const duration = 5000;
+            simpleRouletteSpinning = true;
+            const resultDiv = document.getElementById('simple-roulette-result');
+            resultDiv.innerHTML = '<span class="simple-roulette-result-text" style="color:#f59e0b;">🎰 КРУТИМ...</span>';
+            
+            const canvas = document.getElementById('simple-roulette-canvas');
+            const duration = 4000;
             const startTime = performance.now();
-            const startRotation = depRouletteRotation;
-
-            function animateSpin(timestamp) {
+            
+            // Случайный результат
+            const isWin = Math.random() * 100 < percent;
+            
+            // Для анимации: несколько оборотов + остановка
+            const fullSpins = 3 + Math.floor(Math.random() * 3);
+            const totalRotation = fullSpins * Math.PI * 2;
+            
+            let currentPercent = 0;
+            
+            function animateSimpleSpin(timestamp) {
                 const elapsed = timestamp - startTime;
                 const progress = Math.min(elapsed / duration, 1);
                 
                 // Ease-out для плавной остановки
-                const ease = 1 - Math.pow(1 - progress, 4);
-                depRouletteRotation = startRotation + targetAngle * ease;
+                const ease = 1 - Math.pow(1 - progress, 3);
+                const angle = totalRotation * ease;
                 
-                drawDepWheel();
-
+                // Меняем процент отображения для эффекта вращения
+                const displayPercent = Math.floor(Math.random() * 101);
+                drawSimpleRoulette(displayPercent);
+                
                 if (progress < 1) {
-                    requestAnimationFrame(animateSpin);
-                } else {
-                    // Вращение завершено
-                    depRouletteSpinning = false;
-                    resultDiv.innerHTML = `
-                        <div style="font-size: 18px; color: #f59e0b; margin-bottom: 10px;">🎉 РЕЗУЛЬТАТ:</div>
-                        <div class="dep-result-amount">${selectedOption.amount.toLocaleString()} ₽</div>
-                        <div style="font-size: 14px; color: #888; margin-top: 10px;">Вероятность: ${selectedOption.probability}%</div>
-                        <button class="btn-main" style="margin-top: 20px; background: linear-gradient(135deg, #22c55e, #16a34a) !important; border-color: #22c55e !important;" onclick="applyDepResult(${selectedOption.amount})">✅ ПРИМЕНИТЬ К ДЕПОЗИТУ</button>
-                    `;
-                    
-                    // Звук победы
-                    playTick();
-                }
-            }
-
-            requestAnimationFrame(animateSpin);
-        }
-
-        function applyDepResult(amount) {
-            const depInput = document.getElementById('win-deposit-input');
-            if (depInput) {
-                depInput.value = amount;
-            }
-            // Также заполняем поле депозита в форме статистики рулетки депов
-            const depStatDeposit = document.getElementById('dep-stat-deposit');
-            if (depStatDeposit) {
-                depStatDeposit.value = amount;
-            }
-            closeDepRouletteOnly();
-            alert(`✅ Депозит ${amount.toLocaleString()} ₽ применён!`);
-        }
-
-        function renderDepStatSiteSelect() {
-            const sel = document.getElementById('dep-stat-site');
-            if (!sel) return;
-            const curr = sel.value || '---';
-            sel.innerHTML = '<option value="---">---</option>' + (siteOptions || []).map(s => `<option value="${escapeHtml(s)}">${s}</option>`).join('');
-            try { sel.value = curr; } catch(e){}
-        }
-
-        function addDepStatRecord() {
-            const nameEl = document.getElementById('dep-stat-name');
-            const tgEl = document.getElementById('dep-stat-tg');
-            const amtEl = document.getElementById('dep-stat-amount');
-            const depEl = document.getElementById('dep-stat-deposit');
-            const siteEl = document.getElementById('dep-stat-site');
-            
-            if (!nameEl) return alert('Элемент формы не найден');
-            const name = nameEl.value.trim();
-            if (!name) return alert('Введите никнейм');
-            
-            const tg = (tgEl && tgEl.value.trim()) || '';
-            const amount = parseFloat((amtEl && amtEl.value) || 0) || 0;
-            const deposit = parseFloat((depEl && depEl.value) || 0) || 0;
-            const site = (siteEl && (siteEl.value || '').trim()) || '---';
-            const date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
-
-            let existing = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
-            if (existing) {
-                existing.amount = (existing.amount || 0) + amount;
-                existing.deposits = (existing.deposits || 0) + deposit;
-                if (tg) existing.tg = tg;
-                if (site && site !== '---') existing.site = site;
-            } else {
-                leaders.push({ name, amount, deposits: deposit, tg: tg || '', site });
-            }
-
-            globalHistory.push({ name, amount, deposit, site, tg: tg || '---', rerolls: 0, date });
-
-            if (tg) {
-                saveParticipantTelegram(name, tg);
-                syncParticipantTelegramToCloud(name, tg);
-            }
-
-            saveToStorage();
-            renderLeaderboard();
-            cloudSaveAppStateDebounced();
-
-            // Очищаем поля формы
-            nameEl.value = '';
-            if (tgEl) tgEl.value = '';
-            if (amtEl) amtEl.value = '';
-            if (depEl) depEl.value = '';
-            if (siteEl) siteEl.value = '---';
-
-            alert('✅ Запись добавлена в статистику');
-        }
-
-        function confirmAddDepOption() {
-            const amountInput = document.getElementById('dep-add-amount');
-            const probabilityInput = document.getElementById('dep-add-probability');
-            const amount = parseFloat((amountInput && amountInput.value) || 0);
-            const probability = Math.max(0, Math.round(parseFloat((probabilityInput && probabilityInput.value) || 0)));
-
-            if (amount <= 0) {
-                alert('Введите корректную сумму.');
-                if (amountInput) amountInput.focus();
-                return;
-            }
-
-            if (probability <= 0) {
-                alert('Введите корректный шанс в процентах.');
-                if (probabilityInput) probabilityInput.focus();
-                return;
-            }
-
-            const currentCells = getDepTotalCells(depRouletteOptions);
-            if (currentCells + probability > 100) {
-                alert(`Нельзя добавить вариант. Будет ${currentCells + probability} ячеек из 100.`);
-                if (probabilityInput) probabilityInput.focus();
-                return;
-            }
-
-            depRouletteOptions.push({ amount, probability });
-            saveDepRouletteOptions();
-            renderDepRouletteModal();
-            drawDepSlotMachine(0);
-
-            if (amountInput) amountInput.value = '';
-            if (probabilityInput) probabilityInput.value = '';
-
-            const depForm = document.getElementById('dep-add-form');
-            if (depForm) {
-                depForm.style.display = 'block';
-                depForm.style.borderColor = '#22c55e';
-                depForm.style.background = 'rgba(34, 197, 94, 0.2)';
-                setTimeout(() => {
-                    depForm.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-                    depForm.style.background = 'rgba(245, 158, 11, 0.15)';
-                }, 300);
-            }
-
-            if (amountInput) amountInput.focus();
-        }
-
-        function drawDepSlotMachine(offset) {
-            const track = document.getElementById('dep-slot-track');
-            if (!track) return;
-
-            const options = depRouletteOptions.filter(o => (parseFloat(o.amount) || 0) > 0);
-            const slots = getDepSlotCells(options);
-            track.innerHTML = '';
-
-            if (slots.length === 0) {
-                track.innerHTML = '<div class="slot-item is-empty">Добавьте варианты</div>';
-                return;
-            }
-
-            for (let copy = 0; copy < 3; copy++) {
-                for (let i = 0; i < slots.length; i++) {
-                    const slot = document.createElement('div');
-                    slot.className = 'slot-item';
-                    slot.innerHTML = `
-                        <div class="slot-amount-wrap">
-                            <div class="slot-amount">${Number(slots[i].amount).toLocaleString('ru-RU')} ₽</div>
-                        </div>
-                        <div class="slot-footer">${Number(slots[i].amount).toLocaleString('ru-RU')} ₽</div>
-                    `;
-                    track.appendChild(slot);
-                }
-            }
-
-            track.style.transform = `translate3d(${offset}px, 0, 0)`;
-        }
-
-        function spinDepSlotMachine() {
-            const options = depRouletteOptions.filter(o => (parseFloat(o.amount) || 0) > 0);
-            if (options.length === 0) {
-                alert('Добавьте хотя бы один вариант!');
-                return;
-            }
-
-            if (depRouletteSpinning) return;
-            depRouletteSpinning = true;
-
-            const slots = getDepSlotCells(options).map(slot => slot.amount);
-            if (slots.length === 0) {
-                depRouletteSpinning = false;
-                return;
-            }
-
-            const selectedIndex = Math.floor(Math.random() * slots.length);
-            const selectedAmount = slots[selectedIndex];
-
-            const track = document.getElementById('dep-slot-track');
-            const trackSlots = track.querySelectorAll('.slot-item');
-            trackSlots.forEach(slot => slot.classList.remove('highlight'));
-
-            const slotWidth = DEP_SLOT_SPAN;
-            const n = slots.length;
-            const totalWidth = n * slotWidth;
-            const wrapper = track.parentElement;
-            const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
-            const centerOffset = wrapperWidth / 2 - DEP_SLOT_CARD_WIDTH / 2;
-
-            const targetPos = selectedIndex * slotWidth + totalWidth;
-            const endOffset = centerOffset - targetPos;
-            const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
-            const finalOffset = endOffset - extraLoops;
-            const startOffset = parseFloat(track.dataset.offset || '0') || 0;
-
-            const duration = 5000;
-            const startTime = performance.now();
-            let lastTickOffset = 0;
-
-            track.classList.add('is-spinning');
-
-            function getSpinProgress(progress) {
-                if (progress <= 0.14) {
-                    const t = progress / 0.14;
-                    return 0.08 * t * t;
-                }
-
-                if (progress <= 0.78) {
-                    const t = (progress - 0.14) / 0.64;
-                    return 0.08 + t * 0.76;
-                }
-
-                const t = (progress - 0.78) / 0.22;
-                return 0.84 + (1 - Math.pow(1 - t, 3)) * 0.16;
-            }
-
-            function animateDepSlot(timestamp) {
-                const elapsed = timestamp - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const ease = getSpinProgress(progress);
-                const currentOffset = startOffset + (finalOffset - startOffset) * ease;
-
-                track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
-                track.dataset.offset = String(currentOffset);
-
-                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.55) {
-                    playTick();
-                    lastTickOffset = currentOffset;
-                }
-
-                if (progress < 1) {
-                    requestAnimationFrame(animateDepSlot);
+                    requestAnimationFrame(animateSimpleSpin);
                     return;
                 }
-
-                track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
-                track.dataset.offset = String(finalOffset);
-                track.classList.remove('is-spinning');
-
-                const winnerSlotIdx = n + selectedIndex;
-                if (trackSlots[winnerSlotIdx]) {
-                    trackSlots[winnerSlotIdx].classList.add('highlight');
+                
+                // Вращение завершено
+                drawSimpleRoulette(percent);
+                simpleRouletteSpinning = false;
+                
+                if (isWin) {
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text win">✅ ВЫИГРЫШ ${sum.toLocaleString()} ₽!</span>`;
+                    // Применяем к депозиту
+                    const depInput = document.getElementById('win-deposit-input');
+                    if (depInput) depInput.value = sum;
+                    playTick();
+                } else {
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text lose">❌ ПРОИГРЫШ (${percent}% шанс был)</span>`;
                 }
-
-                const resultDiv = document.getElementById('dep-slot-result');
-                if (resultDiv) {
-                    resultDiv.textContent = selectedAmount + ' ₽';
-                }
-
-                depRouletteSpinning = false;
-                playTick();
             }
-
-            requestAnimationFrame(animateDepSlot);
+            
+            requestAnimationFrame(animateSimpleSpin);
         }
 
     </script>
 
-    <!-- DEPOSIT ROULETTE MODAL -->
-    <div id="dep-roulette-modal" class="modal" style="z-index: 100001;">
-        <div class="modal-content" style="flex-direction: column; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e, #16213e) !important; border: 2px solid #f59e0b; box-shadow: 0 0 60px rgba(245, 158, 11, 0.4); border-radius: 0 !important; max-width: 100vw !important; max-height: 100vh !important;">
-            <div class="close-x" onclick="closeDepRouletteOnly()" style="color: #f59e0b; position: absolute; right: 30px; top: 20px; z-index: 10;">&times;</div>
-            <h2 class="dep-slot-title">🎰 СЛОТ МАШИНА ДЕПОВ</h2>
-            <div class="dep-title-line" aria-hidden="true"></div>
+    <!-- SIMPLE PERCENTAGE ROULETTE MODAL -->
+    <div id="simple-roulette-modal" class="modal" style="z-index: 100001;">
+        <div class="modal-content">
+            <div class="close-x" onclick="closeSimpleRoulette()" style="color: #f59e0b;">&times;</div>
+            <h2 class="simple-roulette-title">🎰 РУЛЕТКА</h2>
             
-            <!-- СЛОТ МАШИНА -->
-            <div class="slot-machine-wrapper" style="border-color: #f59e0b; box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);">
-                <div class="slot-arrow-left" style="color: #f59e0b; text-shadow: 0 0 15px #f59e0b;">◄</div>
-                <div class="slot-arrow-right" style="color: #f59e0b; text-shadow: 0 0 15px #f59e0b;">►</div>
-                <div class="slot-track" id="dep-slot-track"></div>
-            </div>
-            
-            <!-- РЕЗУЛЬТАТ -->
-            <div id="dep-slot-result" style="text-align:center; margin:20px 0; font-size:24px; font-weight:900; color:#f59e0b; text-shadow: 0 0 20px rgba(245, 158, 11, 0.8);">---</div>
-            
-            <!-- КНОПКА КРУТИТЬ -->
-            <button class="btn-main dep-roulette-btn" style="width: 100%; max-width: 400px; margin: 0 auto; padding: 18px; font-size: 16px; display: block;" onclick="spinDepSlotMachine()">🎰 КРУТИТЬ!</button>
-            
-            <div style="display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex: 1; padding: 20px 40px; box-sizing: border-box;">
-                <!-- Левая часть - настройки -->
-                <div style="flex: 1; max-width: 500px; display: flex; flex-direction: column;">
-                    <h4 style="color: #f59e0b; margin: 0 0 15px 0; font-size: 18px; letter-spacing: 1px;">💰 ДОБАВИТЬ ВАРИАНТ:</h4>
-                    
-                    <div id="dep-add-form" style="display:none; padding: 15px; background: rgba(245, 158, 11, 0.15); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.4); margin-bottom: 20px;">
-                        <div style="display: flex; gap: 10px; align-items: flex-end;">
-                            <div style="flex: 1;">
-                                <label style="display: block; color: #f59e0b; font-size: 11px; margin-bottom: 4px;">Сумма (₽)</label>
-                                <input id="dep-add-amount" type="number" min="1" step="1" placeholder="1000" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
-                            </div>
-                            <div style="flex: 1;">
-                                <label style="display: block; color: #f59e0b; font-size: 11px; margin-bottom: 4px;">Шанс (%)</label>
-                                <input id="dep-add-probability" type="number" min="1" step="1" placeholder="20" style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 6px; background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(245,158,11,0.5) !important; color: #fff !important; font-size: 13px;">
-                            </div>
-                            <button onclick="confirmAddDepOption()" style="padding: 10px 20px; background: linear-gradient(135deg, #22c55e, #16a34a); border: 1px solid #22c55e; border-radius: 6px; color: #fff; cursor: pointer; font-size: 12px; font-weight: bold; white-space: nowrap;">СОХРАНИТЬ</button>
-                        </div>
-                    </div>
-                    
-                    <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">📋 ТЕКУЩИЕ ВАРИАНТЫ (в рулетке):</h4>
-                    <div id="dep-options-container" class="dep-options-container" style="flex: 1; overflow-y: auto; max-height: 300px;"></div>
-                    <div style="display:flex; gap:8px; margin-top:12px;">
-                        <button class="btn-main dep-roulette-btn" style="flex:1; padding: 14px; font-size: 14px; margin-bottom:0;" onclick="showDepAddForm()">➕ ДОБАВИТЬ</button>
-                        <button class="btn-main dep-roulette-btn" style="flex:1; padding: 14px; font-size: 14px; margin-bottom:0; background: linear-gradient(135deg, #22c55e, #16a34a) !important; border-color: #22c55e !important;" onclick="saveCurrentDepList()">💾 СОХРАНИТЬ НАБОР</button>
-                    </div>
-
-                    <div style="margin-top: 20px; padding: 16px; background: rgba(245, 158, 11, 0.1); border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
-                        <h4 style="color: #f59e0b; margin: 0 0 10px 0; font-size: 14px; letter-spacing: 1px;">💾 СОХРАНЁННЫЕ НАБОРЫ:</h4>
-                        <div id="dep-saved-list-container" style="max-height: 200px; overflow-y: auto;"></div>
-                    </div>
-                    
-                    <div style="margin-top: 15px; padding: 15px; background: rgba(245, 158, 11, 0.08); border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.2);">
-                        <h4 style="color: #f59e0b; margin: 0 0 8px 0; font-size: 13px;">💡 Подсказка:</h4>
-                        <p style="color: #999; font-size: 12px; margin: 0; line-height: 1.5;">
-                            Каждый вариант = определённый % шанса. Сумма всех % = 100%.<br>
-                            1% = 1 ячейка в слот-машине. Сохраните набор для повторного использования.
-                        </p>
-                    </div>
+            <div class="simple-roulette-inputs">
+                <div class="simple-roulette-input-group">
+                    <label>Сумма (₽)</label>
+                    <input type="number" id="simple-roulette-sum" placeholder="100" min="1">
+                </div>
+                <div class="simple-roulette-input-group">
+                    <label>Процент (%)</label>
+                    <input type="number" id="simple-roulette-percent" placeholder="20" min="1" max="100">
                 </div>
             </div>
+            
+            <div class="simple-roulette-canvas-container">
+                <div class="simple-roulette-pointer"></div>
+                <canvas id="simple-roulette-canvas" width="350" height="350"></canvas>
+            </div>
+            
+            <div class="simple-roulette-result" id="simple-roulette-result">
+                <span class="simple-roulette-result-text">---</span>
+            </div>
+            
+            <button class="btn-main simple-roulette-btn" onclick="spinSimpleRoulette()" style="width: 100%; max-width: 300px; margin: 0 auto; padding: 18px; font-size: 16px;">🎰 КРУТИТЬ!</button>
         </div>
     </div>
 
