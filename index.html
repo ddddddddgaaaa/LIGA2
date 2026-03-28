@@ -35,11 +35,6 @@
         }
         body {
             background-color: var(--bg-color);
-            background-image: url('https://img.sanishtech.com/u/5810775c99a82ddd872e00221f23e7c8.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             color: var(--text-color);
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -940,20 +935,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
         
         .panel-with-bg {
-            background-image: url('https://img.sanishtech.com/u/5810775c99a82ddd872e00221f23e7c8.png') !important;
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
             position: relative;
-        }
-        
-        .panel-with-bg::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.85);
-            border-radius: 20px;
-            z-index: 0;
         }
         
         .panel-with-bg > * {
@@ -1148,6 +1130,15 @@
         let wheelParticipants = [];
         let pendingParticipants = JSON.parse(localStorage.getItem('bot_pending_participants') || '[]'); // участники, которые написали кодовое пока рулетка открыта
         const wheelColors = ['#0f172a','#1e2937','#334155','#475569','#64748b','#1e3a8a','#312e81','#4338ca','#4c1d95','#6b21a8'];
+        
+        // Color coding based on sum ranges
+        function getColorForSum(sum) {
+            if (sum >= 0 && sum <= 100) return '#00bfff'; // голубой (light blue)
+            if (sum >= 101 && sum <= 300) return '#a855f7'; // фиолетовый (purple)
+            if (sum >= 301 && sum <= 500) return '#ef4444'; // красный (red)
+            if (sum >= 501 && sum <= 1000) return '#eab308'; // желтый (yellow)
+            return '#64748b'; // default gray
+        }
         let currentChannelName = localStorage.getItem('bot_channel_name') || '';
         const MODS = [];
         const VIPS = [];
@@ -2226,9 +2217,25 @@
             
             if (p.length === 0) return;
             const slice = (Math.PI * 2) / p.length;
+            
+            // Получаем сумму для текущего сегмента под стрелкой
+            const participantUnderArrow = getParticipantUnderArrow(angle);
+            let currentSum = 0;
+            // Ищем сумму в leaders для участника
+            const leaderEntry = leaders.find(l => l.name.toLowerCase() === participantUnderArrow.toLowerCase());
+            if (leaderEntry) {
+                currentSum = leaderEntry.amount || 0;
+            }
+            const centerColor = getColorForSum(currentSum);
+            
             p.forEach((name, i) => {
+                // Получаем цвет на основе суммы участника
+                const leaderData = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
+                const participantSum = leaderData ? (leaderData.amount || 0) : 0;
+                const segmentColor = getColorForSum(participantSum);
+                
                 ctx.beginPath();
-                ctx.fillStyle = wheelColors[i % wheelColors.length];
+                ctx.fillStyle = segmentColor;
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, angle + i * slice, angle + (i + 1) * slice);
                 ctx.closePath();
@@ -2303,10 +2310,24 @@
             ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 4;
             ctx.stroke();
+            
+            // Центральный круг с цветом на основе суммы (без белого мигания)
             ctx.beginPath();
             ctx.arc(cx, cy, 12, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = centerColor;
             ctx.fill();
+            
+            // Отображаем сумму в центре
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 10px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'rgba(0,0,0,0.9)';
+            if (currentSum > 0) {
+                ctx.fillText(currentSum.toLocaleString() + '₽', cx, cy);
+            }
+            ctx.shadowBlur = 0;
         }
 
         function startSpin(mode) {
