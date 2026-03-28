@@ -3152,8 +3152,18 @@
             // Сохраняем копию массива
             savedDepLists[name.trim()] = JSON.parse(JSON.stringify(depRouletteOptions));
             localStorage.setItem('bot_saved_dep_lists', JSON.stringify(savedDepLists));
+
+            // После сохранения переносим текущий набор в "сохранённые"
+            // и очищаем рабочий список для нового ввода
+            depRouletteOptions = [];
+            saveDepRouletteOptions();
+
             updateSavedDepList();
-            alert('✅ Набор "' + name.trim() + '" сохранён!');
+            renderDepRouletteModal();
+            drawDepSlotMachine(0);
+            showDepAddForm();
+
+            alert('✅ Набор "' + name.trim() + '" сохранён! Теперь можно вводить новый набор.');
         }
 
         function loadSavedDepList(encodedName) {
