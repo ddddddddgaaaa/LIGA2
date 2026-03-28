@@ -2978,6 +2978,12 @@
             return slots;
         }
 
+        function getDepTotalCells(options) {
+            return (options || []).reduce((sum, opt) => {
+                return sum + Math.max(0, Math.round(parseFloat(opt.probability) || 0));
+            }, 0);
+        }
+
         const depColors = [
             '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
             '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
@@ -3013,6 +3019,7 @@
             if (depRouletteOptions.length === 0) {
                 optionsContainer.innerHTML = '<div style="color:#555; text-align:center; padding:20px; font-size:13px;">Нет вариантов. Добавьте первый вариант выше.</div>';
             } else {
+                const totalCells = getDepTotalCells(depRouletteOptions);
                 optionsContainer.innerHTML = depRouletteOptions.map((opt, i) => `
                     <div class="dep-option-row" style="justify-content: space-between;">
                         <div style="flex:1; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -3023,7 +3030,11 @@
                         </div>
                         <button class="remove-dep-btn" onclick="removeDepOption(${i})" style="flex-shrink:0;">✕</button>
                     </div>
-                `).join('');
+                `).join('') + `
+                    <div style="margin-top:8px; padding:10px 12px; border-radius:8px; background:${totalCells === 100 ? 'rgba(34,197,94,0.16)' : 'rgba(245,158,11,0.1)'}; border:1px solid ${totalCells === 100 ? 'rgba(34,197,94,0.45)' : 'rgba(245,158,11,0.28)'}; color:${totalCells === 100 ? '#86efac' : '#fbbf24'}; font-size:12px; font-weight:700;">
+                        Ячеек занято: ${totalCells} / 100
+                    </div>
+                `;
             }
             
             // Отрисовываем колесо
@@ -3139,6 +3150,12 @@
         function saveCurrentDepList() {
             if (depRouletteOptions.length === 0) {
                 alert('Нет вариантов для сохранения! Добавьте хотя бы один вариант.');
+                return;
+            }
+
+            const totalCells = getDepTotalCells(depRouletteOptions);
+            if (totalCells !== 100) {
+                alert(`Сейчас занято ${totalCells} из 100 ячеек. Для сохранения набора нужно ровно 100.`);
                 return;
             }
             const name = prompt('Введите название для этого набора:', 'Набор ' + (Object.keys(savedDepLists).length + 1));
@@ -3569,6 +3586,13 @@
 
             if (probability <= 0) {
                 alert('Введите корректный шанс в процентах.');
+                if (probabilityInput) probabilityInput.focus();
+                return;
+            }
+
+            const currentCells = getDepTotalCells(depRouletteOptions);
+            if (currentCells + probability > 100) {
+                alert(`Нельзя добавить вариант. Будет ${currentCells + probability} ячеек из 100.`);
                 if (probabilityInput) probabilityInput.focus();
                 return;
             }
