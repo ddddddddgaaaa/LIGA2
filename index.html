@@ -887,8 +887,8 @@
         }
         .simple-roulette-canvas-container {
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 300px;
+            height: 300px;
             margin: 0 auto 20px;
         }
         #simple-roulette-canvas {
@@ -1063,16 +1063,13 @@
     <div id="auth-modal" class="auth-modal">
         <div class="auth-card">
             <h2>Вход</h2>
-            <p>Укажи канал. После этого подключится чат и откроется сайт.</p>
+            <p>Укажи канал Twitch. После этого подключится чат.</p>
             <div class="auth-form">
                 <input type="text" id="auth-channel-input" placeholder="Канал Twitch без @" autocomplete="off">
-                <input type="password" id="auth-pass-input" placeholder="Пароль (впервые — задайте новый)" autocomplete="off">
                 <div style="display:flex; gap:8px;">
-                    <button class="btn-main btn-purple" type="button" onclick="handleInitialAuth()">ВОЙТИ / РЕГИСТРАЦИЯ</button>
-                    <button class="btn-main" type="button" onclick="openAuthHelp()">?</button>
+                    <button class="btn-main btn-purple" type="button" onclick="applyAuthSettings()">ПОДКЛЮЧИТЬ</button>
                 </div>
             </div>
-            <div class="auth-note">Данные сохраняются в браузере и подставляются автоматически.</div>
         </div>
     </div>
 
@@ -1347,140 +1344,9 @@
             }
         }
 
-        // ===== Accounts =====
-        async function hashPassword(password, salt) {
-            const enc = new TextEncoder();
-            const data = enc.encode(password + '::' + salt);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function makeSalt() {
-            const arr = new Uint8Array(12);
-            crypto.getRandomValues(arr);
-            return Array.from(arr).map(n => n.toString(16).padStart(2,'0')).join('');
-        }
-
+        // ===== Simple Auth (no password) =====
         async function handleInitialAuth() {
-            const nick = sanitizeChannelName(document.getElementById('auth-channel-input').value || '');
-            const pass = (document.getElementById('auth-pass-input').value || '').trim();
-            if (!nick) return alert('Введите ник канала.');
-            if (cloudReady && cloudDb) {
-                try {
-                    const doc = await cloudDb.collection('accounts').doc(nick).get();
-                    if (!doc.exists) {
-                        if (!pass) return alert('Аккаунт не найден — введите пароль для регистрации.');
-                        await registerAccount(nick, pass);
-                        alert('Аккаунт зарегистрирован. Вы вошли.');
-                    } else {
-                        const data = doc.data() || {};
-                        const ok = await verifyLogin(nick, pass, data);
-                        if (!ok) return alert('Неверный пароль.');
-                        await updateLastLogin(nick);
-                    }
-                    currentAccount = nick;
-                    currentChannelName = nick;
-                    saveToStorage();
-                    updateChannelUi();
-                    initTwitchEmbed();
-                    connectTwitchSocket();
-                    try { await loadAppStateFromCloud(); subscribeAppStateFromCloud(); } catch(e) { console.warn('handleInitialAuth cloud sync:', e); }
-                    await loadRigForCurrentChannel();
-                    subscribeRigForCurrentChannel();
-                    // подписываемся на участников после установки канала
-                    subscribeParticipantsFromCloud();
-                    closeAuthModal();
-                } catch (e) {
-                    console.error('handleInitialAuth cloud error', e);
-                    alert('Ошибка связи с облаком. Попробуйте позже.');
-                }
-            } else {
-                const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
-                const entry = local[nick];
-                if (!entry) {
-                    if (!pass) return alert('Аккаунт не найден — введите пароль для регистрации.');
-                    const salt = makeSalt();
-                    const passwordHash = await hashPassword(pass, salt);
-                    local[nick] = { username: nick, salt, passwordHash, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString() };
-                    localStorage.setItem('bot_accounts', JSON.stringify(local));
-                    accounts[nick] = local[nick];
-                    alert('Локальный аккаунт зарегистрирован и вы вошли.');
-                } else {
-                    const passwordHash = await hashPassword(pass, entry.salt);
-                    if (passwordHash !== entry.passwordHash) return alert('Неверный пароль.');
-                    entry.lastLogin = new Date().toISOString();
-                    local[nick] = entry;
-                    localStorage.setItem('bot_accounts', JSON.stringify(local));
-                    accounts[nick] = entry;
-                    alert('Вход выполнен.');
-                }
-                currentAccount = nick;
-                currentChannelName = nick;
-                saveToStorage();
-                updateChannelUi();
-                initTwitchEmbed();
-                connectTwitchSocket();
-                loadRigForCurrentChannelLocal();
-                // для локального режима используем локальный набор участников
-                // подписываться на облако не нужно
-                closeAuthModal();
-            }
-        }
-
-        async function registerAccount(nick, pass) {
-            const salt = makeSalt();
-            const passwordHash = await hashPassword(pass, salt);
-            const doc = {
-                username: nick,
-                salt,
-                passwordHash,
-                createdAt: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
-            };
-            accounts[nick] = doc;
-            try {
-                if (cloudReady && cloudDb) await cloudDb.collection('accounts').doc(nick).set(doc);
-                else localStorage.setItem('bot_accounts', JSON.stringify(Object.assign({}, JSON.parse(localStorage.getItem('bot_accounts')||'{}'), { [nick]: doc })));
-            } catch (e) { console.error('registerAccount error', e); }
-        }
-
-        async function verifyLogin(nick, pass, data) {
-            if (!data || !data.passwordHash || !data.salt) return false;
-            const ph = await hashPassword(pass, data.salt);
-            return ph === data.passwordHash;
-        }
-
-        async function updateLastLogin(nick) {
-            try {
-                if (cloudReady && cloudDb) {
-                    await cloudDb.collection('accounts').doc(nick).set({ lastLogin: new Date().toISOString() }, { merge: true });
-                } else {
-                    const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
-                    if (local[nick]) { local[nick].lastLogin = new Date().toISOString(); localStorage.setItem('bot_accounts', JSON.stringify(local)); }
-                }
-            } catch (e) { console.error('updateLastLogin error', e); }
-        }
-
-        async function loadAccountsFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                const snapshot = await cloudDb.collection('accounts').get();
-                snapshot.forEach(doc => { accounts[doc.id] = doc.data(); });
-            } catch (e) { console.error('loadAccountsFromCloud', e); }
-        }
-
-        function subscribeAccountsFromCloud() {
-            if (!cloudReady || !cloudDb) return;
-            try {
-                cloudDb.collection('accounts').onSnapshot(qs => {
-                    qs.forEach(ch => {
-                        if (ch.type === 'added' || ch.type === 'modified') accounts[ch.doc.id] = ch.doc.data();
-                        if (ch.type === 'removed') delete accounts[ch.doc.id];
-                    });
-                    renderAccountsList();
-                });
-            } catch (e) { console.error('subscribeAccountsFromCloud', e); }
+            applyAuthSettings();
         }
 
         // ===== Site options =====
@@ -1569,33 +1435,7 @@
         }
 
         function renderAccountsList() {
-            const cont = document.getElementById('admin-accounts-list');
-            if (!cont) return;
-            const rows = Object.keys(accounts).sort().map(k => {
-                const a = accounts[k] || {};
-                return `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.03);"><div><b>${a.username}</b><div style="font-size:12px;color:#94a3b8;">Создан: ${a.createdAt ? a.createdAt.split('T')[0] : '—'} | Последний вход: ${a.lastLogin ? a.lastLogin.split('T')[0] : '—'}</div></div><div><button onclick="promptResetPassword('${a.username}')" style="background:none;border:1px solid rgba(255,255,255,0.06);padding:6px;border-radius:6px;color:var(--accent-neon-blue);">Сбросить пароль</button></div></div>`;
-            }).join('');
-            cont.innerHTML = rows || '<div style="color:#666; padding:12px;">Нет аккаунтов</div>';
-        }
-
-        async function promptResetPassword(nick) {
-            const ok = confirm(`Сбросить пароль для ${nick}?`);
-            if (!ok) return;
-            const np = prompt('Новый пароль:');
-            if (!np) return alert('Пароль не задан.');
-            const salt = makeSalt();
-            const passwordHash = await hashPassword(np, salt);
-            const doc = { salt, passwordHash, lastResetAt: new Date().toISOString() };
-            accounts[nick] = Object.assign({}, accounts[nick] || {}, doc);
-            try {
-                if (cloudReady && cloudDb) await cloudDb.collection('accounts').doc(nick).set(doc, { merge: true });
-                else {
-                    const local = JSON.parse(localStorage.getItem('bot_accounts') || '{}');
-                    if (local[nick]) { local[nick].salt = salt; local[nick].passwordHash = passwordHash; local[nick].lastResetAt = new Date().toISOString(); localStorage.setItem('bot_accounts', JSON.stringify(local)); }
-                }
-                renderAccountsList();
-                alert('Пароль сброшен.');
-            } catch (e) { console.error('promptResetPassword', e); alert('Ошибка при сбросе пароля.'); }
+            // Accounts disabled - no password
         }
         
         function saveToStorage() {
@@ -3192,10 +3032,9 @@
                 <button class="btn-main simple-roulette-btn" onclick="clearRouletteOptions()" style="flex:1; margin-bottom:0; padding:12px; font-size:12px; background:rgba(239,68,68,0.3) !important; border-color:#ef4444 !important;">🗑️ ОЧИСТИТЬ</button>
             </div>
             
-            <div id="saved-options-list" style="width:100%; max-width:400px; max-height:120px; overflow-y:auto; margin-bottom:15px; padding:10px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(245,158,11,0.3);"></div>
+            <div id="saved-options-list" style="width:100%; max-width:500px; max-height:250px; overflow-y:auto; margin-bottom:15px; padding:15px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(245,158,11,0.3);"></div>
             
             <div class="simple-roulette-canvas-container">
-                <div class="simple-roulette-pointer"></div>
                 <canvas id="simple-roulette-canvas" width="400" height="400"></canvas>
             </div>
             
