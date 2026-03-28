@@ -887,8 +887,8 @@
         }
         .simple-roulette-canvas-container {
             position: relative;
-            width: 350px;
-            height: 350px;
+            width: 400px;
+            height: 400px;
             margin: 0 auto 20px;
         }
         #simple-roulette-canvas {
@@ -2934,22 +2934,86 @@
             }
         }
 
-        // ===== SIMPLE PERCENTAGE ROULETTE =====
+        // ===== SIMPLE PERCENTAGE ROULETTE (100 SEGMENTS) =====
         let simpleRouletteSpinning = false;
+        let rouletteOptions = []; // [{sum: 100, percent: 20}, {sum: 500, percent: 10}, ...]
+        const rouletteColors = ['#22c55e', '#3b82f6', '#a855f7', '#ef4444', '#f59e0b', '#06b6d4', '#ec4899', '#84cc16'];
 
         function openSimpleRoulette() {
             document.getElementById('simple-roulette-modal').style.display = 'flex';
-            drawSimpleRoulette();
+            renderSavedOptions();
+            drawRoulette100();
         }
 
         function closeSimpleRoulette() {
             document.getElementById('simple-roulette-modal').style.display = 'none';
             simpleRouletteSpinning = false;
-            // Возвращаемся на экран победителя
             document.getElementById('winner-screen').style.display = 'flex';
         }
 
-        function drawSimpleRoulette(percent) {
+        function saveRouletteOption() {
+            const sumInput = document.getElementById('simple-roulette-sum');
+            const percentInput = document.getElementById('simple-roulette-percent');
+            const sum = parseFloat(sumInput.value) || 0;
+            const percent = Math.min(100, Math.max(1, parseInt(percentInput.value) || 0));
+            
+            if (sum <= 0) { alert('Введите сумму!'); sumInput.focus(); return; }
+            if (percent <= 0 || percent > 100) { alert('Введите процент от 1 до 100!'); percentInput.focus(); return; }
+            
+            // Проверяем сколько уже занято
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            if (usedPercent + percent > 100) {
+                alert(`Нельзя добавить! Уже занято ${usedPercent}%, осталось ${100 - usedPercent}%`);
+                return;
+            }
+            
+            rouletteOptions.push({ sum, percent });
+            sumInput.value = '';
+            percentInput.value = '';
+            renderSavedOptions();
+            drawRoulette100();
+            sumInput.focus();
+        }
+
+        function removeRouletteOption(index) {
+            rouletteOptions.splice(index, 1);
+            renderSavedOptions();
+            drawRoulette100();
+        }
+
+        function clearRouletteOptions() {
+            if (rouletteOptions.length === 0) return;
+            if (!confirm('Очистить все варианты?')) return;
+            rouletteOptions = [];
+            renderSavedOptions();
+            drawRoulette100();
+        }
+
+        function renderSavedOptions() {
+            const container = document.getElementById('saved-options-list');
+            if (!container) return;
+            
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            
+            if (rouletteOptions.length === 0) {
+                container.innerHTML = `<div style="color:#888; text-align:center; font-size:12px;">Нет сохранённых вариантов. Добавьте сумму и процент, затем нажмите "СОХРАНИТЬ"</div>
+                    <div style="color:#f59e0b; text-align:center; font-size:11px; margin-top:5px;">Занято: 0/100 участков</div>`;
+                return;
+            }
+            
+            let html = rouletteOptions.map((opt, i) => `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; background:rgba(245,158,11,0.1); border-radius:6px; margin-bottom:4px; border-left:3px solid ${rouletteColors[i % rouletteColors.length]};">
+                    <span style="color:#fff; font-size:12px;"><b style="color:${rouletteColors[i % rouletteColors.length]}">${opt.sum.toLocaleString()} ₽</b> — ${opt.percent} участков (${opt.percent}%)</span>
+                    <button onclick="removeRouletteOption(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:14px; padding:0 5px;">✕</button>
+                </div>
+            `).join('');
+            
+            html += `<div style="color:${usedPercent === 100 ? '#22c55e' : '#f59e0b'}; text-align:center; font-size:11px; margin-top:5px; font-weight:700;">Занято: ${usedPercent}/100 участков${usedPercent === 100 ? ' ✅' : ''}</div>`;
+            
+            container.innerHTML = html;
+        }
+
+        function drawRoulette100(segmentIndex) {
             const canvas = document.getElementById('simple-roulette-canvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
@@ -2959,31 +3023,69 @@
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Фон - весь круг (серый/проигрыш)
-            ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, Math.PI * 2);
-            ctx.fillStyle = '#374151';
-            ctx.fill();
+            // Создаём массив из 100 сегментов
+            let segments = [];
+            rouletteOptions.forEach((opt, optIndex) => {
+                for (let i = 0; i < opt.percent; i++) {
+                    segments.push({ sum: opt.sum, color: rouletteColors[optIndex % rouletteColors.length] });
+                }
+            });
+            // Заполняем остаток пустыми
+            while (segments.length < 100) {
+                segments.push({ sum: 0, color: '#374151' });
+            }
             
-            if (percent > 0 && percent <= 100) {
-                // Рисуем сегмент процента (зелёный/выигрыш)
-                const angle = (percent / 100) * Math.PI * 2;
+            const sliceAngle = (Math.PI * 2) / 100;
+            
+            // Рисуем 100 сегментов
+            for (let i = 0; i < 100; i++) {
+                const startAngle = -Math.PI / 2 + i * sliceAngle;
+                const endAngle = startAngle + sliceAngle;
+                
                 ctx.beginPath();
                 ctx.moveTo(cx, cy);
-                ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + angle);
+                ctx.arc(cx, cy, r, startAngle, endAngle);
                 ctx.closePath();
-                ctx.fillStyle = '#22c55e';
+                ctx.fillStyle = segments[i].color;
                 ctx.fill();
+                
+                // Разделительные линии
+                ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+            
+            // Подсвечиваем выбранный сегмент
+            if (segmentIndex !== undefined && segmentIndex >= 0 && segmentIndex < 100) {
+                const highlightAngle = -Math.PI / 2 + segmentIndex * sliceAngle;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.arc(cx, cy, r, highlightAngle, highlightAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.5;
+                ctx.fill();
+                ctx.globalAlpha = 1;
             }
             
             // Центральный круг
             ctx.beginPath();
-            ctx.arc(cx, cy, r * 0.2, 0, Math.PI * 2);
+            ctx.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
             ctx.fillStyle = '#f59e0b';
             ctx.fill();
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 3;
             ctx.stroke();
+            
+            // Номер в центре
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.fillText(segmentIndex !== undefined ? (segmentIndex + 1) : '100', cx, cy);
+            ctx.shadowBlur = 0;
             
             // Внешняя рамка
             ctx.beginPath();
@@ -2991,86 +3093,79 @@
             ctx.strokeStyle = '#f59e0b';
             ctx.lineWidth = 4;
             ctx.stroke();
-            
-            // Текст процента в центре
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 16px Inter';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.fillText(percent > 0 ? percent + '%' : '0%', cx, cy);
         }
 
         function spinSimpleRoulette() {
             if (simpleRouletteSpinning) return;
             
-            const sumInput = document.getElementById('simple-roulette-sum');
-            const percentInput = document.getElementById('simple-roulette-percent');
-            const sum = parseFloat(sumInput.value) || 0;
-            const percent = Math.min(100, Math.max(1, parseFloat(percentInput.value) || 0));
-            
-            if (sum <= 0) {
-                alert('Введите сумму!');
-                sumInput.focus();
+            if (rouletteOptions.length === 0) {
+                alert('Сначала добавьте хотя бы один вариант (сумма + процент) и нажмите СОХРАНИТЬ!');
                 return;
             }
-            if (percent <= 0 || percent > 100) {
-                alert('Введите процент от 1 до 100!');
-                percentInput.focus();
-                return;
+            
+            const usedPercent = rouletteOptions.reduce((s, o) => s + o.percent, 0);
+            if (usedPercent < 100) {
+                if (!confirm(`Занято только ${usedPercent}% из 100%. Остальные ${100 - usedPercent}% будут пустыми (проигрыш). Продолжить?`)) return;
             }
             
             simpleRouletteSpinning = true;
             const resultDiv = document.getElementById('simple-roulette-result');
             resultDiv.innerHTML = '<span class="simple-roulette-result-text" style="color:#f59e0b;">🎰 КРУТИМ...</span>';
             
-            const canvas = document.getElementById('simple-roulette-canvas');
             const duration = 4000;
             const startTime = performance.now();
             
-            // Случайный результат
-            const isWin = Math.random() * 100 < percent;
+            // Случайный сегмент (0-99)
+            const winningSegment = Math.floor(Math.random() * 100);
             
-            // Для анимации: несколько оборотов + остановка
-            const fullSpins = 3 + Math.floor(Math.random() * 3);
-            const totalRotation = fullSpins * Math.PI * 2;
+            // Определяем выигрыш
+            let segments = [];
+            rouletteOptions.forEach((opt) => {
+                for (let i = 0; i < opt.percent; i++) {
+                    segments.push(opt.sum);
+                }
+            });
+            while (segments.length < 100) segments.push(0);
             
-            let currentPercent = 0;
+            const winAmount = segments[winningSegment];
+            const isWin = winAmount > 0;
             
-            function animateSimpleSpin(timestamp) {
+            let lastDrawn = -1;
+            
+            function animateSpin(timestamp) {
                 const elapsed = timestamp - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                
-                // Ease-out для плавной остановки
                 const ease = 1 - Math.pow(1 - progress, 3);
-                const angle = totalRotation * ease;
                 
-                // Меняем процент отображения для эффекта вращения
-                const displayPercent = Math.floor(Math.random() * 101);
-                drawSimpleRoulette(displayPercent);
+                // Показываем бегущий сегмент
+                const currentSegment = Math.floor(((winningSegment + 100 * 3 * (1 - ease)) % 100 + 100) % 100);
+                
+                if (currentSegment !== lastDrawn) {
+                    drawRoulette100(currentSegment);
+                    lastDrawn = currentSegment;
+                    if (currentSegment % 5 === 0) playTick();
+                }
                 
                 if (progress < 1) {
-                    requestAnimationFrame(animateSimpleSpin);
+                    requestAnimationFrame(animateSpin);
                     return;
                 }
                 
-                // Вращение завершено
-                drawSimpleRoulette(percent);
+                // Финал - показываем выигрышный сегмент
+                drawRoulette100(winningSegment);
                 simpleRouletteSpinning = false;
                 
                 if (isWin) {
-                    resultDiv.innerHTML = `<span class="simple-roulette-result-text win">✅ ВЫИГРЫШ ${sum.toLocaleString()} ₽!</span>`;
-                    // Применяем к депозиту
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text win">✅ ВЫИГРЫШ ${winAmount.toLocaleString()} ₽! (сегмент ${winningSegment + 1})</span>`;
                     const depInput = document.getElementById('win-deposit-input');
-                    if (depInput) depInput.value = sum;
+                    if (depInput) depInput.value = winAmount;
                     playTick();
                 } else {
-                    resultDiv.innerHTML = `<span class="simple-roulette-result-text lose">❌ ПРОИГРЫШ (${percent}% шанс был)</span>`;
+                    resultDiv.innerHTML = `<span class="simple-roulette-result-text lose">❌ ПРОИГРЫШ (сегмент ${winningSegment + 1} пустой)</span>`;
                 }
             }
             
-            requestAnimationFrame(animateSimpleSpin);
+            requestAnimationFrame(animateSpin);
         }
 
     </script>
@@ -3079,7 +3174,7 @@
     <div id="simple-roulette-modal" class="modal" style="z-index: 100001;">
         <div class="modal-content">
             <div class="close-x" onclick="closeSimpleRoulette()" style="color: #f59e0b;">&times;</div>
-            <h2 class="simple-roulette-title">🎰 РУЛЕТКА</h2>
+            <h2 class="simple-roulette-title">🎰 РУЛЕТКА (100 УЧАСТКОВ)</h2>
             
             <div class="simple-roulette-inputs">
                 <div class="simple-roulette-input-group">
@@ -3092,9 +3187,16 @@
                 </div>
             </div>
             
+            <div style="display:flex; gap:10px; margin-bottom:15px; width:100%; max-width:400px;">
+                <button class="btn-main simple-roulette-btn" onclick="saveRouletteOption()" style="flex:1; margin-bottom:0; padding:12px; font-size:12px;">💾 СОХРАНИТЬ</button>
+                <button class="btn-main simple-roulette-btn" onclick="clearRouletteOptions()" style="flex:1; margin-bottom:0; padding:12px; font-size:12px; background:rgba(239,68,68,0.3) !important; border-color:#ef4444 !important;">🗑️ ОЧИСТИТЬ</button>
+            </div>
+            
+            <div id="saved-options-list" style="width:100%; max-width:400px; max-height:120px; overflow-y:auto; margin-bottom:15px; padding:10px; background:rgba(0,0,0,0.3); border-radius:10px; border:1px solid rgba(245,158,11,0.3);"></div>
+            
             <div class="simple-roulette-canvas-container">
                 <div class="simple-roulette-pointer"></div>
-                <canvas id="simple-roulette-canvas" width="350" height="350"></canvas>
+                <canvas id="simple-roulette-canvas" width="400" height="400"></canvas>
             </div>
             
             <div class="simple-roulette-result" id="simple-roulette-result">
