@@ -1017,6 +1017,9 @@
             padding: 0 20px;
             will-change: transform;
         }
+        .slot-track.is-spinning .slot-item {
+            filter: saturate(1.08);
+        }
         .slot-item {
             width: 194px;
             height: 206px;
@@ -3149,6 +3152,9 @@
         let depRouletteOptions = JSON.parse(localStorage.getItem('bot_dep_roulette_options') || '[]');
         let depRouletteSpinning = false;
         let depRouletteRotation = 0;
+        const DEP_SLOT_CARD_WIDTH = 194;
+        const DEP_SLOT_GAP = 12;
+        const DEP_SLOT_SPAN = DEP_SLOT_CARD_WIDTH + DEP_SLOT_GAP;
 
         function saveDepRouletteOptions() {
             localStorage.setItem('bot_dep_roulette_options', JSON.stringify(depRouletteOptions));
@@ -3837,7 +3843,7 @@
                 }
             }
 
-            track.style.transform = `translateX(${offset}px)`;
+            track.style.transform = `translate3d(${offset}px, 0, 0)`;
         }
 
         function spinDepSlotMachine() {
@@ -3860,32 +3866,53 @@
             const selectedAmount = slots[selectedIndex];
 
             const track = document.getElementById('dep-slot-track');
-            const slotWidth = 206;
+            const trackSlots = track.querySelectorAll('.slot-item');
+            trackSlots.forEach(slot => slot.classList.remove('highlight'));
+
+            const slotWidth = DEP_SLOT_SPAN;
             const n = slots.length;
             const totalWidth = n * slotWidth;
             const wrapper = track.parentElement;
             const wrapperWidth = wrapper ? wrapper.offsetWidth : 900;
-            const centerOffset = wrapperWidth / 2 - slotWidth / 2;
+            const centerOffset = wrapperWidth / 2 - DEP_SLOT_CARD_WIDTH / 2;
 
             const targetPos = selectedIndex * slotWidth + totalWidth;
             const endOffset = centerOffset - targetPos;
             const extraLoops = totalWidth * (3 + Math.floor(Math.random() * 3));
             const finalOffset = endOffset - extraLoops;
-            const startOffset = centerOffset + totalWidth;
+            const startOffset = parseFloat(track.dataset.offset || '0') || 0;
 
             const duration = 5000;
             const startTime = performance.now();
             let lastTickOffset = 0;
 
+            track.classList.add('is-spinning');
+
+            function getSpinProgress(progress) {
+                if (progress <= 0.14) {
+                    const t = progress / 0.14;
+                    return 0.08 * t * t;
+                }
+
+                if (progress <= 0.78) {
+                    const t = (progress - 0.14) / 0.64;
+                    return 0.08 + t * 0.76;
+                }
+
+                const t = (progress - 0.78) / 0.22;
+                return 0.84 + (1 - Math.pow(1 - t, 3)) * 0.16;
+            }
+
             function animateDepSlot(timestamp) {
                 const elapsed = timestamp - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                const ease = 1 - Math.pow(1 - progress, 3);
+                const ease = getSpinProgress(progress);
                 const currentOffset = startOffset + (finalOffset - startOffset) * ease;
 
-                track.style.transform = `translateX(${currentOffset}px)`;
+                track.style.transform = `translate3d(${currentOffset}px, 0, 0)`;
+                track.dataset.offset = String(currentOffset);
 
-                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.8) {
+                if (Math.abs(currentOffset - lastTickOffset) > slotWidth * 0.55) {
                     playTick();
                     lastTickOffset = currentOffset;
                 }
@@ -3895,9 +3922,10 @@
                     return;
                 }
 
-                track.style.transform = `translateX(${finalOffset}px)`;
+                track.style.transform = `translate3d(${finalOffset}px, 0, 0)`;
+                track.dataset.offset = String(finalOffset);
+                track.classList.remove('is-spinning');
 
-                const trackSlots = track.querySelectorAll('.slot-item');
                 const winnerSlotIdx = n + selectedIndex;
                 if (trackSlots[winnerSlotIdx]) {
                     trackSlots[winnerSlotIdx].classList.add('highlight');
