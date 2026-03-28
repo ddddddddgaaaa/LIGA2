@@ -2229,13 +2229,8 @@
             const centerColor = getColorForSum(currentSum);
             
             p.forEach((name, i) => {
-                // Получаем цвет на основе суммы участника
-                const leaderData = leaders.find(l => l.name.toLowerCase() === name.toLowerCase());
-                const participantSum = leaderData ? (leaderData.amount || 0) : 0;
-                const segmentColor = getColorForSum(participantSum);
-                
                 ctx.beginPath();
-                ctx.fillStyle = segmentColor;
+                ctx.fillStyle = wheelColors[i % wheelColors.length];
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, angle + i * slice, angle + (i + 1) * slice);
                 ctx.closePath();
@@ -2911,7 +2906,7 @@
                 ctx.moveTo(cx, cy);
                 ctx.arc(cx, cy, r, startAngle, endAngle);
                 ctx.closePath();
-                ctx.fillStyle = segments[i].color;
+                ctx.fillStyle = getColorForSum(segments[i].sum);
                 ctx.fill();
                 
                 // Разделительные линии
