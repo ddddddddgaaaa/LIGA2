@@ -578,51 +578,6 @@
             border-color: rgba(255, 255, 255, 0.12);
             color: #f3f4f6;
         }
-        .auth-modal {
-            display: flex;
-            position: fixed;
-            inset: 0;
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            background: rgba(2, 2, 5, 0.92);
-            backdrop-filter: blur(10px);
-        }
-        .auth-card {
-            width: min(430px, calc(100vw - 32px));
-            padding: 28px;
-            border-radius: 22px;
-            background: rgba(15, 23, 42, 0.96);
-            border: 1px solid rgba(255, 20, 147, 0.35);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
-        }
-        .auth-card h2 {
-            margin: 0 0 8px;
-            color: var(--accent-neon-blue);
-            letter-spacing: 1px;
-        }
-        .auth-card p {
-            margin: 0 0 18px;
-            color: #cbd5e1;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .auth-form input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 12px 14px;
-            border-radius: 10px;
-        }
-        .auth-note {
-            margin-top: 12px;
-            color: #94a3b8;
-            font-size: 12px;
-        }
         /* WHEEL CANVAS STYLES */
         .wheel-container {
             position: relative;
@@ -1149,18 +1104,6 @@
                             <span>Заменить текущих участников</span>
                         </label>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="auth-modal" class="auth-modal">
-        <div class="auth-card">
-            <h2>Вход</h2>
-            <p>Укажи канал Twitch. После этого подключится чат.</p>
-            <div class="auth-form">
-                <input type="text" id="auth-channel-input" placeholder="Канал Twitch без @" autocomplete="off">
-                <div style="display:flex; gap:8px;">
-                    <button class="btn-main btn-purple" type="button" onclick="applyAuthSettings()">ПОДКЛЮЧИТЬ</button>
                 </div>
             </div>
         </div>
@@ -1815,16 +1758,6 @@
                 header.textContent = `ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "${currentCodeword}" В ЧАТ`;
             }
         }
-        function openAuthModal() {
-            document.getElementById('auth-channel-input').value = '';
-            document.getElementById('auth-modal').style.display = 'flex';
-        }
-        function openAuthHelp() {
-            alert('Ввод: укажите Twitch ник. Если такой аккаунт не зарегистрирован — введите пароль и нажмите ВОЙТИ/РЕГИСТРАЦИЯ чтобы создать локальный/облачный аккаунт. Пароли хранятся в зашифрованном виде (SHA-256 + salt).');
-        }
-        function closeAuthModal() {
-            document.getElementById('auth-modal').style.display = 'none';
-        }
         function connectTwitchSocket() {
             if (!currentChannelName) return;
             if (socket) {
@@ -1904,13 +1837,9 @@
             };
         }
         async function applyAuthSettings() {
-            const channelValue = sanitizeChannelName(document.getElementById('auth-channel-input').value);
-            if (!channelValue) {
-                alert('Введите название канала.');
-                return;
-            }
-            currentChannelName = channelValue;
-            if (sanitizeChannelName(channelValue) === '0savelka0') {
+            // Auth modal removed - channel is set directly to keshnyaaa
+            currentChannelName = 'keshnyaaa';
+            if (sanitizeChannelName(currentChannelName) === '0savelka0') {
                 currentCodeword = '+';
                 const cd = document.getElementById('codeword-display'); if (cd) cd.innerText = currentCodeword;
             }
@@ -1923,7 +1852,6 @@
             if (cloudReady && cloudDb) {
                 subscribeParticipantsFromCloud();
             }
-            closeAuthModal();
         }
         
         function renderLeaderboard() {
@@ -2562,9 +2490,6 @@
             const autos = document.getElementById('autoskip-checkbox');
             if (autos) autos.addEventListener('change', (e) => { autoSpinEnabled = !!e.target.checked; });
         }, 200);
-        document.getElementById('auth-channel-input').addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') applyAuthSettings();
-        });
         setTimeout(initAdminLoginListeners, 0);
         initCloudProfiles();
         try { loadSiteOptionsFromCloud(); subscribeSiteOptionsFromCloud(); } catch(e) { try { renderSiteSelects(); renderSiteOptionsList(); } catch(_) {} }
