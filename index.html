@@ -1080,7 +1080,7 @@
         }
         .auction-table-header {
             display: grid;
-            grid-template-columns: 60px 1fr 150px 100px 100px 60px;
+            grid-template-columns: 60px 1fr 150px 60px;
             background: rgba(245,158,11,0.15);
             padding: 12px 15px;
             border-bottom: 2px solid rgba(245,158,11,0.3);
@@ -1097,7 +1097,7 @@
         }
         .auction-row {
             display: grid;
-            grid-template-columns: 60px 1fr 150px 100px 60px;
+            grid-template-columns: 60px 1fr 150px 60px;
             padding: 10px 15px;
             border-bottom: 1px solid rgba(255,255,255,0.03);
             align-items: center;
@@ -1121,100 +1121,6 @@
             font-size: 16px;
             font-weight: 900;
             text-align: right;
-        }
-        .auction-row-chance {
-            color: #22c55e;
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-        }
-        .auction-item-preview {
-            width: 100%;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(245,158,11,0.2);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-        .auction-item-preview label {
-            color: #f59e0b;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            align-self: flex-start;
-        }
-        .auction-item-preview input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 10px 12px !important;
-            border-radius: 8px !important;
-            background: rgba(0,0,0,0.4) !important;
-            border: 1px solid rgba(245,158,11,0.3) !important;
-            color: #fff !important;
-            font-size: 14px !important;
-        }
-        .auction-item-image-container {
-            width: 280px;
-            height: 280px;
-            border-radius: 16px;
-            overflow: hidden;
-            background: rgba(0,0,0,0.5);
-            border: 2px solid rgba(245,158,11,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .auction-item-image-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-        .auction-item-image-container .no-image {
-            color: #64748b;
-            font-size: 13px;
-            text-align: center;
-            padding: 20px;
-        }
-        .auction-item-price {
-            font-size: 28px;
-            font-weight: 900;
-            color: #f59e0b;
-            text-shadow: 0 0 15px rgba(245,158,11,0.5);
-            letter-spacing: 1px;
-        }
-        .auction-timer-display {
-            font-size: 32px;
-            font-family: 'Orbitron', monospace;
-            color: #f59e0b;
-            text-align: center;
-            cursor: pointer;
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 12px;
-            border: 1px solid rgba(245,158,11,0.3);
-            text-shadow: none;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        .auction-timer-controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        .auction-timer-controls .btn-main {
-            padding: 8px !important;
-            margin-bottom: 0 !important;
-            font-size: 11px !important;
-            border-color: #f59e0b !important;
-            color: #f59e0b !important;
-            background: rgba(245,158,11,0.1) !important;
-        }
-        .auction-timer-controls .btn-main:hover {
-            background: rgba(245,158,11,0.2) !important;
         }
         .auction-row-delete {
             text-align: center;
@@ -1453,13 +1359,13 @@
                 <div class="menu-wave wave-b"></div>
             </div>
             <div style="flex: 1;"></div>
-            <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">+</span></button>
             <button class="btn-main" onclick="resetAll()">Сброс участников</button>
-            <button class="btn-main btn-purple" onclick="openWheel()">🎰 РУЛЕТКА</button>
-            <button class="btn-main btn-purple" onclick="instantRoll()">⚡ БЫСТРЫЙ РОЛЛ</button>
+            <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">+</span></button>
+            <button class="btn-main" onclick="openStats()">АНАЛИТИКА ПРОЕКТОВ</button>
+            <button class="btn-main" onclick="openHistory()">ИСТОРИЯ ВЫПАДЕНИЙ</button>
+            <button class="btn-main btn-purple" onclick="openWheel()">РУЛЕТКА</button>
+            <button class="btn-main btn-purple" onclick="instantRoll()">БЫСТРЫЙ РОЛЛ</button>
             <button class="btn-main btn-purple" onclick="openAuction()" style="background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.08)); border-color: #f59e0b; color: #f59e0b; animation: auctionBtnPulse 2s ease-in-out infinite;">🔨 АУКЦИОН</button>
-            <button class="btn-main" onclick="openStats()">📊 АНАЛИТИКА</button>
-            <button class="btn-main" onclick="openHistory()">📋 ИСТОРИЯ</button>
             <div style="margin-top: auto;">
                 <div id="timer" class="timer-display" onclick="enableTimerEdit()">00:10:00</div>
                 <input type="text" id="timer-input" style="display:none; width: 100%; background: #000; color: #ff1493; border: 1px solid #ff1493; font-size: 30px; text-align: center;">
@@ -3701,35 +3607,22 @@
                         <h2>🔨 АУКЦИОН</h2>
                         <p>Добавляйте участников с суммами ставок</p>
                     </div>
-                    <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px;">
-                        <div class="auction-item-preview">
-                            <label>ССЫЛКА НА КАРТИНКУ</label>
-                            <input type="text" id="auction-item-image" placeholder="https://example.com/image.png" onchange="updateAuctionItemImage()">
-                            <div class="auction-item-image-container" id="auction-image-preview">
-                                <div class="no-image">Нет изображения</div>
-                            </div>
-                            <label>ЦЕНА ПРЕДМЕТА (₽)</label>
-                            <input type="number" id="auction-item-price" placeholder="5000" min="0" onchange="updateAuctionItemPrice()">
-                            <div class="auction-item-price" id="auction-item-price-display">0 ₽</div>
+                    <div class="auction-add-form">
+                        <div class="auction-input-group">
+                            <label>НИК</label>
+                            <input type="text" id="auction-nick-input" placeholder="Никнейм" onkeydown="if(event.key==='Enter')addAuctionParticipant()">
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 15px;">
-                            <div class="auction-add-form">
-                                <div class="auction-input-group">
-                                    <label>НИК</label>
-                                    <input type="text" id="auction-nick-input" placeholder="Никнейм" onkeydown="if(event.key==='Enter')addAuctionParticipant()">
-                                </div>
-                                <div class="auction-input-group">
-                                    <label>РУБЛЕЙ</label>
-                                    <input type="number" id="auction-sum-input" placeholder="100" min="1" onkeydown="if(event.key==='Enter')addAuctionParticipant()">
-                                </div>
-                                <button class="btn-main auction-add-btn" onclick="addAuctionParticipant()">+ ДОБАВИТЬ</button>
-                            </div>
-                            <div class="auction-participants-table">
+                        <div class="auction-input-group">
+                            <label>РУБЛЕЙ</label>
+                            <input type="number" id="auction-sum-input" placeholder="100" min="1" onkeydown="if(event.key==='Enter')addAuctionParticipant()">
+                        </div>
+                        <button class="btn-main auction-add-btn" onclick="addAuctionParticipant()">+ ДОБАВИТЬ</button>
+                    </div>
+                    <div class="auction-participants-table">
                         <div class="auction-table-header">
                             <span>№</span>
                             <span>НИК</span>
                             <span style="text-align:right;">СУММА</span>
-                            <span style="text-align:center;">ШАНС</span>
                             <span></span>
                         </div>
                         <div class="auction-table-body" id="auction-table-body"></div>
@@ -3740,18 +3633,7 @@
                     </div>
                 </div>
                 <div class="auction-sidebar">
-                    <div class="auction-settings-title">⏱️ ТАЙМЕР АУКЦИОНА</div>
-                    <div class="auction-timer-display" id="auction-timer" onclick="enableAuctionTimerEdit()">00:05:00</div>
-                    <input type="text" id="auction-timer-input" style="display:none; width: 100%; background: #000; color: #f59e0b; border: 1px solid #f59e0b; font-size: 24px; text-align: center; padding: 8px; border-radius: 8px;">
-                    <div class="auction-timer-controls">
-                        <button class="btn-main" onclick="adjustAuctionTimer(60)">+1:00</button>
-                        <button class="btn-main" onclick="adjustAuctionTimer(-60)">-1:00</button>
-                        <button class="btn-main" onclick="adjustAuctionTimer(30)">+0:30</button>
-                        <button class="btn-main" onclick="adjustAuctionTimer(-30)">-0:30</button>
-                    </div>
-                    <button class="btn-main" onclick="toggleAuctionTimer()">СТАРТ / ПАУЗА</button>
-                    
-                    <div class="auction-settings-title" style="margin-top: 20px;">⚙️ НАСТРОЙКИ</div>
+                    <div class="auction-settings-title">⚙️ НАСТРОЙКИ</div>
                     <div class="auction-setting-row">
                         <label>РУБЛЕЙ ЗА 1 ЯЧЕЙКУ</label>
                         <input type="number" id="auction-rub-per-cell" value="100" min="1" onchange="updateAuctionSettings()">
@@ -3764,6 +3646,7 @@
                         Каждый участник получает ячейки пропорционально своей ставке
                     </div>
                     <div class="auction-actions">
+                        <button class="btn-main auction-import-btn" onclick="openAuctionImport()">📋 ИМПОРТ СПИСКА</button>
                         <button class="btn-main auction-clear-btn" onclick="clearAuctionParticipants()">🗑️ ОЧИСТИТЬ ВСЕХ</button>
                     </div>
                     <button class="btn-main auction-spin-btn" onclick="openAuctionWheel()">🎰 ОТКРЫТЬ РУЛЕТКУ!</button>
@@ -3779,7 +3662,6 @@
             <div class="auction-wheel-container">
                 <div class="auction-wheel-arrow-container">
                     <div class="auction-wheel-arrow-pointer"></div>
-                    <div id="auction-wheel-nick-display" class="wheel-nick-display" style="background: linear-gradient(135deg, #f59e0b, rgba(245, 158, 11, 0.8)); box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), 0 0 60px rgba(245, 158, 11, 0.3); animation: nickPulse 1.5s ease-in-out infinite;">---</div>
                 </div>
                 <canvas id="auctionWheelCanvas" width="600" height="600"></canvas>
                 <div class="auction-wheel-result" id="auction-wheel-result" style="display:none;">
@@ -4108,100 +3990,16 @@
             saveAuctionToStorage();
         }
 
-        function updateAuctionItemImage() {
-            const urlInput = document.getElementById('auction-item-image');
-            const preview = document.getElementById('auction-image-preview');
-            const url = urlInput.value.trim();
-            
-            if (url) {
-                preview.innerHTML = `<img src="${url}" alt="Item" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>Ошибка загрузки</div>'">`;
-            } else {
-                preview.innerHTML = '<div class="no-image">Нет изображения</div>';
-            }
-            saveAuctionToStorage();
-        }
-
-        function updateAuctionItemPrice() {
-            const priceInput = document.getElementById('auction-item-price');
-            const priceDisplay = document.getElementById('auction-item-price-display');
-            const price = parseInt(priceInput.value) || 0;
-            priceDisplay.textContent = price.toLocaleString() + ' ₽';
-            saveAuctionToStorage();
-        }
-
-        // ===== AUCTION TIMER FUNCTIONS =====
-        let auctionTimerSeconds = 300; // 5 минут по умолчанию
-        let auctionTimerRunning = false;
-        let auctionTimerInterval = null;
-
-        function updateAuctionTimerDisplay() {
-            const h = Math.floor(auctionTimerSeconds/3600).toString().padStart(2,'0');
-            const m = Math.floor((auctionTimerSeconds%3600)/60).toString().padStart(2,'0');
-            const s = (auctionTimerSeconds%60).toString().padStart(2,'0');
-            document.getElementById('auction-timer').innerText = `${h}:${m}:${s}`;
-        }
-
-        function toggleAuctionTimer() {
-            auctionTimerRunning = !auctionTimerRunning;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            if (auctionTimerRunning) {
-                auctionTimerInterval = setInterval(() => {
-                    if (auctionTimerSeconds > 0) {
-                        auctionTimerSeconds--;
-                        updateAuctionTimerDisplay();
-                        if (auctionTimerSeconds === 0) {
-                            auctionTimerRunning = false;
-                            clearInterval(auctionTimerInterval);
-                            playAlarm();
-                        }
-                    }
-                }, 1000);
-            } else {
-                clearInterval(auctionTimerInterval);
-            }
-        }
-
-        function adjustAuctionTimer(delta) {
-            auctionTimerSeconds = Math.max(0, auctionTimerSeconds + delta);
-            updateAuctionTimerDisplay();
-        }
-
-        function enableAuctionTimerEdit() {
-            auctionTimerRunning = false;
-            clearInterval(auctionTimerInterval);
-            
-            const d = document.getElementById('auction-timer');
-            const i = document.getElementById('auction-timer-input');
-            
-            d.style.display = 'none';
-            i.style.display = 'block';
-            i.value = d.innerText;
-            i.focus();
-            
-            i.onblur = () => {
-                let p = i.value.split(':').map(Number).reverse();
-                auctionTimerSeconds = (p[0]||0) + (p[1]||0)*60 + (p[2]||0)*3600;
-                updateAuctionTimerDisplay();
-                i.style.display = 'none';
-                d.style.display = 'block';
-            };
-        }
-
         function renderAuctionTable() {
             const body = document.getElementById('auction-table-body');
             if (!body) return;
             
-            const total = auctionParticipants.reduce((s, p) => s + p.sum, 0);
-            
             let html = '';
             auctionParticipants.forEach((p, i) => {
-                const chance = total > 0 ? ((p.sum / total) * 100).toFixed(1) : '0.0';
                 html += `<div class="auction-row">
                     <span class="auction-row-num">${i + 1}</span>
                     <span class="auction-row-name">${escapeHtml(p.name)}</span>
                     <span class="auction-row-sum">${p.sum.toLocaleString()} ₽</span>
-                    <span class="auction-row-chance" style="color:#22c55e; font-weight:700; text-align:center;">${chance}%</span>
                     <span class="auction-row-delete"><button onclick="removeAuctionParticipant(${i})">✕</button></span>
                 </div>`;
             });
@@ -4209,6 +4007,7 @@
             body.innerHTML = html || '<div style="color:#64748b; text-align:center; padding:40px 0; font-size:14px;">Нет участников. Добавьте первого участника выше.</div>';
             
             // Обновляем итого
+            const total = auctionParticipants.reduce((s, p) => s + p.sum, 0);
             document.getElementById('auction-total-sum').textContent = total.toLocaleString() + ' ₽';
         }
 
@@ -4460,25 +4259,6 @@
             input.value = Math.max(1, Math.min(60, val));
         }
 
-        function getAuctionParticipantUnderArrow(angle) {
-            const p = auctionWheelSegments || [];
-            if (p.length === 0) return '---';
-            
-            const sliceAngle = (Math.PI * 2) / p.length;
-            let index = Math.floor((-Math.PI / 2 - angle) / sliceAngle);
-            index = ((index % p.length) + p.length) % p.length;
-            
-            return p[index] ? p[index].name : '---';
-        }
-
-        function updateAuctionWheelNickDisplay(angle) {
-            const nickDisplay = document.getElementById('auction-wheel-nick-display');
-            if (!nickDisplay) return;
-            
-            const participantUnderArrow = getAuctionParticipantUnderArrow(angle);
-            nickDisplay.textContent = participantUnderArrow;
-        }
-
         function executeAuctionSpin() {
             if (auctionWheelSegments.length === 0) {
                 alert('Нет участников для розыгрыша!');
@@ -4507,7 +4287,6 @@
                 const ease = 1 - Math.pow(1 - progress, 4);
                 const currentAngle = startAngle + (endAngle - startAngle) * ease;
                 drawAuctionWheel(auctionWheelSegments, currentAngle);
-                updateAuctionWheelNickDisplay(currentAngle);
 
                 if (progress < 1) {
                     requestAnimationFrame(animate);
@@ -4515,14 +4294,11 @@
                     drawAuctionWheel(auctionWheelSegments, endAngle);
                     
                     if (auctionSpinMode === 'normal') {
-                        // Показываем результат с шансом на победу
-                        const totalBet = auctionParticipants.reduce((s, p) => s + p.sum, 0);
-                        const winChance = totalBet > 0 ? ((winner.sum / totalBet) * 100).toFixed(1) : '0.0';
-                        
+                        // Показываем результат
                         const resultDiv = document.getElementById('auction-wheel-result');
                         resultDiv.style.display = 'block';
                         document.getElementById('auction-wheel-result-name').textContent = winner.name;
-                        document.getElementById('auction-wheel-result-sum').innerHTML = `СТАВКА: <b>${winner.sum.toLocaleString()} ₽</b> | ШАНС НА ПОБЕДУ: <b style="color:#22c55e;">${winChance}%</b>`;
+                        document.getElementById('auction-wheel-result-sum').textContent = winner.sum.toLocaleString() + ' ₽';
                         document.getElementById('auction-elim-log').innerText = '🏆 ПОБЕДИТЕЛЬ: ' + winner.name;
                         playTick();
                         document.getElementById('auction-roll-button').disabled = false;
