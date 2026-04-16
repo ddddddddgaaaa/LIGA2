@@ -2447,6 +2447,20 @@
             setImportFormat('csv');
             updateImportApplyState();
         }
+        function openWheel() {
+            const modal = document.getElementById('wheel-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Initialize wheel participants if empty
+                if (!wheelParticipants || wheelParticipants.length === 0) {
+                    wheelParticipants = getActiveParticipants();
+                }
+                // Draw initial wheel state
+                drawWheel(0);
+                // Reset spin mode UI
+                setSpinMode(selectedSpinMode || 'normal');
+            }
+        }
         function setImportFormat(format) {
             selectedImportFormat = format;
             const exampleBox = document.getElementById('import-example-box');
@@ -2646,7 +2660,7 @@
         }
 
         function editHistoryItem(index) { let h = globalHistory[index]; let name = prompt('Игрок:', h.name); let tg = prompt('Telegram:', h.tg || getSavedTelegram(h.name) || ''); let site = prompt('Проект:', h.site); let amount = prompt('Вывод (₽):', h.amount); let deposit = prompt('Депозит (₽):', h.deposit); let date = prompt('Дата и время:', h.date); if (name !== null) { h.name = name; h.tg = tg; h.site = site; h.amount = parseFloat(amount) || 0; h.deposit = parseFloat(deposit) || 0; h.date = date; saveParticipantTelegram(h.name, tg); syncParticipantTelegramToCloud(h.name, tg); saveToStorage(); openHistory(); renderLeaderboard(); } }
-    
+            
         async function syncRerollToCloud(name, count) {
             if (!cloudReady || !cloudDb) return;
             const key = getProfileKey(name);
