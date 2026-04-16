@@ -416,7 +416,7 @@
             font-size: 14.5px;
             line-height: 1.65;
             color: #e0e7ff;
-            max-height: calc(26 * 36px);
+            max-height: calc(20 * 36px);
         }
         #full-participants-list div {
             padding: 5px 10px;
@@ -1512,7 +1512,48 @@
     <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(15)">15</button>
     <button class="btn-main" style="padding:5px 10px; margin-bottom:0; font-size:11px;" onclick="setDur(30)">30</button>
 </div></div><button id="roll-button" class="btn-main btn-purple" style="padding: 18px; font-size: 18px;" onclick="executeSpin()">КРУТИТЬ! 🚀</button><label style="display:flex; align-items:center; gap:8px; margin-top:6px;"><input id="autoskip-checkbox" type="checkbox"> <span style="font-size:13px; color:#ccc;">Автокрут (пока окно открыто)</span></label></div></div></div>
-    <div id="import-participants-modal" class="modal">
+    <div id="stats-modal" class="modal"><div class="modal-content" style="flex-direction: column; min-width: 750px; max-height: 80vh;"><div class="close-x" onclick="closeModals()">&times;</div><h2 style="color: var(--accent-neon-blue); margin: 0; text-shadow: none;">Статистика по сайтам</h2><div style="width: 100%; overflow-y: auto; margin-top: 20px;"><table class="stats-table" style="width: 100%; border-collapse: collapse;"><thead><tr><th>Проект / Сайт</th><th>Побед</th><th>Общ. Выводы (₽)</th><th>Общ. Депозиты (₽)</th><th>Действие</th></tr></thead><tbody id="stats-body"></tbody></table></div></div></div>
+
+<!-- New Edit Leader Modal -->
+<div id="edit-leader-modal" class="modal">
+    <div class="modal-content" style="flex-direction: column; min-width: 400px; max-width: 500px;">
+        <div class="close-x" onclick="closeModals()">&times;</div>
+        <h2 style="color: var(--accent-neon-blue); margin: 0 0 20px 0; text-shadow: none;">Редактирование участника</h2>
+        
+        <input type="hidden" id="edit-leader-original-name">
+        
+        <div style="margin-bottom: 15px;">
+            <label style="display:block; color:#94a3b8; font-size:12px; margin-bottom:5px;">Никнейм</label>
+            <input id="edit-leader-name" type="text" style="width:100%; padding:10px; border-radius:8px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:14px;">
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom: 15px;">
+            <div>
+                <label style="display:block; color:#94a3b8; font-size:12px; margin-bottom:5px;">Сумма вывода (₽)</label>
+                <input id="edit-leader-amount" type="number" style="width:100%; padding:10px; border-radius:8px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:14px;">
+            </div>
+            <div>
+                <label style="display:block; color:#94a3b8; font-size:12px; margin-bottom:5px;">Депозит (₽)</label>
+                <input id="edit-leader-deposit" type="number" style="width:100%; padding:10px; border-radius:8px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:14px;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="display:block; color:#94a3b8; font-size:12px; margin-bottom:5px;">Telegram</label>
+            <input id="edit-leader-tg" type="text" placeholder="@username" style="width:100%; padding:10px; border-radius:8px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:14px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display:block; color:#94a3b8; font-size:12px; margin-bottom:5px;">Сайт / Проект</label>
+            <input id="edit-leader-site" type="text" placeholder="Например: Stake" style="width:100%; padding:10px; border-radius:8px; background:#0b1220; border:1px solid rgba(255,255,255,0.1); color:#e2e8f0; font-size:14px;">
+        </div>
+
+        <button onclick="saveEditedLeader()" style="width:100%; padding:12px; background:var(--accent-neon-blue); border:none; border-radius:8px; color:#000; font-weight:bold; font-size:14px; cursor:pointer; margin-bottom:10px;">СОХРАНИТЬ ИЗМЕНЕНИЯ</button>
+        <button onclick="closeModals()" style="width:100%; padding:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#e2e8f0; font-weight:bold; font-size:14px; cursor:pointer;">ОТМЕНА</button>
+    </div>
+</div>
+
+<div id="import-participants-modal" class="modal">
         <div class="modal-content import-modal-content">
             <div class="close-x" onclick="closeModals()">&times;</div>
             <div class="import-layout">
