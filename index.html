@@ -2932,15 +2932,67 @@
         // Ensure showWinnerRef exists and works
         function showWinnerRef(winnerName) {
             if (!winnerName) return;
+            
+            // Set current winner global variable
+            currentWinner = winnerName;
+            rerollCount = 0;
+
             const winnerScreen = document.getElementById('winner-screen');
-            const winnerText = document.getElementById('winner-name-display'); // Assuming this ID exists for the name
+            const nickEl = document.getElementById('win-nick');
+            const timerLabel = document.getElementById('win-timer-label');
+            const statusLabel = document.getElementById('win-status-label');
+            const rerollDisplay = document.getElementById('reroll-counter-display');
             
             if (winnerScreen) {
                 winnerScreen.style.display = 'flex';
-                if (winnerText) {
-                    winnerText.textContent = winnerName;
+                
+                // Update Nickname
+                if (nickEl) nickEl.textContent = winnerName;
+                
+                // Reset Styles and Labels
+                if (timerLabel) {
+                    timerLabel.classList.remove('timer-responded');
+                    timerLabel.innerText = '00:00:00';
                 }
-                // Optional: Play sound or other effects here
+                if (statusLabel) {
+                    statusLabel.classList.remove('winner-responded');
+                    statusLabel.innerText = 'WINNER FOUND';
+                }
+                if (rerollDisplay) rerollDisplay.innerText = 'Рероллов: 0';
+                
+                // Reset Inputs
+                const amtInput = document.getElementById('win-amount-input');
+                const depInput = document.getElementById('win-deposit-input');
+                const tgInput = document.getElementById('win-tg-input');
+                const siteSelect = document.getElementById('win-site-select');
+                
+                if (amtInput) amtInput.value = '';
+                if (depInput) depInput.value = '';
+                if (tgInput) {
+                    tgInput.value = getSavedTelegram(winnerName);
+                }
+                if (siteSelect) siteSelect.value = '---';
+
+                // Load Stats and History
+                updateWinnerStatsUI();
+                updateWinnerHistoryUI();
+                
+                // Clear Chat History for this session
+                const chatHistory = document.getElementById('win-chat-history');
+                if (chatHistory) chatHistory.innerHTML = '';
+
+                // Start Timer Logic if needed (optional, usually manual start or auto-start)
+                winTimerActive = true;
+                clearInterval(window.winInt);
+                // Optional: Auto-start timer on win? Currently it waits for response or manual interaction.
+                // If you want it to count down immediately:
+                /*
+                let timeLeft = 60; // Example
+                window.winInt = setInterval(() => {
+                   // logic
+                }, 1000);
+                */
+                
                 playTick(); 
             } else {
                 console.warn('Winner screen element #winner-screen not found');
