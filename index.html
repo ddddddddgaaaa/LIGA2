@@ -1631,7 +1631,7 @@
         let participantProfiles = JSON.parse(localStorage.getItem('bot_participant_profiles')) || {};
         let participants = new Set(); // активные участники (те, кто в розыгрыше)
         let userMessages = {};
-        let timerSeconds = 600, timerRunning = false, winTimerActive = false;
+        let timerSeconds = 600, timerRunning = false, winTimerActive = false, winTimerSeconds = 60;
         let currentWinner = null, selectedSpinMode = 'normal';
         let rerollCount = 0;
         let currentRotation = 0;
@@ -2284,6 +2284,7 @@
                 if (currentWinner && user.toLowerCase() === currentWinner.toLowerCase()) {
                     if (winTimerActive) {
                         winTimerActive = false;
+                        clearInterval(window.winInt);
                         const timerLabel = document.getElementById('win-timer-label');
                         const statusLabel = document.getElementById('win-status-label');
                         const nick = document.getElementById('win-nick');
@@ -2397,6 +2398,7 @@
             frame.src = `https://www.twitch.tv/embed/${safeChannelName}/chat?parent=${encodeURIComponent(parentDomain)}&darkpopout`;
         }
         function updateTimerDisplay() { const h = Math.floor(timerSeconds/3600).toString().padStart(2,'0'), m = Math.floor((timerSeconds%3600)/60).toString().padStart(2,'0'), s = (timerSeconds%60).toString().padStart(2,'0'); document.getElementById('timer').innerText = `${h}:${m}:${s}`; }
+        function updateWinnerTimerDisplay() { const m = Math.floor(winTimerSeconds/60).toString().padStart(2,'0'), s = (winTimerSeconds%60).toString().padStart(2,'0'); document.getElementById('win-timer-label').innerText = `${m}:${s}`; }
         function toggleTimer() { timerRunning = !timerRunning; if(audioCtx.state === 'suspended') audioCtx.resume(); }
         function adjustTimer(delta) {
             timerSeconds = Math.max(0, timerSeconds + delta);
@@ -2984,15 +2986,19 @@
 
                 // Start Timer Logic if needed (optional, usually manual start or auto-start)
                 winTimerActive = true;
+                winTimerSeconds = 60; // Reset to 60 seconds
+                updateWinnerTimerDisplay();
                 clearInterval(window.winInt);
-                // Optional: Auto-start timer on win? Currently it waits for response or manual interaction.
-                // If you want it to count down immediately:
-                /*
-                let timeLeft = 60; // Example
                 window.winInt = setInterval(() => {
-                   // logic
+                    if (winTimerActive && winTimerSeconds > 0) {
+                        winTimerSeconds--;
+                        updateWinnerTimerDisplay();
+                        if (winTimerSeconds === 0) {
+                            playAlarm();
+                            winTimerActive = false;
+                        }
+                    }
                 }, 1000);
-                */
                 
                 playTick(); 
             } else {
