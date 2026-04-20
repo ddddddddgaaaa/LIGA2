@@ -2395,9 +2395,9 @@
             let html = '';
             arr.forEach((u, i) => {
                 const badges = userRolesCache[u.toLowerCase()] || '';
-                const isSubscriber = badges.includes('subscriber');
-                const badgeClass = isSubscriber ? 'subscriber' : 'non-subscriber';
-                const badgeText = isSubscriber ? 'ПОДПИСЧИК' : 'НЕ ПОДПИСЧИК';
+                const isSubscriber = badges.includes('УЧАСТВУЕТ');
+                const badgeClass = isSubscriber ? 'УЧАСТВУЕТ' : 'УЧАСТВУЕТ';
+                const badgeText = isSubscriber ? 'УЧАСТВУЕТ' : 'УЧАСТВУЕТ';
                 html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge ${badgeClass}">${badgeText}</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
             });
             container.innerHTML = html || '<div style="color:#666; text-align:center; padding:30px 0;">Нет участников</div>';
