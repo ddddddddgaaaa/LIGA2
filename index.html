@@ -452,11 +452,13 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
-        .participant-row label {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 18px;
+        .participant-badge.subscriber {
+            background: rgba(34, 197, 94, 0.18);
+            border: 1px solid rgba(34, 197, 94, 0.45);
+            color: #86efac;
+        }
+        .modal[style*="display: flex"] ~ .container #twitch-chat-frame {
+            display: none !important;
         }
         .participant-row input[type="checkbox"] {
             width: 16px;
@@ -2170,7 +2172,17 @@
         function syncParticipantsState() {
             document.getElementById('user-count').innerText = participants.size;
             updateFullParticipantsList();
-            wheelParticipants = getActiveParticipants();
+            
+            // Не обновляем рулетку если она открыта или крутится
+            const wheelModal = document.getElementById('wheel-modal');
+            const rollButton = document.getElementById('roll-button');
+            const isWheelOpen = wheelModal && wheelModal.style.display === 'flex';
+            const isWheelSpinning = rollButton && rollButton.disabled;
+            
+            if (!isWheelOpen && !isWheelSpinning) {
+                wheelParticipants = getActiveParticipants();
+            }
+            
             saveToStorage();
         }
 
@@ -2382,7 +2394,11 @@
             const arr = Array.from(participants);
             let html = '';
             arr.forEach((u, i) => {
-                html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge">УЧАСТВУЕТ</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
+                const badges = userRolesCache[u.toLowerCase()] || '';
+                const isSubscriber = badges.includes('subscriber');
+                const badgeClass = isSubscriber ? 'subscriber' : 'non-subscriber';
+                const badgeText = isSubscriber ? 'ПОДПИСЧИК' : 'НЕ ПОДПИСЧИК';
+                html += `<div class="participant-row"><span class="participant-name"><span class="participant-badge ${badgeClass}">${badgeText}</span><span>${i+1}. <b>${u}</b></span></span><label><input type="checkbox" checked onchange="toggleParticipantActive('${u.replace(/'/g, "\\'")}', this.checked)"></label></div>`;
             });
             container.innerHTML = html || '<div style="color:#666; text-align:center; padding:30px 0;">Нет участников</div>';
         }
@@ -3051,12 +3067,40 @@
             });
         }
 
-        function updateWinnerHistoryLimit(value) {
-            winnerHistoryLimit = Math.max(5, Math.min(10, parseInt(value) || 5));
-            localStorage.setItem('bot_winner_history_limit', winnerHistoryLimit.toString());
-            const valueEl = document.getElementById('win-history-range-value');
-            if (valueEl) valueEl.textContent = winnerHistoryLimit;
-            updateWinnerHistoryUI();
+        function hideTwitchChat() {
+            const chatFrame = document.getElementById('twitch-chat-frame');
+            if (chatFrame) {
+                chatFrame.style.display = 'none';
+            }
+        }
+
+        function showTwitchChat() {
+            const chatFrame = document.getElementById('twitch-chat-frame');
+            if (chatFrame) {
+                chatFrame.style.display = 'block';
+                // Reload to ensure it works properly
+                setTimeout(() => {
+                    initTwitchEmbed();
+                }, 100);
+            }
+        }
+
+        function reSpinToHome() {
+            const activeParticipants = getActiveParticipants();
+            if (activeParticipants.length === 0) {
+                alert('Нет активных участников для перекрутки!');
+                return;
+            }
+            
+            // Выбираем случайного победителя
+            const randomIndex = Math.floor(Math.random() * activeParticipants.length);
+            const newWinner = activeParticipants[randomIndex];
+            
+            // Закрываем текущий экран победителя
+            document.getElementById('winner-screen').style.display = 'none';
+            
+            // Открываем экран с новым победителем
+            showWinnerRef(newWinner);
         }
 
         function closeDepRouletteOnly() {
