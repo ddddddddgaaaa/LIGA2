@@ -2986,17 +2986,13 @@
 
                 // Start Timer Logic if needed (optional, usually manual start or auto-start)
                 winTimerActive = true;
-                winTimerSeconds = 60; // Reset to 60 seconds
+                winTimerSeconds = 0; // Start from 0 seconds
                 updateWinnerTimerDisplay();
                 clearInterval(window.winInt);
                 window.winInt = setInterval(() => {
-                    if (winTimerActive && winTimerSeconds > 0) {
-                        winTimerSeconds--;
+                    if (winTimerActive) {
+                        winTimerSeconds++;
                         updateWinnerTimerDisplay();
-                        if (winTimerSeconds === 0) {
-                            playAlarm();
-                            winTimerActive = false;
-                        }
                     }
                 }, 1000);
                 
