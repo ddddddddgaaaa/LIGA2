@@ -1426,7 +1426,6 @@
                 <div class="menu-wave wave-b"></div>
             </div>
             <div style="flex: 1;"></div>
-            <button class="btn-main" style="background: #200236; border-color: #6a0dad;" onclick="window.open('https://ddddddddgaaaa.github.io/pandora/', '_blank')">ЯЩИК ПАНДОРЫ</button>
             <button class="btn-main" onclick="resetAll()">Сброс участников</button>
             <button class="btn-main btn-codeword" onclick="changeCodeword()">КОД: <span id="codeword-display">+</span></button>
             <button class="btn-main" onclick="openStats()">АНАЛИТИКА ПРОЕКТОВ</button>
@@ -1603,6 +1602,7 @@
             <button class="btn-main btn-purple" style="margin-top:10px" onclick="saveWinnerStats()">СОХРАНИТЬ 📊</button>
             <button class="btn-main" onclick="window.open('https://followage.showmasterokda.com/?user=' + currentWinner, '_blank')">ПОДПИСКИ 🔗</button>
             <button class="btn-main" onclick="window.open('https://www.twitch.tv/popout/' + currentChannelName + '/viewercard/' + currentWinner + '?popout=', '_blank')">СООБЩЕНИЯ</button>
+            <button class="btn-main" style="background: #6a0dad; border-color: #6a0dad;" onclick="window.open('https://ddddddddgaaaa.github.io/pandora/', '_blank')">ЯЩИК ПАНДОРЫ</button>
             <button class="btn-main simple-roulette-btn" onclick="openSimpleRoulette()">🎰 РУЛЕТКА</button>
             <button class="btn-main" onclick="showCloseConfirmModal()">ЗАКРЫТЬ</button>
             <button class="btn-main btn-purple" onclick="reSpinToHome()">ПЕРЕКРУТИТЬ</button>
@@ -2982,22 +2982,113 @@
                 const chatHistory = document.getElementById('win-chat-history');
                 if (chatHistory) chatHistory.innerHTML = '';
 
-                // Start Timer Logic if needed (optional, usually manual start or auto-start)
+                // Start Stopwatch Timer
                 winTimerActive = true;
                 clearInterval(window.winInt);
-                // Optional: Auto-start timer on win? Currently it waits for response or manual interaction.
-                // If you want it to count down immediately:
-                /*
-                let timeLeft = 60; // Example
+                
+                let elapsedSeconds = 0;
+                
+                // Update timer display
+                function updateTimerDisplay() {
+                    const hours = Math.floor(elapsedSeconds / 3600);
+                    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+                    const seconds = elapsedSeconds % 60;
+                    
+                    timerLabel.innerText = 
+                        String(hours).padStart(2, '0') + ':' + 
+                        String(minutes).padStart(2, '0') + ':' + 
+                        String(seconds).padStart(2, '0');
+                }
+                
+                // Start stopwatch - increment every second
                 window.winInt = setInterval(() => {
-                   // logic
+                    if (winTimerActive) {
+                        elapsedSeconds++;
+                        updateTimerDisplay();
+                    }
                 }, 1000);
-                */
                 
                 playTick(); 
             } else {
                 console.warn('Winner screen element #winner-screen not found');
                 alert('Победитель: ' + winnerName);
+            }
+        }
+
+        function updateWinnerStatsUI() {
+            // Find the winner in the leaders array
+            const winner = leaders.find(l => l.name.toLowerCase() === (currentWinner || '').toLowerCase());
+            
+            // Update stats display
+            const countEl = document.getElementById('win-count-stat');
+            const sumEl = document.getElementById('win-sum-stat');
+            const depEl = document.getElementById('win-dep-stat');
+            
+            if (countEl) countEl.textContent = winner ? (winner.count || 0) : '0';
+            if (sumEl) sumEl.textContent = (winner ? (winner.amount || 0) : 0).toLocaleString() + ' ₽';
+            if (depEl) depEl.textContent = (winner ? (winner.deposits || 0) : 0).toLocaleString() + ' ₽';
+        }
+
+        function updateWinnerHistoryUI() {
+            // Filter history for current winner, limit by winnerHistoryLimit
+            const historyEl = document.getElementById('win-drop-history');
+            if (!historyEl) return;
+            
+            const winnerHistory = globalHistory
+                .filter(h => h.name.toLowerCase() === (currentWinner || '').toLowerCase())
+                .slice(-winnerHistoryLimit)
+                .reverse();
+            
+            historyEl.innerHTML = '';
+            if (winnerHistory.length === 0) {
+                historyEl.innerHTML = '<div style="padding: 10px; color: #aaa; text-align: center;">История пуста</div>';
+                return;
+            }
+            
+            winnerHistory.forEach(h => {
+                const displaySite = (h.site && h.site !== '---' && h.site !== 'НЕТ ИНФОРМАЦИИ') ? h.site : 'НЕТ ИНФОРМАЦИИ';
+                const displayAmount = (typeof h.amount === 'number' && !Number.isNaN(h.amount)) ? (h.amount.toLocaleString() + ' ₽') : 'НЕТ ИНФОРМАЦИИ';
+                const displayDeposit = (typeof h.deposit === 'number' && !Number.isNaN(h.deposit)) ? (h.deposit.toLocaleString() + ' ₽') : 'НЕТ ИНФОРМАЦИИ';
+                
+                historyEl.innerHTML += `<div style="padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 12px;">
+                    <div><small style="color: #aaa;">${h.date || ''}</small></div>
+                    <div style="color: var(--accent-neon-blue);">Сайт: ${displaySite}</div>
+                    <div>Вывод: <strong>${displayAmount}</strong></div>
+                    <div>Депозит: <strong>${displayDeposit}</strong></div>
+                </div>`;
+            });
+        }
+
+        function updateWinnerHistoryLimit(value) {
+            winnerHistoryLimit = Math.max(5, Math.min(10, parseInt(value, 10)));
+            localStorage.setItem('bot_winner_history_limit', winnerHistoryLimit);
+            
+            const rangeValueEl = document.getElementById('win-history-range-value');
+            if (rangeValueEl) rangeValueEl.textContent = winnerHistoryLimit;
+            
+            updateWinnerHistoryUI();
+        }
+
+        function editWinnerCounter(type) {
+            let winner = leaders.find(l => l.name.toLowerCase() === currentWinner.toLowerCase());
+            if (!winner) {
+                winner = { name: currentWinner, amount: 0, deposits: 0, count: 0 };
+                leaders.push(winner);
+            }
+            
+            let value = '';
+            if (type === 'count') value = prompt('Количество выигрышей:', winner.count || 0);
+            else if (type === 'sum') value = prompt('Сумма вывода (₽):', winner.amount || 0);
+            else if (type === 'dep') value = prompt('Сумма депозитов (₽):', winner.deposits || 0);
+            
+            if (value !== null) {
+                const num = parseFloat(value) || 0;
+                if (type === 'count') winner.count = Math.max(0, parseInt(value, 10) || 0);
+                else if (type === 'sum') winner.amount = Math.max(0, num);
+                else if (type === 'dep') winner.deposits = Math.max(0, num);
+                
+                saveToStorage();
+                updateWinnerStatsUI();
             }
         }
 
