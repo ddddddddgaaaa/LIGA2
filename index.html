@@ -1510,7 +1510,7 @@
             <h3 style="color: var(--accent-neon-blue); margin: 0 0 20px; text-align: center;">Редактировать статистику</h3>
             <div style="display: flex; flex-direction: column; gap: 12px;">
                 <label style="font-size: 12px; color: #94a3b8;">Никнейм</label>
-                <input type="text" id="edit-stat-name" readonly style="opacity: 0.7; cursor: not-allowed;">
+                <input type="text" id="edit-stat-name" style="opacity: 1; cursor: text;" placeholder="Никнейм">
                 
                 <label style="font-size: 12px; color: #94a3b8;">Telegram</label>
                 <input type="text" id="edit-stat-tg" placeholder="@username">
@@ -2565,8 +2565,9 @@
             globalHistory.push({ name: currentWinner, amount: historyAmount, deposit: historyDeposit, site: historySite, tg: historyTg, rerolls: rerollCount, date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString() }); 
             rerollCount = 0; 
             renderLeaderboard(); 
-            closeModals(); 
+            saveToStorage(); 
             cloudSaveAppStateDebounced(); // сохраняем топ и историю
+            closeModals(); 
         }
         
         function openStats() { const stats = {}; globalHistory.forEach(h => { if (h.isReroll) return; const siteName = h.site || '---'; if(!stats[siteName]) stats[siteName] = { count: 0, sum: 0, deps: 0 }; stats[siteName].count++; stats[siteName].sum += (h.amount || 0); stats[siteName].deps += (h.deposit || 0); }); const body = document.getElementById('stats-body'); body.innerHTML = ''; Object.keys(stats).sort().forEach(site => { body.innerHTML += `<tr><td><b>${site}</b></td><td>${stats[site].count}</td><td>${stats[site].sum.toLocaleString()} ₽</td><td>${stats[site].deps.toLocaleString()} ₽</td><td><button class="btn-edit-row" style="color:var(--accent-neon-blue); background:none; border:none; cursor:pointer;" onclick="editProjectName('${site}')" title="Переименовать проект">✏️</button><button class="btn-delete-row" style="color:red; background:none; border:none; cursor:pointer;" onclick="deleteProjectRecords('${site}')" title="Удалить все записи по проекту">🗑️</button></td></tr>`; }); document.getElementById('stats-modal').style.display = 'flex'; }
@@ -2643,17 +2644,33 @@
         function saveEditedStats() {
             if (!currentEditLeaderName) return;
             
+            const name = document.getElementById('edit-stat-name').value.trim();
             const tg = document.getElementById('edit-stat-tg').value.trim();
             const site = document.getElementById('edit-stat-site').value;
             const amount = parseFloat(document.getElementById('edit-stat-amount').value) || 0;
             const deposit = parseFloat(document.getElementById('edit-stat-deposit').value) || 0;
             
+            if (!name) {
+                alert('Имя не может быть пустым');
+                return;
+            }
+            
             const leader = leaders.find(l => l.name.toLowerCase() === currentEditLeaderName.toLowerCase());
             if (leader) {
+                const oldName = leader.name;
+                leader.name = name;
                 leader.tg = tg;
                 leader.site = site;
                 leader.amount = amount;
                 leader.deposits = deposit;
+                
+                if (name.toLowerCase() !== oldName.toLowerCase()) {
+                    globalHistory.forEach(h => {
+                        if (h.name.toLowerCase() === oldName.toLowerCase()) {
+                            h.name = name;
+                        }
+                    });
+                }
                 
                 // Also update profile telegram
                 if (tg) {
