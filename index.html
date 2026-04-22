@@ -1479,7 +1479,7 @@
             </div>
         </div>
         <div class="panel panel-with-bg" style="padding: 15px;">
-            <div class="animated-header" id="participation-header">ДЛЯ УЧАСТИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
+            <div class="animated-header" id="participation-header">ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "<span id="header-codeword">+</span>" В ЧАТ!</div>
             <div class="middle-split">
                 <div class="red-participants">
                     <h4>СПИСОК УЧАСТНИКОВ <span id="user-count" style="font-size: 18px; color: var(--accent-neon-blue); font-weight: 800;">0</span></h4>
@@ -1631,6 +1631,7 @@
         let leaders = JSON.parse(localStorage.getItem('bot_top_leaders')) || [];
         let globalHistory = JSON.parse(localStorage.getItem('bot_global_history')) || [];
         let participantProfiles = JSON.parse(localStorage.getItem('bot_participant_profiles')) || {};
+        let leaderOverrides = JSON.parse(localStorage.getItem('bot_leader_overrides') || '{}') || {};
         let participants = new Set(); // активные участники (те, кто в розыгрыше)
         let userMessages = {};
         let timerSeconds = 600, timerRunning = false, winTimerActive = false, winTimerSeconds = 60;
@@ -1773,6 +1774,28 @@
             return false;
         }
         function getProfileKey(name) { return String(name || '').trim().toLowerCase(); }
+        function getLeaderOverrideKey(name) { return String(name || '').trim().toLowerCase(); }
+        function getLeaderOverride(name) {
+            const key = getLeaderOverrideKey(name);
+            return key ? leaderOverrides[key] || null : null;
+        }
+        function setLeaderOverride(oldName, nextData) {
+            const oldKey = getLeaderOverrideKey(oldName);
+            const newKey = getLeaderOverrideKey(nextData && nextData.name);
+            if (oldKey && oldKey !== newKey) delete leaderOverrides[oldKey];
+            if (!newKey) return;
+            leaderOverrides[newKey] = {
+                name: nextData.name,
+                tg: nextData.tg || '',
+                site: nextData.site || '---',
+                amount: Number(nextData.amount) || 0,
+                deposits: Number(nextData.deposits) || 0
+            };
+        }
+        function deleteLeaderOverride(name) {
+            const key = getLeaderOverrideKey(name);
+            if (key) delete leaderOverrides[key];
+        }
         function getSavedTelegram(name) {
             const key = getProfileKey(name);
             return key ? participantProfiles[key]?.tg || '' : '';
@@ -1952,6 +1975,7 @@
             localStorage.setItem('bot_top_leaders', JSON.stringify(leaders));
             localStorage.setItem('bot_global_history', JSON.stringify(globalHistory));
             localStorage.setItem('bot_participant_profiles', JSON.stringify(participantProfiles));
+            localStorage.setItem('bot_leader_overrides', JSON.stringify(leaderOverrides));
             localStorage.setItem('bot_channel_name', currentChannelName);
             // participants не сохраняем в localStorage, они идут из Firebase
         }
@@ -1970,6 +1994,7 @@
                     leaders: leaders || [],
                     globalHistory: globalHistory || [],
                     participantProfiles: participantProfiles || {},
+                    leaderOverrides: leaderOverrides || {},
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                 };
                 const docId = getAppDocId();
@@ -2002,6 +2027,7 @@
                 if (Array.isArray(data.leaders) && data.leaders.length) leaders = data.leaders;
                 if (Array.isArray(data.globalHistory) && data.globalHistory.length) globalHistory = data.globalHistory;
                 if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                if (data.leaderOverrides) leaderOverrides = Object.assign({}, leaderOverrides, data.leaderOverrides);
                 saveToStorage();
                 renderLeaderboard();
             } catch (e) {
@@ -2032,6 +2058,7 @@
                         saveToStorage();
                     }
                     if (data.participantProfiles) participantProfiles = Object.assign({}, participantProfiles, data.participantProfiles);
+                    if (data.leaderOverrides) leaderOverrides = Object.assign({}, leaderOverrides, data.leaderOverrides);
                 });
                 try { loadAccountsFromCloud(); } catch(e){}
                 if (sanitizeChannelName(currentChannelName) === '0savelka0') {
@@ -2238,7 +2265,7 @@
         function updateParticipationHeader() {
             const header = document.getElementById('participation-header');
             if (header) {
-                header.textContent = `ДЛЯ УЧАСТИЯ В ПРОКАЧКЕ "${currentCodeword}" В ЧАТ`;
+                header.textContent = `ДЛЯ УЧАСТВИЯ В ПРОКАЧКЕ "${currentCodeword}" В ЧАТ`;
             }
         }
         function connectTwitchSocket() {
@@ -2363,6 +2390,17 @@
         }
         function renderLeaderboard() {
             recalculateLeadersFromHistory();
+            leaders = leaders.map((leader) => {
+                const override = getLeaderOverride(leader.name);
+                return override ? {
+                    ...leader,
+                    name: override.name || leader.name,
+                    tg: override.tg || leader.tg,
+                    site: override.site || leader.site,
+                    amount: typeof override.amount === 'number' ? override.amount : leader.amount,
+                    deposits: typeof override.deposits === 'number' ? override.deposits : leader.deposits
+                } : leader;
+            });
             leaders.sort((a,b) => b.amount - a.amount);
             const container = document.getElementById('leaderboard');
             container.innerHTML = '';
@@ -2663,6 +2701,7 @@
                 leader.site = site;
                 leader.amount = amount;
                 leader.deposits = deposit;
+                setLeaderOverride(oldName, { name, tg, site, amount, deposits: deposit });
                 
                 if (name.toLowerCase() !== oldName.toLowerCase()) {
                     globalHistory.forEach(h => {
@@ -2679,6 +2718,7 @@
                 }
                 
                 saveToStorage();
+                cloudSaveAppStateDebounced();
                 renderLeaderboard();
                 closeEditStatsModal();
                 alert('Статистика обновлена!');
@@ -2689,7 +2729,9 @@
             if (!currentEditLeaderName) return;
             if (confirm(`Вы уверены, что хотите удалить ${currentEditLeaderName} из топа? История выплат останется в архиве.`)) {
                 leaders = leaders.filter(l => l.name.toLowerCase() !== currentEditLeaderName.toLowerCase());
+                deleteLeaderOverride(currentEditLeaderName);
                 saveToStorage();
+                cloudSaveAppStateDebounced();
                 renderLeaderboard();
                 closeEditStatsModal();
             }
